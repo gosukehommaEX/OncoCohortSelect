@@ -34,14 +34,23 @@ evaluates the selection rules by simulation.
 
 ## Installation
 
+OncoCohortSelect and the package it uses to simulate correlated
+endpoints,
+[CorOncoEndpoints](https://github.com/gosukehommaEX/CorOncoEndpoints),
+are installed from GitHub; neither is on CRAN.
+
 ``` r
 
-# install.packages("remotes")
+install.packages("remotes")
+# CorOncoEndpoints, at the version used by OncoCohortSelect
+remotes::install_github("gosukehommaEX/CorOncoEndpoints@35f731d6052ff31625c140af0018b2558142dfc3")
 remotes::install_github("gosukehommaEX/OncoCohortSelect")
 ```
 
-CorOncoEndpoints is installed from GitHub with it (the version is fixed
-in the `Remotes` field of DESCRIPTION).
+The second call alone also installs CorOncoEndpoints at this version,
+which is fixed in the `Remotes` field of DESCRIPTION; the first call
+makes the dependency explicit. CorOncoEndpoints contains C++ code and is
+built from source, so Rtools is needed on Windows.
 
 ## Example
 
