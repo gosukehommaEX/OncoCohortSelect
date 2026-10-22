@@ -14,7 +14,11 @@
 #'   (the score against target values, plotted for every cohort including the
 #'   reference).
 #' @param threshold Optional threshold drawn as a dashed line.
+#' @param col Colors of the cohorts (recycled), in the order of the cohorts in
+#'   \code{x}; a cohort keeps its color whatever the statistic.
 #' @param main Title of the plot.
+#' @param cex.main,cex.lab,cex.axis Sizes of the title, of the axis titles and
+#'   of the axis labels, relative to the default size.
 #' @param ... Not used.
 #' @return \code{print()} returns \code{x} invisibly. \code{plot()} returns
 #'   invisibly a list with the plotted values for each cohort; infinite win

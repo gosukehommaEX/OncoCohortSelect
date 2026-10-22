@@ -6,11 +6,26 @@
 #' draws these probabilities against the threshold, one line per cohort, or as
 #' bars when there is a single threshold. Results of several statistics
 #' combined with \code{rbind()} are printed as a data frame and cannot be
-#' plotted together.
+#' plotted together. The plot methods of the package restore the graphical
+#' parameters they change, so elements added afterwards with low-level
+#' functions such as \code{abline()} may be misplaced; use the arguments of the
+#' methods, such as \code{threshold}, instead.
 #'
 #' @param x Data frame returned by \code{\link{SelectionOC}}.
 #' @param digits Number of significant digits.
+#' @param threshold Optional thresholds marked by dashed vertical lines, for
+#'   example a calibrated threshold (several thresholds only).
+#' @param col Colors of the cohorts (recycled).
 #' @param main Title of the plot.
+#' @param legend.position Position of the legend: \code{"bottom"} (below the
+#'   plot, the default) or \code{"top"} (above the plot) for a horizontal
+#'   legend, a keyword of \code{\link[graphics]{legend}} such as
+#'   \code{"topright"} for a legend inside the plot, or \code{"none"}. With a
+#'   single threshold the cohorts are named under the bars and no legend is
+#'   drawn.
+#' @param cex.main,cex.lab,cex.axis,cex.legend Sizes of the title, of the axis
+#'   titles, of the axis and bar labels, and of the legend, relative to the
+#'   default size.
 #' @param ... Not used.
 #' @return \code{print()} returns \code{x} invisibly. \code{plot()} returns
 #'   invisibly the matrix of selection probabilities, with one row per
@@ -24,6 +39,7 @@
 #' oc <- SelectionOC(res, "ntb", threshold = seq(0, 0.3, by = 0.05))
 #' oc
 #' plot(oc)
+#' plot(oc, threshold = 0.15, legend.position = "right", cex.lab = 1.2)
 #' @seealso \code{\link{SelectionOC}}
 #' @name SelectionOC-methods
 NULL

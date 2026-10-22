@@ -8,7 +8,16 @@
 #'
 #' @param x Data frame returned by \code{\link{BenefitRisk}}.
 #' @param digits Number of significant digits of the scores.
+#' @param col Colors of the bars: one per component and one for the score
+#'   (recycled).
 #' @param main Title of the plot.
+#' @param legend.position Position of the legend: \code{"bottom"} (below the
+#'   plot, the default) or \code{"top"} (above the plot) for a horizontal
+#'   legend, a keyword of \code{\link[graphics]{legend}} such as
+#'   \code{"topright"} for a legend inside the plot, or \code{"none"}.
+#' @param cex.main,cex.lab,cex.axis,cex.legend Sizes of the title, of the axis
+#'   titles, of the axis and bar labels, and of the legend (and notes),
+#'   relative to the default size.
 #' @param ... Not used.
 #' @return \code{print()} returns \code{x} invisibly. \code{plot()} returns
 #'   invisibly the matrix of plotted values, with one row per component and a
@@ -28,6 +37,8 @@
 #' br <- BenefitRisk(d, eps, crit)
 #' br
 #' plot(br)
+#' plot(br, col = c("grey80", "grey60", "grey40", "black"), legend.position = "top",
+#'      cex.axis = 1.2)
 #' @seealso \code{\link{BenefitRisk}}
 #' @name BenefitRisk-methods
 NULL

@@ -6,14 +6,37 @@
 \alias{print.BenefitRisk}
 \title{Print and plot benefit-risk scores}
 \usage{
-\method{plot}{BenefitRisk}(x, main = NULL, ...)
+\method{plot}{BenefitRisk}(
+  x,
+  col = NULL,
+  main = NULL,
+  legend.position = c("bottom", "top", "topright", "topleft", "bottomright",
+    "bottomleft", "right", "left", "none"),
+  cex.main = 1.2,
+  cex.lab = 1,
+  cex.axis = 1,
+  cex.legend = 0.9,
+  ...
+)
 
 \method{print}{BenefitRisk}(x, digits = 3, ...)
 }
 \arguments{
 \item{x}{Data frame returned by \code{\link{BenefitRisk}}.}
 
+\item{col}{Colors of the bars: one per component and one for the score
+(recycled).}
+
 \item{main}{Title of the plot.}
+
+\item{legend.position}{Position of the legend: \code{"bottom"} (below the
+plot, the default) or \code{"top"} (above the plot) for a horizontal
+legend, a keyword of \code{\link[graphics]{legend}} such as
+\code{"topright"} for a legend inside the plot, or \code{"none"}.}
+
+\item{cex.main, cex.lab, cex.axis, cex.legend}{Sizes of the title, of the axis
+titles, of the axis and bar labels, and of the legend (and notes),
+relative to the default size.}
 
 \item{...}{Not used.}
 
@@ -45,6 +68,8 @@ crit <- data.frame(endpoint = c("ORR", "PFS", "AE"), target = c(0.3, 0.5, 0.3),
 br <- BenefitRisk(d, eps, crit)
 br
 plot(br)
+plot(br, col = c("grey80", "grey60", "grey40", "black"), legend.position = "top",
+     cex.axis = 1.2)
 }
 \seealso{
 \code{\link{BenefitRisk}}

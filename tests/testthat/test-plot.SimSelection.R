@@ -10,6 +10,10 @@ test_that("the plotted values are the statistic of each cohort", {
   w <- with_null_device(plot(r, "wr"))
   expect_equal(w$B, c(0.9, 1))
   expect_equal(w$C, c(1.2, 1.5))
+  v2 <- with_null_device(plot(r, "ntb", col = c("red", "green", "blue"), cex.main = 1.5,
+                              cex.lab = 0.8, cex.axis = 0.8))
+  expect_identical(v2, v)
+  expect_error(plot(r, "ntb", cex.axis = 0), "cex.axis")
   expect_error(plot(r, "br"), "br")
   expect_error(plot(r, "ntb", threshold = "a"), "threshold")
 })

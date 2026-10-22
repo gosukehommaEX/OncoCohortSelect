@@ -6,14 +6,42 @@
 \alias{print.SelectionOC}
 \title{Print and plot selection probabilities}
 \usage{
-\method{plot}{SelectionOC}(x, main = NULL, ...)
+\method{plot}{SelectionOC}(
+  x,
+  threshold = NULL,
+  col = NULL,
+  main = NULL,
+  legend.position = c("bottom", "top", "topright", "topleft", "bottomright",
+    "bottomleft", "right", "left", "none"),
+  cex.main = 1.2,
+  cex.lab = 1,
+  cex.axis = 1,
+  cex.legend = 0.9,
+  ...
+)
 
 \method{print}{SelectionOC}(x, digits = 3, ...)
 }
 \arguments{
 \item{x}{Data frame returned by \code{\link{SelectionOC}}.}
 
+\item{threshold}{Optional thresholds marked by dashed vertical lines, for
+example a calibrated threshold (several thresholds only).}
+
+\item{col}{Colors of the cohorts (recycled).}
+
 \item{main}{Title of the plot.}
+
+\item{legend.position}{Position of the legend: \code{"bottom"} (below the
+plot, the default) or \code{"top"} (above the plot) for a horizontal
+legend, a keyword of \code{\link[graphics]{legend}} such as
+\code{"topright"} for a legend inside the plot, or \code{"none"}. With a
+single threshold the cohorts are named under the bars and no legend is
+drawn.}
+
+\item{cex.main, cex.lab, cex.axis, cex.legend}{Sizes of the title, of the axis
+titles, of the axis and bar labels, and of the legend, relative to the
+default size.}
 
 \item{...}{Not used.}
 
@@ -30,7 +58,10 @@ cohort, with one row per threshold and one column per cohort. \code{plot()}
 draws these probabilities against the threshold, one line per cohort, or as
 bars when there is a single threshold. Results of several statistics
 combined with \code{rbind()} are printed as a data frame and cannot be
-plotted together.
+plotted together. The plot methods of the package restore the graphical
+parameters they change, so elements added afterwards with low-level
+functions such as \code{abline()} may be misplaced; use the arguments of the
+methods, such as \code{threshold}, instead.
 }
 \examples{
 set.seed(1)
@@ -41,6 +72,7 @@ res$ntb <- ifelse(res$is_reference, NA,
 oc <- SelectionOC(res, "ntb", threshold = seq(0, 0.3, by = 0.05))
 oc
 plot(oc)
+plot(oc, threshold = 0.15, legend.position = "right", cex.lab = 1.2)
 }
 \seealso{
 \code{\link{SelectionOC}}

@@ -6,15 +6,37 @@
 \alias{print.WinStat}
 \title{Print and plot win statistics}
 \usage{
-\method{plot}{WinStat}(x, main = NULL, ...)
+\method{plot}{WinStat}(
+  x,
+  col = c("#0072B2", "#D55E00", "grey75"),
+  main = NULL,
+  legend.position = c("bottom", "top", "topright", "topleft", "bottomright",
+    "bottomleft", "right", "left", "none"),
+  cex.main = 1,
+  cex.lab = 1,
+  cex.axis = 1,
+  cex.legend = 0.9,
+  ...
+)
 
 \method{print}{WinStat}(x, digits = 3, ...)
 }
 \arguments{
 \item{x}{List returned by \code{\link{WinStat}}.}
 
+\item{col}{Colors of the pairs won, lost and undecided (recycled).}
+
 \item{main}{Title of the plot; by default the net treatment benefit and the
 win ratio with their confidence intervals.}
+
+\item{legend.position}{Position of the legend: \code{"bottom"} (below the
+plot, the default) or \code{"top"} (above the plot) for a horizontal
+legend, a keyword of \code{\link[graphics]{legend}} such as
+\code{"topright"} for a legend inside the plot, or \code{"none"}.}
+
+\item{cex.main, cex.lab, cex.axis, cex.legend}{Sizes of the title, of the axis
+titles, of the axis and bar labels, and of the legend (and notes),
+relative to the default size.}
 
 \item{...}{Not used.}
 
@@ -46,6 +68,8 @@ eps <- list(Endpoint("OS", "tte", time = "os_tte", event = "os_event"),
 w <- WinStat(d, eps, treatment = "Cohort1", control = "Cohort2")
 w
 plot(w)
+plot(w, col = c("darkgreen", "firebrick", "grey80"), legend.position = "topright",
+     cex.main = 0.9, cex.legend = 1)
 }
 \seealso{
 \code{\link{WinStat}}

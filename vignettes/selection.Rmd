@@ -189,8 +189,7 @@ threshold of the net treatment benefit.
 
 ```{r}
 oc <- SelectionOC(res[["Cohort3 best"]], "ntb", threshold = seq(0, 0.4, by = 0.02))
-plot(oc)
-abline(v = thr_ntb, lty = 2)
+plot(oc, threshold = thr_ntb)
 ```
 
 ## Saturation of the score against target values

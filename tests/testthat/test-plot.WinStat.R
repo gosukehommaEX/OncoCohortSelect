@@ -11,3 +11,21 @@ test_that("the bars are the proportions won and lost at each level", {
   expect_equal(sum(H), 1, tolerance = 1e-12)
   expect_error(plot(structure(list(), class = "WinStat")), "WinStat")
 })
+
+test_that("colors, sizes and the legend can be chosen and par() is restored", {
+  d <- fixture("gpc_cont.csv")
+  w <- WinStat(d, fixture_endpoints(), treatment = "T", control = "C", group = "arm")
+  H <- with_null_device(plot(w))
+  for (p in c("bottom", "top", "topright", "none")) {
+    H2 <- with_null_device({
+      m0 <- graphics::par("mar")
+      out <- plot(w, col = "black", legend.position = p, cex.main = 0.8, cex.lab = 1.3,
+                  cex.axis = 1.2, cex.legend = 1.1)
+      expect_identical(graphics::par("mar"), m0)
+      out
+    })
+    expect_identical(H2, H)
+  }
+  expect_error(with_null_device(plot(w, legend.position = "middle")))
+  expect_error(plot(w, cex.main = 0), "cex.main")
+})

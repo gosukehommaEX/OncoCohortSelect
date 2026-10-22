@@ -10,7 +10,11 @@
   x,
   statistic = c("ntb", "ntb_lower", "wr", "wo", "br_diff", "br_ref", "br"),
   threshold = NULL,
+  col = NULL,
   main = NULL,
+  cex.main = 1.2,
+  cex.lab = 1,
+  cex.axis = 1,
   ...
 )
 
@@ -26,7 +30,13 @@ reference).}
 
 \item{threshold}{Optional threshold drawn as a dashed line.}
 
+\item{col}{Colors of the cohorts (recycled), in the order of the cohorts in
+\code{x}; a cohort keeps its color whatever the statistic.}
+
 \item{main}{Title of the plot.}
+
+\item{cex.main, cex.lab, cex.axis}{Sizes of the title, of the axis titles and
+of the axis labels, relative to the default size.}
 
 \item{...}{Not used.}
 

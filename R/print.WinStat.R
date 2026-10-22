@@ -11,8 +11,16 @@
 #'
 #' @param x List returned by \code{\link{WinStat}}.
 #' @param digits Number of significant digits.
+#' @param col Colors of the pairs won, lost and undecided (recycled).
 #' @param main Title of the plot; by default the net treatment benefit and the
 #'   win ratio with their confidence intervals.
+#' @param legend.position Position of the legend: \code{"bottom"} (below the
+#'   plot, the default) or \code{"top"} (above the plot) for a horizontal
+#'   legend, a keyword of \code{\link[graphics]{legend}} such as
+#'   \code{"topright"} for a legend inside the plot, or \code{"none"}.
+#' @param cex.main,cex.lab,cex.axis,cex.legend Sizes of the title, of the axis
+#'   titles, of the axis and bar labels, and of the legend (and notes),
+#'   relative to the default size.
 #' @param ... Not used.
 #' @return \code{print()} returns \code{x} invisibly. \code{plot()} returns
 #'   invisibly the matrix of plotted proportions (rows \code{won},
@@ -29,6 +37,8 @@
 #' w <- WinStat(d, eps, treatment = "Cohort1", control = "Cohort2")
 #' w
 #' plot(w)
+#' plot(w, col = c("darkgreen", "firebrick", "grey80"), legend.position = "topright",
+#'      cex.main = 0.9, cex.legend = 1)
 #' @seealso \code{\link{WinStat}}
 #' @name WinStat-methods
 NULL
