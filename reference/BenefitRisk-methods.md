@@ -10,7 +10,18 @@ score as bars, with the admissibility cutoffs as dashed lines.
 
 ``` r
 # S3 method for class 'BenefitRisk'
-plot(x, main = NULL, ...)
+plot(
+  x,
+  col = NULL,
+  main = NULL,
+  legend.position = c("bottom", "top", "topright", "topleft", "bottomright",
+    "bottomleft", "right", "left", "none"),
+  cex.main = 1.2,
+  cex.lab = 1,
+  cex.axis = 1,
+  cex.legend = 0.9,
+  ...
+)
 
 # S3 method for class 'BenefitRisk'
 print(x, digits = 3, ...)
@@ -23,9 +34,26 @@ print(x, digits = 3, ...)
   Data frame returned by
   [`BenefitRisk`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/BenefitRisk.md).
 
+- col:
+
+  Colors of the bars: one per component and one for the score
+  (recycled).
+
 - main:
 
   Title of the plot.
+
+- legend.position:
+
+  Position of the legend: `"bottom"` (below the plot, the default) or
+  `"top"` (above the plot) for a horizontal legend, a keyword of
+  [`legend`](https://rdrr.io/r/graphics/legend.html) such as
+  `"topright"` for a legend inside the plot, or `"none"`.
+
+- cex.main, cex.lab, cex.axis, cex.legend:
+
+  Sizes of the title, of the axis titles, of the axis and bar labels,
+  and of the legend (and notes), relative to the default size.
 
 - ...:
 
@@ -75,4 +103,7 @@ br
 #> 
 #> Selected: Cohort1
 plot(br)
+
+plot(br, col = c("grey80", "grey60", "grey40", "black"), legend.position = "top",
+     cex.axis = 1.2)
 ```

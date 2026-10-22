@@ -14,7 +14,18 @@ confidence intervals.
 
 ``` r
 # S3 method for class 'WinStat'
-plot(x, main = NULL, ...)
+plot(
+  x,
+  col = c("#0072B2", "#D55E00", "grey75"),
+  main = NULL,
+  legend.position = c("bottom", "top", "topright", "topleft", "bottomright",
+    "bottomleft", "right", "left", "none"),
+  cex.main = 1,
+  cex.lab = 1,
+  cex.axis = 1,
+  cex.legend = 0.9,
+  ...
+)
 
 # S3 method for class 'WinStat'
 print(x, digits = 3, ...)
@@ -27,10 +38,26 @@ print(x, digits = 3, ...)
   List returned by
   [`WinStat`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat.md).
 
+- col:
+
+  Colors of the pairs won, lost and undecided (recycled).
+
 - main:
 
   Title of the plot; by default the net treatment benefit and the win
   ratio with their confidence intervals.
+
+- legend.position:
+
+  Position of the legend: `"bottom"` (below the plot, the default) or
+  `"top"` (above the plot) for a horizontal legend, a keyword of
+  [`legend`](https://rdrr.io/r/graphics/legend.html) such as
+  `"topright"` for a legend inside the plot, or `"none"`.
+
+- cex.main, cex.lab, cex.axis, cex.legend:
+
+  Sizes of the title, of the axis titles, of the axis and bar labels,
+  and of the legend (and notes), relative to the default size.
 
 - ...:
 
@@ -80,4 +107,7 @@ w
 #>         WR    1.318 0.402  0.725 2.397
 #>         WO    1.244 0.298  0.778 1.989
 plot(w)
+
+plot(w, col = c("darkgreen", "firebrick", "grey80"), legend.position = "topright",
+     cex.main = 0.9, cex.legend = 1)
 ```

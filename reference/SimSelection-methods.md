@@ -14,7 +14,11 @@ plot(
   x,
   statistic = c("ntb", "ntb_lower", "wr", "wo", "br_diff", "br_ref", "br"),
   threshold = NULL,
+  col = NULL,
   main = NULL,
+  cex.main = 1.2,
+  cex.lab = 1,
+  cex.axis = 1,
   ...
 )
 
@@ -39,9 +43,19 @@ print(x, n = 10, digits = 3, ...)
 
   Optional threshold drawn as a dashed line.
 
+- col:
+
+  Colors of the cohorts (recycled), in the order of the cohorts in `x`;
+  a cohort keeps its color whatever the statistic.
+
 - main:
 
   Title of the plot.
+
+- cex.main, cex.lab, cex.axis:
+
+  Sizes of the title, of the axis titles and of the axis labels,
+  relative to the default size.
 
 - ...:
 

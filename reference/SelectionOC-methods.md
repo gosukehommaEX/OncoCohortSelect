@@ -7,13 +7,29 @@ and one column per cohort.
 probabilities against the threshold, one line per cohort, or as bars
 when there is a single threshold. Results of several statistics combined
 with [`rbind()`](https://rdrr.io/r/base/cbind.html) are printed as a
-data frame and cannot be plotted together.
+data frame and cannot be plotted together. The plot methods of the
+package restore the graphical parameters they change, so elements added
+afterwards with low-level functions such as
+[`abline()`](https://rdrr.io/r/graphics/abline.html) may be misplaced;
+use the arguments of the methods, such as `threshold`, instead.
 
 ## Usage
 
 ``` r
 # S3 method for class 'SelectionOC'
-plot(x, main = NULL, ...)
+plot(
+  x,
+  threshold = NULL,
+  col = NULL,
+  main = NULL,
+  legend.position = c("bottom", "top", "topright", "topleft", "bottomright",
+    "bottomleft", "right", "left", "none"),
+  cex.main = 1.2,
+  cex.lab = 1,
+  cex.axis = 1,
+  cex.legend = 0.9,
+  ...
+)
 
 # S3 method for class 'SelectionOC'
 print(x, digits = 3, ...)
@@ -26,9 +42,31 @@ print(x, digits = 3, ...)
   Data frame returned by
   [`SelectionOC`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md).
 
+- threshold:
+
+  Optional thresholds marked by dashed vertical lines, for example a
+  calibrated threshold (several thresholds only).
+
+- col:
+
+  Colors of the cohorts (recycled).
+
 - main:
 
   Title of the plot.
+
+- legend.position:
+
+  Position of the legend: `"bottom"` (below the plot, the default) or
+  `"top"` (above the plot) for a horizontal legend, a keyword of
+  [`legend`](https://rdrr.io/r/graphics/legend.html) such as
+  `"topright"` for a legend inside the plot, or `"none"`. With a single
+  threshold the cohorts are named under the bars and no legend is drawn.
+
+- cex.main, cex.lab, cex.axis, cex.legend:
+
+  Sizes of the title, of the axis titles, of the axis and bar labels,
+  and of the legend, relative to the default size.
 
 - ...:
 
@@ -71,4 +109,6 @@ oc
 #>       0.25 0.870 0.010 0.120
 #>       0.30 0.935 0.000 0.065
 plot(oc)
+
+plot(oc, threshold = 0.15, legend.position = "right", cex.lab = 1.2)
 ```

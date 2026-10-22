@@ -10,12 +10,18 @@ cohort, with one row per threshold and one column per cohort. plot()
 draws these probabilities against the threshold, one line per cohort, or as
 bars when there is a single threshold. Results of several statistics
 combined with rbind() are printed as a data frame and cannot be
-plotted together."><meta property="og:description" content="print() shows the probability that the decision rule selects each
+plotted together. The plot methods of the package restore the graphical
+parameters they change, so elements added afterwards with low-level
+functions such as abline() may be misplaced; use the arguments of the
+methods, such as threshold, instead."><meta property="og:description" content="print() shows the probability that the decision rule selects each
 cohort, with one row per threshold and one column per cohort. plot()
 draws these probabilities against the threshold, one line per cohort, or as
 bars when there is a single threshold. Results of several statistics
 combined with rbind() are printed as a data frame and cannot be
-plotted together."></head><body>
+plotted together. The plot methods of the package restore the graphical
+parameters they change, so elements added afterwards with low-level
+functions such as abline() may be misplaced; use the arguments of the
+methods, such as threshold, instead."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -23,7 +29,7 @@ plotted together."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,13 +71,28 @@ cohort, with one row per threshold and one column per cohort. <code><a href="htt
 draws these probabilities against the threshold, one line per cohort, or as
 bars when there is a single threshold. Results of several statistics
 combined with <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> are printed as a data frame and cannot be
-plotted together.</p>
+plotted together. The plot methods of the package restore the graphical
+parameters they change, so elements added afterwards with low-level
+functions such as <code><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline()</a></code> may be misplaced; use the arguments of the
+methods, such as <code>threshold</code>, instead.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'SelectionOC'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, main <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  threshold <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  main <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  legend.position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom"</span>, <span class="st">"top"</span>, <span class="st">"topright"</span>, <span class="st">"topleft"</span>, <span class="st">"bottomright"</span>,</span>
+<span>    <span class="st">"bottomleft"</span>, <span class="st">"right"</span>, <span class="st">"left"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
+<span>  cex.main <span class="op">=</span> <span class="fl">1.2</span>,</span>
+<span>  cex.lab <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cex.axis <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cex.legend <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'SelectionOC'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, digits <span class="op">=</span> <span class="fl">3</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
@@ -85,8 +106,32 @@ plotted together.</p>
 <dd><p>Data frame returned by <code><a href="SelectionOC.html">SelectionOC</a></code>.</p></dd>
 
 
+<dt id="arg-threshold">threshold<a class="anchor" aria-label="anchor" href="#arg-threshold"></a></dt>
+<dd><p>Optional thresholds marked by dashed vertical lines, for
+example a calibrated threshold (several thresholds only).</p></dd>
+
+
+<dt id="arg-col">col<a class="anchor" aria-label="anchor" href="#arg-col"></a></dt>
+<dd><p>Colors of the cohorts (recycled).</p></dd>
+
+
 <dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p>Title of the plot.</p></dd>
+
+
+<dt id="arg-legend-position">legend.position<a class="anchor" aria-label="anchor" href="#arg-legend-position"></a></dt>
+<dd><p>Position of the legend: <code>"bottom"</code> (below the
+plot, the default) or <code>"top"</code> (above the plot) for a horizontal
+legend, a keyword of <code><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></code> such as
+<code>"topright"</code> for a legend inside the plot, or <code>"none"</code>. With a
+single threshold the cohorts are named under the bars and no legend is
+drawn.</p></dd>
+
+
+<dt id="arg-cex-main-cex-lab-cex-axis-cex-legend">cex.main, cex.lab, cex.axis, cex.legend<a class="anchor" aria-label="anchor" href="#arg-cex-main-cex-lab-cex-axis-cex-legend"></a></dt>
+<dd><p>Sizes of the title, of the axis
+titles, of the axis and bar labels, and of the legend, relative to the
+default size.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -130,6 +175,8 @@ plotted together.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       0.30 0.935 0.000 0.065</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oc</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="SelectionOC-methods-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oc</span>, threshold <span class="op">=</span> <span class="fl">0.15</span>, legend.position <span class="op">=</span> <span class="st">"right"</span>, cex.lab <span class="op">=</span> <span class="fl">1.2</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="SelectionOC-methods-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

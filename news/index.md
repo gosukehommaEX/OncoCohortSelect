@@ -1,5 +1,14 @@
 # Changelog
 
+## OncoCohortSelect 0.3.1
+
+- The [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods
+  have arguments for the colors (`col`), the sizes of the title, axis
+  titles, axis labels and legend (`cex.main`, `cex.lab`, `cex.axis`,
+  `cex.legend`) and the position of the legend (`legend.position`: below
+  the plot by default, above it, inside it or none).
+- Horizontal legends space their entries by the width of each label.
+
 ## OncoCohortSelect 0.3.0
 
 - [`print()`](https://rdrr.io/r/base/print.html) and
