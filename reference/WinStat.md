@@ -17,6 +17,7 @@ WinStat(
   group = "group",
   priority = NULL,
   threshold = NULL,
+  scoring = c("gehan", "peron"),
   conf.level = 0.95
 )
 ```
@@ -51,7 +52,12 @@ WinStat(
   Numeric vector of thresholds, one per element of `priority`: the
   minimal difference of times that decides a pair on a time-to-event
   endpoint (0 or `NA` for binary endpoints). By default 0 for every
-  endpoint.
+  endpoint. The thresholds of an endpoint used more than once must
+  decrease.
+
+- scoring:
+
+  Scoring rule of time-to-event endpoints: `"gehan"` or `"peron"`.
 
 - conf.level:
 
@@ -75,7 +81,8 @@ A list with elements
 
   Data frame with, for each priority level, the proportions of all pairs
   won and lost at that level and the proportion of pairs still undecided
-  after it.
+  after it (with the Peron scoring rule, sums of probabilities divided
+  by the number of pairs).
 
 - n:
 
@@ -87,17 +94,38 @@ A list with elements
 A pair is compared on the endpoints in the order of `priority`. The
 first endpoint that decides the pair determines a win or a loss of the
 treatment patient; a pair that no endpoint decides is a tie. An endpoint
-can appear more than once, for example with a large threshold first and
-a threshold of 0 later.
+can appear more than once with decreasing thresholds, for example with a
+large threshold first and a threshold of 0 later.
 
 A binary endpoint decides a pair when the two patients have different
-values; a pair with a missing value is undecided. A time-to-event
-endpoint is scored by the rule of Gehan (1965): the pair is decided when
-the patient with the shorter observed time has an event and the
-difference of the observed times is at least the threshold. With a
-threshold of 0 the difference must be positive, and a censored time
-equal to an event time counts as longer. These rules agree with the
-Gehan scoring rule of the `BuyseTest` package.
+values; a pair with a missing value is undecided. With
+`scoring = "gehan"`, a time-to-event endpoint is scored by the rule of
+Gehan (1965): the pair is decided when the patient with the shorter
+observed time has an event and the difference of the observed times is
+at least the threshold. With a threshold of 0 the difference must be
+positive, and a censored time equal to an event time counts as longer.
+These rules agree with the Gehan scoring rule of the `BuyseTest`
+package.
+
+With `scoring = "peron"`, pairs with a censored time are scored by the
+rule of Péron et al. (2018). The true time of a censored patient is
+given the distribution of the Kaplan-Meier estimate of its cohort
+conditional on survival beyond the censoring time, and the pair is won
+with the probability that the treatment time is longer by at least the
+threshold and lost with the probability that the control time is longer
+by at least the threshold. The Kaplan-Meier estimate is not defined
+after the largest observed time of a cohort; the probability beyond that
+time counts only when the comparison holds wherever the true time lies,
+so the two probabilities are lower bounds, and the rest of the pair goes
+to the next endpoints. When an endpoint is used again with a smaller
+threshold, the probabilities at its previous threshold are subtracted,
+since a pair won at the larger threshold is also won at the smaller one,
+and the weight of a pair is the product over the other endpoints of the
+probability that the pair is still undecided. These rules agree with the
+Peron scoring rule of the `BuyseTest` package, except that a difference
+of times exactly equal to a positive threshold always counts as decided,
+which can give small differences when times plus or minus the threshold
+coincide with event times.
 
 With `p_win`, `p_loss` and `p_tie` the proportions of pairs won, lost
 and tied by the treatment patient, the net treatment benefit is
@@ -105,10 +133,12 @@ and tied by the treatment patient, the net treatment benefit is
 `(p_win + p_tie / 2) / (p_loss + p_tie / 2)`. Their standard errors are
 computed from the first-order H-decomposition of the two-sample
 U-statistics (Bebu and Lachin 2016), the standard errors of the win
-ratio and the win odds by the delta method. The confidence interval of
-the net treatment benefit is computed on the inverse hyperbolic tangent
-scale, that of the win ratio on the log scale, and that of the win odds
-is the interval of the net treatment benefit transformed by
+ratio and the win odds by the delta method. With `scoring = "peron"` the
+Kaplan-Meier estimates are treated as known, so the standard errors are
+approximate and tend to be too small. The confidence interval of the net
+treatment benefit is computed on the inverse hyperbolic tangent scale,
+that of the win ratio on the log scale, and that of the win odds is the
+interval of the net treatment benefit transformed by
 `(1 + x) / (1 - x)`.
 
 ## References
@@ -135,6 +165,12 @@ ratio analysis of a composite outcome based on prioritized components.
 Gehan, E. A. (1965). A generalized Wilcoxon test for comparing
 arbitrarily singly-censored samples. *Biometrika*, 52, 203-223.
 [doi:10.1093/biomet/52.1-2.203](https://doi.org/10.1093/biomet/52.1-2.203)
+
+Péron, J., Buyse, M., Ozenne, B., Roche, L. and Roy, P. (2018). An
+extension of generalized pairwise comparisons for prioritized outcomes
+in the presence of censoring. *Statistical Methods in Medical Research*,
+27, 1230-1239.
+[doi:10.1177/0962280216658320](https://doi.org/10.1177/0962280216658320)
 
 ## See also
 
@@ -170,4 +206,10 @@ WinStat(d, eps, treatment = "Cohort1", control = "Cohort2",
         priority = c("ORR", "OS", "AE"), threshold = c(0, 3, 0))$estimate
 #>    p_win   p_loss    p_tie      ntb       wr       wo 
 #> 0.510000 0.326875 0.163125 0.183125 1.560229 1.448355 
+
+# censored pairs scored with the Kaplan-Meier estimates
+WinStat(d, eps, treatment = "Cohort1", control = "Cohort2",
+        scoring = "peron")$estimate
+#>       p_win      p_loss       p_tie         ntb          wr          wo 
+#> 0.548955956 0.447661285 0.003382759 0.101294670 1.226275252 1.225423544 
 ```

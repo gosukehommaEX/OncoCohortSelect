@@ -18,6 +18,8 @@ Endpoint(
   var = NULL,
   time = NULL,
   event = NULL,
+  censor = NULL,
+  positive = NULL,
   higher.better = TRUE
 )
 ```
@@ -39,10 +41,25 @@ Endpoint(
 
   For a binary endpoint, the name of the column with the values.
 
-- time, event:
+- time:
 
-  For a time-to-event endpoint, the names of the columns with the
-  observed times and the event indicators.
+  For a time-to-event endpoint, the name of the column with the observed
+  times.
+
+- event:
+
+  For a time-to-event endpoint, the name of the column with the event
+  indicators (1 = event, 0 = censored). Give `event` or `censor`.
+
+- censor:
+
+  For a time-to-event endpoint, the name of the column with the
+  censoring indicators (0 = event, other values = censored).
+
+- positive:
+
+  For a binary endpoint, optional vector of the values of `var` that
+  count as 1; other non-missing values count as 0.
 
 - higher.better:
 
@@ -52,22 +69,31 @@ Endpoint(
 ## Value
 
 An object of class `Endpoint`: a list with elements `name`, `type`,
-`var`, `time`, `event` and `higher.better`.
+`var`, `time`, `event`, `censor`, `positive` and `higher.better`.
 
 ## Details
 
 A binary endpoint is a column with values 0, 1 or `NA`, for example the
 objective response (`higher.better = TRUE`) or the occurrence of an
-adverse event (`higher.better = FALSE`). Missing values are excluded
-from the posterior distribution in
+adverse event (`higher.better = FALSE`). With `positive`, the column can
+hold any codes: the values in `positive` count as 1 and the other values
+as 0, for example `positive = c("CR", "PR")` for a best overall response
+or `positive = "Y"` for a flag that is `"Y"` or blank. Missing values
+(`NA`) are excluded from the posterior distribution in
 [`BenefitRisk`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/BenefitRisk.md)
 and make a pair uninformative for this endpoint in
 [`WinStat`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat.md).
 
-A time-to-event endpoint is given by a column of observed times and a
-column of event indicators (1 for an event, 0 for censoring), for
-example overall survival or progression-free survival. With
-`higher.better = TRUE` (the usual case) longer times are favorable.
+A time-to-event endpoint is given by a column of observed times and
+either a column of event indicators (`event`: 1 for an event, 0 for
+censoring) or a column of censoring indicators (`censor`: 0 for an
+event, any other value for censoring, as the variable `CNSR` of ADaM
+data sets), for example overall survival or progression-free survival.
+With `higher.better = TRUE` (the usual case) longer times are favorable.
+
+The columns are named freely, so that data with any variable names (for
+example ADaM data sets restructured to one row per patient) can be
+analyzed, and any number of endpoints can be defined.
 
 ## See also
 
@@ -85,4 +111,11 @@ eps <- list(
 )
 eps[[4]]$higher.better
 #> [1] FALSE
+
+# variables in the style of ADaM data sets
+adam_eps <- list(
+  Endpoint("OS", "tte", time = "OSAVAL", censor = "OSCNSR"),
+  Endpoint("ORR", "binary", var = "BOR", positive = c("CR", "PR")),
+  Endpoint("AE", "binary", var = "AEFL", positive = "Y", higher.better = FALSE)
+)
 ```

@@ -2,11 +2,12 @@
 
 Finds, from the results of
 [`SimSelection`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection.md)
-under a scenario in which the treatment cohort should not be selected
-(for example identical cohorts), the smallest threshold for which the
-proportion of simulated trials that select the treatment cohort is at
-most `alpha`. Decision rules based on different statistics can then be
-compared at the same false selection probability.
+under a scenario in which no cohort should be selected over the
+reference cohort (for example cohorts that are all identical), the
+smallest threshold for which the proportion of simulated trials that
+select a cohort other than the reference is at most `alpha`. Decision
+rules based on different statistics can then be compared at the same
+false selection probability.
 
 ## Usage
 
@@ -33,7 +34,7 @@ CalibrateThreshold(
 
 - alpha:
 
-  Target probability of selecting the treatment cohort.
+  Target probability of selecting a cohort other than the reference.
 
 - admissibility:
 
@@ -43,19 +44,23 @@ CalibrateThreshold(
 ## Value
 
 A data frame with columns `statistic`, `alpha`, `threshold` and
-`p_treatment` (the achieved proportion).
+`p_nonreference` (the achieved proportion of trials that select a cohort
+other than the reference).
 
 ## Details
 
 The decision rules are those of
-[`SelectionOC`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md).
-With `statistic = "br_diff"` and `admissibility = TRUE`, trials in which
-only the treatment cohort is admissible select it whatever the
-threshold; when their proportion exceeds `alpha`, no threshold achieves
-`alpha` and the result is `NA` with a warning. The threshold is one of
-the simulated values of the statistic (or `-Inf` when no trial needs to
-be excluded), and the achieved proportion can be smaller than `alpha`
-because of ties and the finite number of trials.
+[`SelectionOC`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md):
+a cohort other than the reference is selected when the largest statistic
+among the candidate cohorts exceeds the threshold. With
+`statistic = "br_diff"` and `admissibility = TRUE`, trials in which the
+reference cohort is not admissible and another cohort is admissible
+select that cohort whatever the threshold; when their proportion exceeds
+`alpha`, no threshold achieves `alpha` and the result is `NA` with a
+warning. The threshold is one of the simulated values of the statistic
+(or `-Inf` when no trial needs to be excluded), and the achieved
+proportion can be smaller than `alpha` because of ties and the finite
+number of trials.
 
 ## See also
 
@@ -66,11 +71,14 @@ because of ties and the finite number of trials.
 
 ``` r
 set.seed(1)
-res <- data.frame(ntb = rnorm(1000, 0, 0.1), wr = exp(rnorm(1000, 0, 0.3)))
+res <- data.frame(sim = rep(1:500, each = 3), group = rep(c("A", "B", "C"), 500),
+                  is_reference = rep(c(TRUE, FALSE, FALSE), 500))
+res$ntb <- ifelse(res$is_reference, NA, rnorm(1500, 0, 0.1))
+res$wr <- ifelse(res$is_reference, NA, exp(rnorm(1500, 0, 0.3)))
 CalibrateThreshold(res, "ntb", alpha = 0.1)
-#>   statistic alpha threshold p_treatment
-#> 1       ntb   0.1 0.1324004         0.1
+#>   statistic alpha threshold p_nonreference
+#> 1       ntb   0.1  0.164408            0.1
 CalibrateThreshold(res, "wr", alpha = 0.1)
-#>   statistic alpha threshold p_treatment
-#> 1        wr   0.1  1.478975         0.1
+#>   statistic alpha threshold p_nonreference
+#> 1        wr   0.1   1.67811            0.1
 ```

@@ -2,8 +2,8 @@
 
 Computes, from the results of
 [`SimSelection`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection.md),
-the proportions of simulated trials in which a decision rule selects the
-treatment cohort, the control cohort or neither.
+the proportion of simulated trials in which a decision rule selects each
+cohort.
 
 ## Usage
 
@@ -30,7 +30,7 @@ SelectionOC(
 
 - threshold:
 
-  Numeric vector of thresholds; one row of the output per value.
+  Numeric vector of thresholds.
 
 - admissibility:
 
@@ -39,30 +39,37 @@ SelectionOC(
 
 ## Value
 
-A data frame with columns `statistic`, `threshold`, `p_treatment`,
-`p_control` and `p_none`.
+A data frame with columns `statistic`, `threshold`, `group` and
+`p_select`, with one row per threshold and cohort (in the order of
+`results`), and, for `"br_diff"` with admissibility, a row `"(none)"`
+for the trials in which no cohort is selected.
 
 ## Details
 
-The treatment cohort is selected when `statistic` exceeds `threshold`;
-otherwise the control cohort is selected. The statistics are
+In each simulated trial, the cohorts other than the reference cohort
+whose `statistic` exceeds `threshold` are candidates, and the candidate
+with the largest statistic is selected; without a candidate, the
+reference cohort is selected. A cohort with a missing statistic (for
+example a win ratio when no pair is decided) is not a candidate. The
+statistics are
 
 - `"br_diff"`: the difference of the benefit-risk scores against target
-  values. With `admissibility = TRUE`, the scores are compared only when
-  both cohorts are admissible; an admissible cohort is selected over one
-  that is not, and neither is selected when neither is admissible.
+  values from that of the reference cohort. With `admissibility = TRUE`,
+  a candidate must be admissible; when the reference cohort is not
+  admissible, every admissible cohort is a candidate whatever the
+  threshold, and no cohort is selected when none is admissible.
 
-- `"br_ref"`: the benefit-risk score of the treatment cohort relative to
-  the control cohort. With `admissibility = TRUE`, the treatment cohort
-  must also be admissible relative to the control cohort.
+- `"br_ref"`: the benefit-risk score relative to the reference cohort.
+  With `admissibility = TRUE`, a candidate must also be admissible
+  relative to the reference cohort.
 
-- `"ntb"`, `"ntb_lower"`, `"wr"`, `"wo"`: the net treatment benefit, its
-  lower confidence bound, the win ratio and the win odds.
+- `"ntb"`, `"ntb_lower"`, `"wr"`, `"wo"`: the net treatment benefit
+  against the reference cohort, its lower confidence bound, the win
+  ratio and the win odds.
 
-A missing statistic (for example a win ratio when no pair is decided)
-selects the control cohort. The default thresholds are 0 for the
-differences and the net treatment benefit and 1 for the win ratio and
-the win odds; `"br_ref"` has no default.
+The default thresholds are 0 for the differences and the net treatment
+benefit and 1 for the win ratio and the win odds; `"br_ref"` has no
+default.
 
 ## See also
 
@@ -72,14 +79,26 @@ the win odds; `"br_ref"` has no default.
 ## Examples
 
 ``` r
-res <- data.frame(br_diff = c(0.2, -0.1, 0.05, 0.3), adm_trt = c(TRUE, TRUE, FALSE, TRUE),
-                  adm_ctl = c(TRUE, TRUE, TRUE, FALSE), ntb = c(0.1, -0.2, 0.05, 0.3),
-                  wr = c(1.3, 0.6, 1.1, 2))
+res <- data.frame(sim = rep(1:4, each = 3),
+                  group = rep(c("A", "B", "C"), 4),
+                  is_reference = rep(c(TRUE, FALSE, FALSE), 4),
+                  br_diff = c(NA, 0.2, 0.1, NA, -0.1, 0.05, NA, 0.3, 0.4, NA, 0, -0.2),
+                  adm = c(TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE,
+                          FALSE, FALSE, FALSE),
+                  ntb = c(NA, 0.1, -0.1, NA, -0.2, 0.05, NA, 0.3, 0.1, NA, 0.02, 0.01))
 SelectionOC(res, "br_diff", threshold = c(0, 0.1))
-#>   statistic threshold p_treatment p_control p_none
-#> 1   br_diff       0.0         0.5       0.5      0
-#> 2   br_diff       0.1         0.5       0.5      0
-SelectionOC(res, "wr")
-#>   statistic threshold p_treatment p_control p_none
-#> 1        wr         1        0.75      0.25      0
+#>   statistic threshold  group p_select
+#> 1   br_diff       0.0      A     0.25
+#> 2   br_diff       0.0      B     0.50
+#> 3   br_diff       0.0      C     0.00
+#> 4   br_diff       0.0 (none)     0.25
+#> 5   br_diff       0.1      A     0.25
+#> 6   br_diff       0.1      B     0.50
+#> 7   br_diff       0.1      C     0.00
+#> 8   br_diff       0.1 (none)     0.25
+SelectionOC(res, "ntb")
+#>   statistic threshold group p_select
+#> 1       ntb         0     A     0.00
+#> 2       ntb         0     B     0.75
+#> 3       ntb         0     C     0.25
 ```

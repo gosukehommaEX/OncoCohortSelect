@@ -2,9 +2,12 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  benefit-risk: benefit-risk.html
+  completed-trial: completed-trial.html
   introduction: introduction.html
   selection: selection.html
-last_built: 2026-10-22T05:53Z
+  win-statistics: win-statistics.html
+last_built: 2026-10-22T08:27Z
 urls:
   reference: https://gosukehommaEX.github.io/OncoCohortSelect/reference
   article: https://gosukehommaEX.github.io/OncoCohortSelect/articles
