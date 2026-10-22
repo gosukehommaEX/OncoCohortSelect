@@ -1,0 +1,10 @@
+test_that("sufficient statistics are computed by group", {
+  d <- data.frame(r = c(1, 0, NA, 1, 1), t = c(2, 3, 4, 5, 6), e = c(1, 0, 1, 1, 0))
+  key <- c(1L, 1L, 1L, 2L, 2L)
+  sb <- .suff_stats(d, Endpoint("R", var = "r"), key, 3L)
+  expect_equal(sb$s1, c(1, 2, 0))
+  expect_equal(sb$s2, c(2, 2, 0))
+  st <- .suff_stats(d, Endpoint("T", "tte", time = "t", event = "e"), key, 3L)
+  expect_equal(st$s1, c(2, 1, 0))
+  expect_equal(st$s2, c(9, 11, 0))
+})

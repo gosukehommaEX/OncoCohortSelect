@@ -1,16 +1,42 @@
 Package: OncoCohortSelect
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Cohort Selection by Posterior Benefit-Risk and Win Statistics
 Version: 0.1.0
-Authors@R: c(
-    person(
-      "Jane", "Doe",
-      email = "jane@example.com",
-      role = c("aut", "cre")
-    )
-  )
-Description: More about what it does (maybe more than one line).
-    Continuation lines should be indented.
-License: What license is it under?
+Authors@R: person(given = "Gosuke",
+                  family = "Homma",
+                  role = c("aut", "cre"),
+                  email = "my.name.is.gosuke@gmail.com")
+Description: Selects one of several single-arm oncology cohorts with multiple
+    efficacy and safety endpoints for further development, and evaluates the
+    selection rules by simulation. A posterior benefit-risk score combines the
+    posterior probabilities that response rates, survival probabilities or
+    hazard ratios are favorable, against target values or relative to a
+    reference cohort, following Chakraborty et al. (2026)
+    <doi:10.1080/19466315.2026.2668381>. Generalized pairwise comparisons of
+    prioritized binary and time-to-event endpoints (Buyse (2010)
+    <doi:10.1002/sim.3923>) give the net treatment benefit, the win ratio and
+    the win odds with standard errors. Correlated progression-free survival,
+    overall survival and objective response are simulated with the
+    'CorOncoEndpoints' package, an independent adverse event is added, and
+    decision rules are compared at a common probability of a false selection.
+License: MIT + file LICENSE
+URL: https://github.com/gosukehommaEX/OncoCohortSelect,
+    https://gosukehommaEX.github.io/OncoCohortSelect/
+BugReports: https://github.com/gosukehommaEX/OncoCohortSelect/issues
 Encoding: UTF-8
-LazyData: true
+Depends:
+    R (>= 4.1.0)
+Imports:
+    stats,
+    CorOncoEndpoints (>= 0.3.0),
+    dqrng
+Remotes:
+    gosukehommaEX/CorOncoEndpoints@35f731d6052ff31625c140af0018b2558142dfc3
+Suggests:
+    testthat (>= 3.0.0),
+    BuyseTest,
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+Config/roxygen2/version: 8.0.0

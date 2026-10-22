@@ -1,0 +1,6 @@
+mode,group,BR,admissible,selected
+target,Cohort1,0.456046248917041,TRUE,TRUE
+target,Cohort2,0.136530536796719,FALSE,FALSE
+target,Cohort3,0.0357492435219309,TRUE,FALSE
+reference,Cohort1,0.536486575645438,TRUE,NA
+reference,Cohort3,0.14701071793103,FALSE,NA

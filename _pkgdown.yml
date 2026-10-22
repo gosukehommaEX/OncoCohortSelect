@@ -1,0 +1,61 @@
+url: https://gosukehommaEX.github.io/OncoCohortSelect/
+template:
+  bootstrap: 5
+  bootswatch: cosmo
+  theme: arrow-light
+
+home:
+  title: OncoCohortSelect • Cohort Selection by Posterior Benefit-Risk and Win Statistics
+  description: >
+    Selects one of several single-arm oncology cohorts by a posterior
+    benefit-risk score and by generalized pairwise comparisons, and evaluates
+    the selection rules by simulation.
+
+navbar:
+  structure:
+    left:  [home, intro, reference, articles, news]
+    right: [search, github]
+  components:
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+      aria-label: Home
+    intro:
+      text: Get started
+      href: articles/introduction.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Getting started with OncoCohortSelect
+        href: articles/introduction.html
+      - text: Comparing selection rules by simulation
+        href: articles/selection.html
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/gosukehommaEX/OncoCohortSelect
+      aria-label: GitHub
+
+reference:
+  - title: "Endpoints and scores"
+    desc: >
+      Define endpoints and compute posterior benefit-risk scores and win
+      statistics of observed or simulated data
+    contents:
+      - Endpoint
+      - PosteriorProb
+      - BenefitRisk
+      - WinStat
+  - title: "Simulation"
+    desc: >
+      Simulate cohorts and evaluate selection rules
+    contents:
+      - SimCohorts
+      - SimSelection
+      - SelectionOC
+      - CalibrateThreshold

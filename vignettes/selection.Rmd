@@ -1,0 +1,149 @@
+---
+title: "Comparing selection rules by simulation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparing selection rules by simulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r setup}
+library(OncoCohortSelect)
+```
+
+Two single-arm cohorts, Cohort1 and Cohort2, are run in parallel, and one of
+them is to be selected for further development. Cohort2 is the default, and
+Cohort1 is selected only if the data favor it. This vignette compares decision
+rules based on the posterior benefit-risk score and on win statistics by their
+selection probabilities in simulated trials.
+
+## What makes a rule better
+
+The scores of the two approaches are on different scales, so their raw values
+cannot be compared. A fair comparison fixes, for every rule, the probability
+of selecting Cohort1 when it is not better than Cohort2 (here, identical
+cohorts), and then compares the probabilities of selecting Cohort1 when it is
+better. The truth must be defined before the simulation and independently of
+the rules: by scenarios in which the better cohort is clear (one cohort at
+least as good on every endpoint), and, for trade-offs between efficacy and
+safety, by the choice the clinical team would make for the true parameters.
+
+## Scenarios
+
+Each scenario gives the true parameters of the two cohorts: PFS and OS
+medians, response rate and adverse event rate. The number of simulated trials
+is kept small so that the vignette builds quickly; an evaluation would use
+several thousand.
+
+```{r}
+make_arm <- function(pfs, orr, os) {
+  CorOncoEndpoints::OncoArm(pfs.median = pfs, orr = orr, resp.cor = 0.4,
+                            death.prop = 0.15, os.median = os)
+}
+scenarios <- list(
+  "Identical" = list(arms = list(Cohort1 = make_arm(6, 0.30, 15),
+                                 Cohort2 = make_arm(6, 0.30, 15)), ae = c(0.20, 0.20)),
+  "Cohort1 better" = list(arms = list(Cohort1 = make_arm(9, 0.50, 20),
+                                      Cohort2 = make_arm(6, 0.30, 15)), ae = c(0.20, 0.20)),
+  "Cohort1 better, more AE" = list(arms = list(Cohort1 = make_arm(9, 0.50, 20),
+                                               Cohort2 = make_arm(6, 0.30, 15)),
+                                   ae = c(0.40, 0.20)))
+nsim <- 200
+```
+
+## Rules
+
+The benefit-risk score against target values is computed for each cohort, and
+Cohort1 is selected when its score exceeds that of Cohort2 by more than a
+threshold (`br_diff`). The score of Cohort1 relative to Cohort2 selects Cohort1
+when it exceeds a threshold (`br_ref`). The net treatment benefit (`ntb`) and
+the win ratio (`wr`) of the pairwise comparisons with priority OS, PFS,
+response and adverse event select Cohort1 when they exceed a threshold.
+
+```{r}
+eps <- list(
+  Endpoint("OS", "tte", time = "os_tte", event = "os_event"),
+  Endpoint("PFS", "tte", time = "pfs_tte", event = "pfs_event"),
+  Endpoint("ORR", "binary", var = "response"),
+  Endpoint("AE", "binary", var = "ae", higher.better = FALSE))
+crit <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
+                   target = c(0.30, 0.50, 0.60, 0.30), time = c(NA, 6, 12, NA))
+crit_ref <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
+                       measure = c("rate", "hr", "hr", "rate"),
+                       target = c(0.10, 0.80, 0.90, 0.10))
+```
+
+Each scenario is simulated with 50 patients per cohort, enrolled over 12
+months and analyzed at month 24.
+
+```{r}
+res <- lapply(seq_along(scenarios), function(i) {
+  sc <- scenarios[[i]]
+  d <- SimCohorts(nsim = nsim, n = c(50, 50), arms = sc$arms, ae.rate = sc$ae,
+                  cutoff = 24, a.time = c(0, 12), seed = i)
+  SimSelection(d, eps, crit, treatment = "Cohort1", control = "Cohort2",
+               criteria.ref = crit_ref)
+})
+names(res) <- names(scenarios)
+head(res[["Cohort1 better"]][, c("br_trt", "br_ctl", "br_ref", "ntb", "wr")])
+```
+
+## Thresholds and selection probabilities
+
+The thresholds are calibrated in the scenario with identical cohorts so that
+Cohort1 is selected in at most 10% of the trials.
+
+```{r}
+stats <- c("br_diff", "br_ref", "ntb", "wr")
+thr <- do.call(rbind, lapply(stats, function(s) {
+  CalibrateThreshold(res[["Identical"]], s, alpha = 0.10)
+}))
+thr
+tab <- sapply(names(res), function(sc) {
+  vapply(seq_along(stats), function(i) {
+    SelectionOC(res[[sc]], stats[i], threshold = thr$threshold[i])$p_treatment
+  }, numeric(1))
+})
+rownames(tab) <- stats
+knitr::kable(tab, digits = 2,
+             caption = "Probability of selecting Cohort1 at the calibrated thresholds")
+```
+
+In the scenario "Cohort1 better", the rules select Cohort1 with probabilities
+between `r round(min(tab[, "Cohort1 better"]), 2)` and
+`r round(max(tab[, "Cohort1 better"]), 2)`. With more adverse events in
+Cohort1, the probabilities range from
+`r round(min(tab[, "Cohort1 better, more AE"]), 2)` to
+`r round(max(tab[, "Cohort1 better, more AE"]), 2)`; whether Cohort1 should be
+selected in that scenario is a clinical judgment that has to be fixed before
+the rules are compared.
+
+## Saturation of the score against target values
+
+In the scenario "Cohort1 better", the median scores against the target values
+are `r round(median(res[["Cohort1 better"]]$br_trt), 3)` for Cohort1 and
+`r round(median(res[["Cohort1 better"]]$br_ctl), 3)` for Cohort2. The score
+measures how certainly a cohort exceeds the targets, not by how much. When both
+cohorts clearly exceed the targets, both scores approach 1 and their difference
+carries little information; the score relative to the other cohort and the win
+statistics compare the cohorts directly.
+
+```{r}
+summary(res[["Cohort1 better"]][, c("br_trt", "br_ctl")])
+```
+
+## References
+
+Buyse, M. (2010). Generalized pairwise comparisons of prioritized outcomes in
+the two-sample problem. *Statistics in Medicine*, 29, 3245-3257.
+https://doi.org/10.1002/sim.3923
+
+Chakraborty, S., Dubey, A. K., Kumar, A. and Chan, I. (2026). A two-stage dose
+optimization framework for oncology drug development with multiple efficacy
+and safety endpoints via an integrated benefit-risk assessment. *Statistics in
+Biopharmaceutical Research*, published online.
+https://doi.org/10.1080/19466315.2026.2668381

@@ -1,0 +1,15 @@
+spec,level,endpoint,threshold
+spec1,1,os,0
+spec1,2,pfs,0
+spec1,3,resp,0
+spec1,4,ae,0
+spec2,1,resp,0
+spec2,2,pfs,2
+spec2,3,ae,0
+spec2,4,os,1
+spec3,1,os,3
+spec3,2,pfs,0
+spec3,3,os,0
+spec3,4,ae,0
+spec4,1,ae,0
+spec4,2,resp,0
