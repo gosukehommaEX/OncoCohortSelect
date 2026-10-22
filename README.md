@@ -3,6 +3,7 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/gosukehommaEX/OncoCohortSelect/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/gosukehommaEX/OncoCohortSelect/actions/workflows/R-CMD-check.yaml)
 [![pkgdown](https://img.shields.io/badge/pkgdown-documentation-blue.svg)](https://gosukehommaEX.github.io/OncoCohortSelect/)
+[![Codecov test coverage](https://codecov.io/gh/gosukehommaEX/OncoCohortSelect/graph/badge.svg)](https://app.codecov.io/gh/gosukehommaEX/OncoCohortSelect)
 <!-- badges: end -->
 
 OncoCohortSelect selects one of several single-arm oncology cohorts with
