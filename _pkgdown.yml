@@ -3,6 +3,7 @@ template:
   bootstrap: 5
   bootswatch: cosmo
   theme: arrow-light
+  math-rendering: mathjax
 
 home:
   title: OncoCohortSelect • Cohort Selection by Posterior Benefit-Risk and Win Statistics
@@ -31,8 +32,14 @@ navbar:
       menu:
       - text: Getting started with OncoCohortSelect
         href: articles/introduction.html
-      - text: Comparing selection rules by simulation
+      - text: Posterior benefit-risk score
+        href: articles/benefit-risk.html
+      - text: Net benefit and win ratio
+        href: articles/win-statistics.html
+      - text: Evaluating decision rules by simulation
         href: articles/selection.html
+      - text: Analyzing a completed trial
+        href: articles/completed-trial.html
     news:
       text: Changelog
       href: news/index.html

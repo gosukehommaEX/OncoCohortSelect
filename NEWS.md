@@ -1,3 +1,46 @@
+# OncoCohortSelect 0.2.0
+
+## Breaking changes
+
+* `SimSelection()` compares any number of cohorts with a reference cohort:
+  the arguments `treatment` and `control` are replaced by `reference` and
+  `cohorts`, and the output has one row per simulated trial and cohort
+  (columns `sim`, `group`, `is_reference`, `br`, `adm`, `br_diff`, `br_ref`,
+  `adm_ref` and the win statistics against the reference cohort).
+* `SelectionOC()` returns the probability of selecting each cohort (columns
+  `group` and `p_select`, with a row `"(none)"` for `"br_diff"` with
+  admissibility), and `CalibrateThreshold()` returns `p_nonreference`, the
+  probability of selecting a cohort other than the reference. In each trial,
+  the cohorts whose statistic exceeds the threshold are candidates and the
+  candidate with the largest statistic is selected.
+* An endpoint used more than once in `priority` must have decreasing
+  thresholds.
+
+## New features
+
+* `Endpoint()` accepts columns coded as in ADaM data sets: `censor` gives a
+  censoring indicator (0 for an event, as `CNSR`) instead of `event`, and
+  `positive` lists the values of a binary endpoint that count as 1 (for
+  example `c("CR", "PR")` for the best overall response or `"Y"` for a flag).
+* `WinStat()` and `SimSelection()` have the argument `scoring`: `"gehan"`
+  (default) or `"peron"`, the scoring rule of Peron et al. (2018) that scores
+  pairs with censored times by the Kaplan-Meier estimates of the cohorts. An
+  endpoint used again with a smaller threshold adds only the pairs decided at
+  the new threshold, as in the BuyseTest package. With `"peron"`, the standard
+  errors treat the Kaplan-Meier estimates as known.
+* Example data of a completed trial with three cohorts in
+  `inst/extdata/example_trial.csv`.
+* New articles: "Posterior benefit-risk score", "Net benefit and win ratio",
+  "Evaluating decision rules by simulation" (three cohorts) and "Analyzing a
+  completed trial".
+
+## Verification
+
+* Tests of the Peron scoring rule against hand calculations, an independent
+  Python implementation (`inst/validation/python/reference.py`) and, when it
+  is installed, the BuyseTest package; `inst/validation/validate_winstat.R`
+  also compares the Peron scoring rule with BuyseTest on simulated trials.
+
 # OncoCohortSelect 0.1.0
 
 * First version.

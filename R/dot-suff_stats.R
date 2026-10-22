@@ -12,13 +12,12 @@
 #' @keywords internal
 #' @noRd
 .suff_stats <- function(data, endpoint, key, nkey) {
+  v <- .ep_values(data, endpoint)
   if (endpoint$type == "binary") {
-    x <- as.numeric(data[[endpoint$var]])
-    ok <- !is.na(x)
-    list(s1 = .sum_by(ifelse(ok, x, 0), key, nkey),
+    ok <- !is.na(v$value)
+    list(s1 = .sum_by(ifelse(ok, v$value, 0), key, nkey),
          s2 = .sum_by(as.numeric(ok), key, nkey))
   } else {
-    list(s1 = .sum_by(as.numeric(data[[endpoint$event]]), key, nkey),
-         s2 = .sum_by(as.numeric(data[[endpoint$time]]), key, nkey))
+    list(s1 = .sum_by(v$event, key, nkey), s2 = .sum_by(v$time, key, nkey))
   }
 }

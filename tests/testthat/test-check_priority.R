@@ -17,4 +17,10 @@ test_that("invalid priorities and thresholds give errors", {
   expect_error(.check_priority(eps, c("os", "resp"), c(-1, 0)), "non-negative")
   expect_error(.check_priority(eps, c("os", "resp"), c(NA, 0)), "non-negative")
   expect_error(.check_priority(eps, c("os", "resp"), c("a", "b")), "numeric")
+  # an endpoint used again needs a smaller threshold
+  expect_error(.check_priority(eps, c("os", "resp", "os"), c(0, 0, 3)), "decreasing")
+  expect_error(.check_priority(eps, c("os", "os"), c(1, 1)), "decreasing")
+  expect_error(.check_priority(eps, c("resp", "resp"), c(0, 0)), "decreasing")
+  expect_named(.check_priority(eps, c("os", "pfs", "os", "os"), c(3, 0, 1, 0))$endpoints,
+               c("os", "pfs", "os", "os"))
 })

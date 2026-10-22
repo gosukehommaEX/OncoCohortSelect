@@ -8,11 +8,12 @@ SimSelection(
   data,
   endpoints,
   criteria,
-  treatment,
-  control,
+  reference,
+  cohorts = NULL,
   criteria.ref = NULL,
   priority = NULL,
   threshold = NULL,
+  scoring = c("gehan", "peron"),
   group = "group",
   sim = "sim",
   conf.level = 0.95,
@@ -29,13 +30,17 @@ SimSelection(
 \item{criteria}{Data frame of the components of the benefit-risk score
 against target values; see \code{\link{BenefitRisk}}.}
 
-\item{treatment, control}{Names of the two cohorts compared.}
+\item{reference}{Name of the reference cohort.}
+
+\item{cohorts}{Names of the cohorts compared, including \code{reference};
+by default all cohorts of \code{data} (in the order of the levels of a
+factor, otherwise in the order of appearance).}
 
 \item{criteria.ref}{Optional data frame of the components of the
-benefit-risk score of \code{treatment} relative to \code{control}.}
+benefit-risk score relative to the reference cohort.}
 
-\item{priority, threshold}{Priority order and thresholds of the pairwise
-comparisons; see \code{\link{WinStat}}.}
+\item{priority, threshold, scoring}{Priority order, thresholds and scoring
+rule of the pairwise comparisons; see \code{\link{WinStat}}.}
 
 \item{group, sim}{Names of the columns of \code{data} with the cohort and the
 simulated trial.}
@@ -50,34 +55,44 @@ differences.}
 components are added to the output.}
 }
 \value{
-A data frame with one row per simulated trial. With
-  \code{scores = TRUE}, the posterior probabilities of the components are
-  added after the columns below, in columns named \code{trt:}, \code{ctl:}
-  and \code{ref:} followed by the label of the component. The columns are
+A data frame with one row per simulated trial and cohort. The
+  statistics that compare a cohort with the reference cohort are \code{NA}
+  in the rows of the reference cohort. With \code{scores = TRUE}, the
+  posterior probabilities of the components are added after the columns
+  below, in columns named \code{S:} (against target values) and \code{ref:}
+  (relative to the reference cohort) followed by the label of the
+  component. The columns are
   \item{sim}{The simulated trial.}
-  \item{br_trt, br_ctl}{Benefit-risk scores against target values.}
-  \item{adm_trt, adm_ctl}{Admissibility against target values.}
-  \item{br_diff}{\code{br_trt - br_ctl}.}
-  \item{br_ref, adm_ref}{Benefit-risk score and admissibility of the
-    treatment cohort relative to the control cohort (only with
-    \code{criteria.ref}).}
+  \item{group}{The cohort.}
+  \item{is_reference}{Whether the cohort is the reference cohort.}
+  \item{br, adm}{Benefit-risk score and admissibility against target
+    values.}
+  \item{br_diff}{Difference of \code{br} from that of the reference
+    cohort.}
+  \item{br_ref, adm_ref}{Benefit-risk score and admissibility relative to
+    the reference cohort (only with \code{criteria.ref}).}
   \item{p_win, p_loss, p_tie, ntb, ntb_se, ntb_lower, wr, wo}{Proportions
-    of pairs won, lost and tied, net treatment benefit with its standard
-    error and lower confidence bound, win ratio and win odds.}
+    of pairs won, lost and tied against the reference cohort, net treatment
+    benefit with its standard error and lower confidence bound, win ratio
+    and win odds.}
 }
 \description{
-For each simulated trial, compares a treatment cohort with a control cohort
-by the posterior benefit-risk score against target values (both cohorts),
-optionally by the benefit-risk score of the treatment cohort relative to the
-control cohort, and by generalized pairwise comparisons. The results are
-summarized by \code{\link{SelectionOC}} and \code{\link{CalibrateThreshold}}.
+For each simulated trial, computes the posterior benefit-risk score of
+every cohort against target values and compares every other cohort with a
+reference cohort by the difference of these scores, optionally by the
+benefit-risk score relative to the reference cohort, and by generalized
+pairwise comparisons. The results are summarized by
+\code{\link{SelectionOC}} and \code{\link{CalibrateThreshold}}.
 }
 \details{
-The benefit-risk scores are computed as in \code{\link{BenefitRisk}}, with
+The reference cohort is the one chosen when no other cohort is shown to be
+better, for example the cohort of the standard combination. The
+benefit-risk scores are computed as in \code{\link{BenefitRisk}}, with
 \code{criteria} for the scores against target values and
-\code{criteria.ref} for the score relative to the control cohort. The win
-statistics are computed as in \code{\link{WinStat}}. Every simulated trial
-must contain patients of both cohorts.
+\code{criteria.ref} for the scores relative to the reference cohort. The win
+statistics of a cohort are those of \code{\link{WinStat}} with the cohort as
+treatment and the reference cohort as control. Every simulated trial must
+contain patients of every cohort.
 }
 \examples{
 arms <- list(
@@ -96,8 +111,7 @@ crit <- data.frame(endpoint = c("ORR", "PFS", "AE"), target = c(0.3, 0.5, 0.3),
 crit_ref <- data.frame(endpoint = c("ORR", "PFS", "AE"),
                        measure = c("rate", "hr", "rate"),
                        target = c(0.1, 0.8, 0.1))
-res <- SimSelection(d, eps, crit, treatment = "Cohort1", control = "Cohort2",
-                    criteria.ref = crit_ref)
+res <- SimSelection(d, eps, crit, reference = "Cohort2", criteria.ref = crit_ref)
 head(res)
 }
 \seealso{

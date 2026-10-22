@@ -17,7 +17,7 @@
   names(endpoints) <- nm
   if (!is.null(data)) {
     for (e in endpoints) {
-      cols <- if (e$type == "binary") e$var else c(e$time, e$event)
+      cols <- if (e$type == "binary") e$var else c(e$time, e$event, e$censor)
       miss <- setdiff(cols, names(data))
       if (length(miss)) {
         stop("Column(s) ", paste(miss, collapse = ", "), " of endpoint '", e$name,
@@ -25,17 +25,30 @@
       }
       if (e$type == "binary") {
         x <- data[[e$var]]
-        if (!(is.numeric(x) || is.logical(x)) || any(!is.na(x) & !(x %in% c(0, 1)))) {
-          stop("Column '", e$var, "' must contain only 0, 1 or NA.", call. = FALSE)
+        if (is.null(e$positive)) {
+          if (!(is.numeric(x) || is.logical(x)) || any(!is.na(x) & !(x %in% c(0, 1)))) {
+            stop("Column '", e$var, "' must contain only 0, 1 or NA ",
+                 "(or give 'positive' in Endpoint()).", call. = FALSE)
+          }
+        } else if (!is.atomic(x) && !is.factor(x)) {
+          stop("Column '", e$var, "' must be a vector.", call. = FALSE)
         }
       } else {
         tt <- data[[e$time]]
-        ev <- data[[e$event]]
         if (!is.numeric(tt) || anyNA(tt) || any(!is.finite(tt)) || any(tt < 0)) {
           stop("Column '", e$time, "' must contain non-negative finite times.", call. = FALSE)
         }
-        if (!(is.numeric(ev) || is.logical(ev)) || anyNA(ev) || any(!(ev %in% c(0, 1)))) {
-          stop("Column '", e$event, "' must contain only 0 and 1.", call. = FALSE)
+        if (is.null(e$censor)) {
+          ev <- data[[e$event]]
+          if (!(is.numeric(ev) || is.logical(ev)) || anyNA(ev) || any(!(ev %in% c(0, 1)))) {
+            stop("Column '", e$event, "' must contain only 0 and 1.", call. = FALSE)
+          }
+        } else {
+          cn <- data[[e$censor]]
+          if (!(is.numeric(cn) || is.logical(cn)) || anyNA(cn)) {
+            stop("Column '", e$censor, "' must contain numeric censoring indicators ",
+                 "without missing values.", call. = FALSE)
+          }
         }
       }
     }

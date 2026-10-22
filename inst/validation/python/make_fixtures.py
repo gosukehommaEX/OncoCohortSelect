@@ -88,6 +88,8 @@ EPS = {
     "resp": dict(type="binary", var="resp", higher=True),
     "ae": dict(type="binary", var="ae", higher=False),
 }
+for _name, _ep in EPS.items():
+    _ep["name"] = _name
 
 
 def make_patients(rng, n, arm, integer, na_resp):
@@ -145,6 +147,47 @@ write_csv("gpc_expected_levels.csv", ["dataset", "spec", "level", "endpoint", "t
           levels)
 write_csv("gpc_specs.csv", ["spec", "level", "endpoint", "threshold"],
           [[s, k + 1, p[k], t[k]] for s, (p, t) in specs.items() for k in range(len(p))])
+
+# Peron scores. The data set "cens" has heavy censoring, so that many pairs
+# remain partly undecided, and the specifications use an endpoint again with a
+# smaller threshold.
+rng_c = np.random.RandomState(20261022)
+cens_rows = []
+for arm, n, scale in (("T", 30, 12.0), ("C", 25, 9.0)):
+    for i in range(n):
+        os_t = rng_c.exponential(scale)
+        pfs_t = min(os_t, rng_c.exponential(scale / 2.0))
+        cens = min(rng_c.uniform(1.0, 14.0), 10.0)
+        cens_rows.append(dict(arm=arm,
+                              os_time=round(min(os_t, cens), 6), os_event=int(os_t <= cens),
+                              pfs_time=round(min(pfs_t, cens), 6), pfs_event=int(pfs_t <= cens),
+                              resp=float(rng_c.uniform() < 0.4), ae=float(rng_c.uniform() < 0.3)))
+datasets["cens"] = cens_rows
+write_csv("gpc_cens.csv", ["arm", "os_time", "os_event", "pfs_time", "pfs_event", "resp", "ae"],
+          [[r["arm"], r["os_time"], r["os_event"], r["pfs_time"], r["pfs_event"],
+            r["resp"], int(r["ae"])] for r in cens_rows])
+peron_specs = {
+    "peron1": (["os", "pfs", "resp", "ae"], [0, 0, 0, 0]),
+    "peron2": (["resp", "pfs", "ae", "os"], [0, 2, 0, 1]),
+    "peron3": (["os", "pfs", "os", "ae"], [3, 0, 0, 0]),
+    "peron4": (["os", "resp", "os", "pfs"], [2, 0, 0, 1]),
+}
+write_csv("gpc_peron_specs.csv", ["spec", "level", "endpoint", "threshold"],
+          [[s_, k + 1, p_[k], t_[k]] for s_, (p_, t_) in peron_specs.items()
+           for k in range(len(p_))])
+summ, levels = [], []
+for dname in ("ties", "cont", "cens"):
+    rows_d = datasets[dname]
+    trt = [r for r in rows_d if r["arm"] == "T"]
+    ctl = [r for r in rows_d if r["arm"] == "C"]
+    for sname, (pri, thr) in peron_specs.items():
+        res, wk, lk = ref.gpc_peron(trt, ctl, [EPS[p] for p in pri], thr)
+        summ.append([dname, sname] + [fmt(res[k]) for k in ("p_win", "p_loss", "p_tie", "ntb", "wr")])
+        for k in range(len(pri)):
+            levels.append([dname, sname, k + 1, pri[k], thr[k], fmt(wk[k]), fmt(lk[k])])
+write_csv("gpc_peron_expected.csv", ["dataset", "spec", "p_win", "p_loss", "p_tie", "ntb", "wr"], summ)
+write_csv("gpc_peron_expected_levels.csv",
+          ["dataset", "spec", "level", "endpoint", "threshold", "win", "loss"], levels)
 
 # ---------------------------------------------------------------------------
 # 3. Benefit-risk scores

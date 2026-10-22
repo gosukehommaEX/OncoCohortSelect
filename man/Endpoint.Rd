@@ -10,6 +10,8 @@ Endpoint(
   var = NULL,
   time = NULL,
   event = NULL,
+  censor = NULL,
+  positive = NULL,
   higher.better = TRUE
 )
 }
@@ -22,16 +24,26 @@ Endpoint(
 
 \item{var}{For a binary endpoint, the name of the column with the values.}
 
-\item{time, event}{For a time-to-event endpoint, the names of the columns
-with the observed times and the event indicators.}
+\item{time}{For a time-to-event endpoint, the name of the column with the
+observed times.}
+
+\item{event}{For a time-to-event endpoint, the name of the column with the
+event indicators (1 = event, 0 = censored). Give \code{event} or
+\code{censor}.}
+
+\item{censor}{For a time-to-event endpoint, the name of the column with the
+censoring indicators (0 = event, other values = censored).}
+
+\item{positive}{For a binary endpoint, optional vector of the values of
+\code{var} that count as 1; other non-missing values count as 0.}
 
 \item{higher.better}{Logical: \code{TRUE} if a value of 1 (binary) or a
 longer time (time to event) is favorable.}
 }
 \value{
 An object of class \code{Endpoint}: a list with elements
-  \code{name}, \code{type}, \code{var}, \code{time}, \code{event} and
-  \code{higher.better}.
+  \code{name}, \code{type}, \code{var}, \code{time}, \code{event},
+  \code{censor}, \code{positive} and \code{higher.better}.
 }
 \description{
 Defines a binary or time-to-event endpoint by the columns of a patient-level
@@ -42,14 +54,24 @@ definitions are used by \code{\link{BenefitRisk}}, \code{\link{WinStat}} and
 \details{
 A binary endpoint is a column with values 0, 1 or \code{NA}, for example the
 objective response (\code{higher.better = TRUE}) or the occurrence of an
-adverse event (\code{higher.better = FALSE}). Missing values are excluded
-from the posterior distribution in \code{\link{BenefitRisk}} and make a pair
-uninformative for this endpoint in \code{\link{WinStat}}.
+adverse event (\code{higher.better = FALSE}). With \code{positive}, the
+column can hold any codes: the values in \code{positive} count as 1 and the
+other values as 0, for example \code{positive = c("CR", "PR")} for a best
+overall response or \code{positive = "Y"} for a flag that is \code{"Y"} or
+blank. Missing values (\code{NA}) are excluded from the posterior
+distribution in \code{\link{BenefitRisk}} and make a pair uninformative for
+this endpoint in \code{\link{WinStat}}.
 
-A time-to-event endpoint is given by a column of observed times and a column
-of event indicators (1 for an event, 0 for censoring), for example overall
-survival or progression-free survival. With \code{higher.better = TRUE}
-(the usual case) longer times are favorable.
+A time-to-event endpoint is given by a column of observed times and either a
+column of event indicators (\code{event}: 1 for an event, 0 for censoring)
+or a column of censoring indicators (\code{censor}: 0 for an event, any
+other value for censoring, as the variable \code{CNSR} of ADaM data sets),
+for example overall survival or progression-free survival. With
+\code{higher.better = TRUE} (the usual case) longer times are favorable.
+
+The columns are named freely, so that data with any variable names (for
+example ADaM data sets restructured to one row per patient) can be analyzed,
+and any number of endpoints can be defined.
 }
 \examples{
 eps <- list(
@@ -59,6 +81,13 @@ eps <- list(
   Endpoint("AE", "binary", var = "ae", higher.better = FALSE)
 )
 eps[[4]]$higher.better
+
+# variables in the style of ADaM data sets
+adam_eps <- list(
+  Endpoint("OS", "tte", time = "OSAVAL", censor = "OSCNSR"),
+  Endpoint("ORR", "binary", var = "BOR", positive = c("CR", "PR")),
+  Endpoint("AE", "binary", var = "AEFL", positive = "Y", higher.better = FALSE)
+)
 }
 \seealso{
 \code{\link{BenefitRisk}}, \code{\link{WinStat}}

@@ -11,17 +11,37 @@
 #' A pair is compared on the endpoints in the order of \code{priority}. The
 #' first endpoint that decides the pair determines a win or a loss of the
 #' treatment patient; a pair that no endpoint decides is a tie. An endpoint can
-#' appear more than once, for example with a large threshold first and a
-#' threshold of 0 later.
+#' appear more than once with decreasing thresholds, for example with a large
+#' threshold first and a threshold of 0 later.
 #'
 #' A binary endpoint decides a pair when the two patients have different
-#' values; a pair with a missing value is undecided. A time-to-event endpoint
-#' is scored by the rule of Gehan (1965): the pair is decided when the patient
-#' with the shorter observed time has an event and the difference of the
-#' observed times is at least the threshold. With a threshold of 0 the
-#' difference must be positive, and a censored time equal to an event time
-#' counts as longer. These rules agree with the Gehan scoring rule of the
-#' \code{BuyseTest} package.
+#' values; a pair with a missing value is undecided. With
+#' \code{scoring = "gehan"}, a time-to-event endpoint is scored by the rule of
+#' Gehan (1965): the pair is decided when the patient with the shorter observed
+#' time has an event and the difference of the observed times is at least the
+#' threshold. With a threshold of 0 the difference must be positive, and a
+#' censored time equal to an event time counts as longer. These rules agree
+#' with the Gehan scoring rule of the \code{BuyseTest} package.
+#'
+#' With \code{scoring = "peron"}, pairs with a censored time are scored by the
+#' rule of \enc{Péron}{Peron} et al. (2018). The true time of a censored
+#' patient is given the distribution of the Kaplan-Meier estimate of its
+#' cohort conditional on survival beyond the censoring time, and the pair is
+#' won with the probability that the treatment time is longer by at least the
+#' threshold and lost with the probability that the control time is longer by
+#' at least the threshold. The Kaplan-Meier estimate is not defined after the
+#' largest observed time of a cohort; the probability beyond that time counts
+#' only when the comparison holds wherever the true time lies, so the two
+#' probabilities are lower bounds, and the rest of the pair goes to the next
+#' endpoints. When an endpoint is used again with a smaller threshold, the
+#' probabilities at its previous threshold are subtracted, since a pair won at
+#' the larger threshold is also won at the smaller one, and the weight of a
+#' pair is the product over the other endpoints of the probability that the
+#' pair is still undecided. These rules agree with the Peron scoring rule of
+#' the \code{BuyseTest} package, except that a difference of times exactly
+#' equal to a positive threshold always counts as decided, which can give
+#' small differences when times plus or minus the threshold coincide with
+#' event times.
 #'
 #' With \code{p_win}, \code{p_loss} and \code{p_tie} the proportions of pairs
 #' won, lost and tied by the treatment patient, the net treatment benefit is
@@ -29,9 +49,10 @@
 #' \code{(p_win + p_tie / 2) / (p_loss + p_tie / 2)}. Their standard errors
 #' are computed from the first-order H-decomposition of the two-sample
 #' U-statistics (Bebu and Lachin 2016), the standard errors of the win ratio
-#' and the win odds by the delta method. The confidence interval of the net
-#' treatment benefit is
-#' computed on the inverse hyperbolic tangent scale, that of the win ratio on
+#' and the win odds by the delta method. With \code{scoring = "peron"} the
+#' Kaplan-Meier estimates are treated as known, so the standard errors are
+#' approximate and tend to be too small. The confidence interval of the net
+#' treatment benefit is computed on the inverse hyperbolic tangent scale, that of the win ratio on
 #' the log scale, and that of the win odds is the interval of the net treatment
 #' benefit transformed by \code{(1 + x) / (1 - x)}.
 #'
@@ -45,7 +66,10 @@
 #' @param threshold Numeric vector of thresholds, one per element of
 #'   \code{priority}: the minimal difference of times that decides a pair on a
 #'   time-to-event endpoint (0 or \code{NA} for binary endpoints). By default
-#'   0 for every endpoint.
+#'   0 for every endpoint. The thresholds of an endpoint used more than once
+#'   must decrease.
+#' @param scoring Scoring rule of time-to-event endpoints: \code{"gehan"}
+#'   or \code{"peron"}.
 #' @param conf.level Confidence level of the intervals.
 #' @return A list with elements
 #'   \item{estimate}{Named vector with \code{p_win}, \code{p_loss},
@@ -55,7 +79,8 @@
 #'     (\code{WR}) and the win odds (\code{WO}).}
 #'   \item{by.endpoint}{Data frame with, for each priority level, the
 #'     proportions of all pairs won and lost at that level and the proportion
-#'     of pairs still undecided after it.}
+#'     of pairs still undecided after it (with the Peron scoring rule, sums of
+#'     probabilities divided by the number of pairs).}
 #'   \item{n}{Named vector with the numbers of treatment and control patients
 #'     and of pairs.}
 #' @references
@@ -79,6 +104,11 @@
 #' Gehan, E. A. (1965). A generalized Wilcoxon test for comparing arbitrarily
 #' singly-censored samples. \emph{Biometrika}, 52, 203-223.
 #' \doi{10.1093/biomet/52.1-2.203}
+#'
+#' \enc{Péron}{Peron}, J., Buyse, M., Ozenne, B., Roche, L. and Roy, P. (2018).
+#' An extension of generalized pairwise comparisons for prioritized outcomes in
+#' the presence of censoring. \emph{Statistical Methods in Medical Research},
+#' 27, 1230-1239. \doi{10.1177/0962280216658320}
 #' @examples
 #' set.seed(1)
 #' d <- data.frame(group = rep(c("Cohort1", "Cohort2"), each = 40),
@@ -96,10 +126,16 @@
 #' # response first, then OS with a threshold of 3 months
 #' WinStat(d, eps, treatment = "Cohort1", control = "Cohort2",
 #'         priority = c("ORR", "OS", "AE"), threshold = c(0, 3, 0))$estimate
+#'
+#' # censored pairs scored with the Kaplan-Meier estimates
+#' WinStat(d, eps, treatment = "Cohort1", control = "Cohort2",
+#'         scoring = "peron")$estimate
 #' @seealso \code{\link{BenefitRisk}}, \code{\link{SimSelection}}
 #' @export
 WinStat <- function(data, endpoints, treatment, control, group = "group",
-                    priority = NULL, threshold = NULL, conf.level = 0.95) {
+                    priority = NULL, threshold = NULL, scoring = c("gehan", "peron"),
+                    conf.level = 0.95) {
+  scoring <- match.arg(scoring)
   if (!is.data.frame(data)) stop("'data' must be a data frame.", call. = FALSE)
   if (!.is_string(group) || !group %in% names(data)) {
     stop("'group' must be the name of a column of 'data'.", call. = FALSE)
@@ -121,7 +157,7 @@ WinStat <- function(data, endpoints, treatment, control, group = "group",
     stop("'data' must contain patients of both 'treatment' and 'control'.", call. = FALSE)
   }
   pairs <- .gpc_pairs(data[it, , drop = FALSE], data[ic, , drop = FALSE],
-                      pr$endpoints, pr$threshold)
+                      pr$endpoints, pr$threshold, scoring)
   st <- .gpc_stats(pairs, conf.level)
   np <- length(it) * length(ic)
   ci <- data.frame(

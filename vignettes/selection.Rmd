@@ -1,8 +1,8 @@
 ---
-title: "Comparing selection rules by simulation"
+title: "Evaluating decision rules by simulation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Comparing selection rules by simulation}
+  %\VignetteIndexEntry{Evaluating decision rules by simulation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,54 +15,71 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 library(OncoCohortSelect)
 ```
 
-Two single-arm cohorts, Cohort1 and Cohort2, are run in parallel, and one of
-them is to be selected for further development. Cohort2 is the default, and
-Cohort1 is selected only if the data favor it. This vignette compares decision
-rules based on the posterior benefit-risk score and on win statistics by their
-selection probabilities in simulated trials.
+Three single-arm cohorts are run in parallel: Cohort1 receives the reference
+regimen and Cohort2 and Cohort3 receive new regimens. At the end of the trial
+one cohort is selected for further development. Cohort1 is the default, and a
+new regimen is selected only if the data favor it. This article compares
+decision rules based on the posterior benefit-risk score and on win statistics
+by their selection probabilities in simulated trials.
 
 ## What makes a rule better
 
-The scores of the two approaches are on different scales, so their raw values
-cannot be compared. A fair comparison fixes, for every rule, the probability
-of selecting Cohort1 when it is not better than Cohort2 (here, identical
-cohorts), and then compares the probabilities of selecting Cohort1 when it is
-better. The truth must be defined before the simulation and independently of
-the rules: by scenarios in which the better cohort is clear (one cohort at
-least as good on every endpoint), and, for trade-offs between efficacy and
-safety, by the choice the clinical team would make for the true parameters.
+The statistics of the two approaches are on different scales, so their raw
+values cannot be compared. A fair comparison fixes, for every rule, the
+probability of selecting a new regimen when none is better than the reference
+(here, three identical cohorts), and then compares the probabilities of
+selecting the right cohort when a new regimen is better. The right cohort of
+each scenario must be fixed before the simulation and independently of the
+rules: by scenarios in which one cohort is at least as good as the others on
+every endpoint, and, for trade-offs between efficacy and safety, by the
+choice the clinical team would make if it knew the true parameters.
 
 ## Scenarios
 
-Each scenario gives the true parameters of the two cohorts: PFS and OS
-medians, response rate and adverse event rate. The number of simulated trials
-is kept small so that the vignette builds quickly; an evaluation would use
-several thousand.
+Each scenario gives the true PFS and OS medians, response rates and adverse
+event rates of the three cohorts. In the last scenario Cohort3 is the most
+active but has an adverse event rate of 0.45, which the clinical team is
+assumed to have judged unacceptable, so the right choice is Cohort2.
 
 ```{r}
 make_arm <- function(pfs, orr, os) {
   CorOncoEndpoints::OncoArm(pfs.median = pfs, orr = orr, resp.cor = 0.4,
                             death.prop = 0.15, os.median = os)
 }
+ref_arm <- make_arm(5, 0.30, 14)
+mid_arm <- make_arm(7, 0.45, 17)
+top_arm <- make_arm(8.5, 0.55, 19)
 scenarios <- list(
-  "Identical" = list(arms = list(Cohort1 = make_arm(6, 0.30, 15),
-                                 Cohort2 = make_arm(6, 0.30, 15)), ae = c(0.20, 0.20)),
-  "Cohort1 better" = list(arms = list(Cohort1 = make_arm(9, 0.50, 20),
-                                      Cohort2 = make_arm(6, 0.30, 15)), ae = c(0.20, 0.20)),
-  "Cohort1 better, more AE" = list(arms = list(Cohort1 = make_arm(9, 0.50, 20),
-                                               Cohort2 = make_arm(6, 0.30, 15)),
-                                   ae = c(0.40, 0.20)))
-nsim <- 200
+  "Null" = list(arms = list(Cohort1 = ref_arm, Cohort2 = ref_arm, Cohort3 = ref_arm),
+                ae = c(0.20, 0.20, 0.20)),
+  "Cohort2 better" = list(arms = list(Cohort1 = ref_arm, Cohort2 = mid_arm,
+                                      Cohort3 = ref_arm), ae = c(0.20, 0.20, 0.20)),
+  "Cohort3 best" = list(arms = list(Cohort1 = ref_arm, Cohort2 = mid_arm,
+                                    Cohort3 = top_arm), ae = c(0.20, 0.20, 0.20)),
+  "Cohort3 toxic" = list(arms = list(Cohort1 = ref_arm, Cohort2 = mid_arm,
+                                     Cohort3 = top_arm), ae = c(0.20, 0.20, 0.45)))
+right <- c("Null" = "Cohort1", "Cohort2 better" = "Cohort2",
+           "Cohort3 best" = "Cohort3", "Cohort3 toxic" = "Cohort2")
+nsim <- 100
 ```
+
+The number of simulated trials is kept small so that the article builds
+quickly; with 100 trials a probability of 0.5 has a Monte Carlo standard error
+of 0.05, and an evaluation would use several thousand trials.
 
 ## Rules
 
-The benefit-risk score against target values is computed for each cohort, and
-Cohort1 is selected when its score exceeds that of Cohort2 by more than a
-threshold (`br_diff`). The score of Cohort1 relative to Cohort2 selects Cohort1
-when it exceeds a threshold (`br_ref`). The net treatment benefit (`ntb`) and
-the win ratio (`wr`) of the pairwise comparisons with priority OS, PFS,
-response and adverse event select Cohort1 when they exceed a threshold.
+Four rules are compared. In each trial, the new cohorts whose statistic
+exceeds a threshold are candidates, and the candidate with the largest
+statistic is selected; without a candidate, Cohort1 is selected.
+
+* `br_diff`: the benefit-risk score against target values minus that of
+  Cohort1. The cohorts must also be admissible: the posterior probability that
+  the adverse event rate is at most 0.4 must be at least 0.8.
+* `br_ref`: the benefit-risk score relative to Cohort1, with the same kind of
+  admissibility condition on the difference of the adverse event rates.
+* `ntb` and `wr`: the net treatment benefit and the win ratio against Cohort1,
+  with priority OS, PFS, response and adverse event.
 
 ```{r}
 eps <- list(
@@ -71,70 +88,98 @@ eps <- list(
   Endpoint("ORR", "binary", var = "response"),
   Endpoint("AE", "binary", var = "ae", higher.better = FALSE))
 crit <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
-                   target = c(0.30, 0.50, 0.60, 0.30), time = c(NA, 6, 12, NA))
+                   target = c(0.30, 0.50, 0.60, 0.40), time = c(NA, 6, 12, NA),
+                   weight = c(1 / 3, 1 / 3, 1 / 3, 1), cutoff = c(NA, NA, NA, 0.8))
 crit_ref <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
                        measure = c("rate", "hr", "hr", "rate"),
-                       target = c(0.10, 0.80, 0.90, 0.10))
+                       target = c(0.10, 0.80, 0.90, 0.10),
+                       weight = c(1 / 3, 1 / 3, 1 / 3, 1), cutoff = c(NA, NA, NA, 0.8))
 ```
 
-Each scenario is simulated with 50 patients per cohort, enrolled over 12
-months and analyzed at month 24.
+Each scenario is simulated with 40 patients per cohort, enrolled over 12
+months and analyzed at month 24. `SimSelection()` returns one row per trial
+and cohort with all the statistics.
 
 ```{r}
 res <- lapply(seq_along(scenarios), function(i) {
   sc <- scenarios[[i]]
-  d <- SimCohorts(nsim = nsim, n = c(50, 50), arms = sc$arms, ae.rate = sc$ae,
+  d <- SimCohorts(nsim = nsim, n = c(40, 40, 40), arms = sc$arms, ae.rate = sc$ae,
                   cutoff = 24, a.time = c(0, 12), seed = i)
-  SimSelection(d, eps, crit, treatment = "Cohort1", control = "Cohort2",
-               criteria.ref = crit_ref)
+  SimSelection(d, eps, crit, reference = "Cohort1", criteria.ref = crit_ref)
 })
 names(res) <- names(scenarios)
-head(res[["Cohort1 better"]][, c("br_trt", "br_ctl", "br_ref", "ntb", "wr")])
+head(res[["Cohort3 best"]][, c("sim", "group", "br", "adm", "br_diff", "br_ref", "ntb",
+                               "wr")])
 ```
 
-## Thresholds and selection probabilities
+The pairwise comparisons use the scoring rule of Gehan; `scoring = "peron"`
+in `SimSelection()` uses the rule of Péron instead.
 
-The thresholds are calibrated in the scenario with identical cohorts so that
-Cohort1 is selected in at most 10% of the trials.
+## Calibrated thresholds
+
+The thresholds are chosen in the null scenario so that a new cohort is
+selected in at most 10% of the trials.
 
 ```{r}
 stats <- c("br_diff", "br_ref", "ntb", "wr")
 thr <- do.call(rbind, lapply(stats, function(s) {
-  CalibrateThreshold(res[["Identical"]], s, alpha = 0.10)
+  CalibrateThreshold(res[["Null"]], s, alpha = 0.10)
 }))
 thr
-tab <- sapply(names(res), function(sc) {
-  vapply(seq_along(stats), function(i) {
-    SelectionOC(res[[sc]], stats[i], threshold = thr$threshold[i])$p_treatment
-  }, numeric(1))
-})
-rownames(tab) <- stats
-knitr::kable(tab, digits = 2,
-             caption = "Probability of selecting Cohort1 at the calibrated thresholds")
 ```
 
-In the scenario "Cohort1 better", the rules select Cohort1 with probabilities
-between `r round(min(tab[, "Cohort1 better"]), 2)` and
-`r round(max(tab[, "Cohort1 better"]), 2)`. With more adverse events in
-Cohort1, the probabilities range from
-`r round(min(tab[, "Cohort1 better, more AE"]), 2)` to
-`r round(max(tab[, "Cohort1 better, more AE"]), 2)`; whether Cohort1 should be
-selected in that scenario is a clinical judgment that has to be fixed before
-the rules are compared.
+## Selection probabilities
+
+```{r}
+oc_row <- function(r, s, th) {
+  oc <- SelectionOC(r, s, threshold = th)
+  p <- stats::setNames(oc$p_select, oc$group)
+  out <- c(p[c("Cohort1", "Cohort2", "Cohort3")], "(none)" = 0)
+  if ("(none)" %in% names(p)) out[["(none)"]] <- p[["(none)"]]
+  out
+}
+tab <- do.call(rbind, lapply(names(res), function(sc) {
+  do.call(rbind, lapply(seq_along(stats), function(i) {
+    data.frame(scenario = sc, rule = stats[i],
+               t(oc_row(res[[sc]], stats[i], thr$threshold[i])), check.names = FALSE)
+  }))
+}))
+tab$right <- mapply(function(i, g) tab[[g]][i], seq_len(nrow(tab)), right[tab$scenario])
+knitr::kable(tab, digits = 2, row.names = FALSE,
+             caption = "Probability of selecting each cohort at the calibrated thresholds")
+```
+
+The column `right` is the probability of selecting the right cohort of the
+scenario. In the scenario "Cohort3 best", the rules select Cohort3 with
+probabilities between
+`r round(min(tab$right[tab$scenario == "Cohort3 best"]), 2)` and
+`r round(max(tab$right[tab$scenario == "Cohort3 best"]), 2)`. In the scenario
+"Cohort3 toxic", they select Cohort2 with probabilities between
+`r round(min(tab$right[tab$scenario == "Cohort3 toxic"]), 2)` and
+`r round(max(tab$right[tab$scenario == "Cohort3 toxic"]), 2)`, and Cohort3
+with probabilities between
+`r round(min(tab$Cohort3[tab$scenario == "Cohort3 toxic"]), 2)` and
+`r round(max(tab$Cohort3[tab$scenario == "Cohort3 toxic"]), 2)`. The
+admissibility condition of the benefit-risk rules excludes a cohort with too
+many adverse events, whereas in the pairwise comparisons the adverse event has
+the lowest priority and decides only the pairs left undecided by OS, PFS and
+response; a rule based on win statistics gives more weight to safety when the
+adverse event comes earlier in the priority order.
 
 ## Saturation of the score against target values
 
-In the scenario "Cohort1 better", the median scores against the target values
-are `r round(median(res[["Cohort1 better"]]$br_trt), 3)` for Cohort1 and
-`r round(median(res[["Cohort1 better"]]$br_ctl), 3)` for Cohort2. The score
-measures how certainly a cohort exceeds the targets, not by how much. When both
-cohorts clearly exceed the targets, both scores approach 1 and their difference
-carries little information; the score relative to the other cohort and the win
-statistics compare the cohorts directly.
+In the scenario "Cohort3 best", the median scores against the target values
+are
 
 ```{r}
-summary(res[["Cohort1 better"]][, c("br_trt", "br_ctl")])
+r3 <- res[["Cohort3 best"]]
+round(tapply(r3$br, r3$group, median), 3)
 ```
+
+The score measures how certainly a cohort exceeds the targets, not by how
+much. When several cohorts clearly exceed the targets, their scores approach 1
+and the differences carry little information; the score relative to the
+reference cohort and the win statistics compare the cohorts directly.
 
 ## References
 

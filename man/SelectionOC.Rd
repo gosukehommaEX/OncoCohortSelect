@@ -17,49 +17,56 @@ SelectionOC(
 \item{statistic}{One of \code{"br_diff"}, \code{"br_ref"}, \code{"ntb"},
 \code{"ntb_lower"}, \code{"wr"} and \code{"wo"}.}
 
-\item{threshold}{Numeric vector of thresholds; one row of the output per
-value.}
+\item{threshold}{Numeric vector of thresholds.}
 
 \item{admissibility}{Logical: use the admissibility of the benefit-risk
 scores (\code{"br_diff"} and \code{"br_ref"} only).}
 }
 \value{
 A data frame with columns \code{statistic}, \code{threshold},
-  \code{p_treatment}, \code{p_control} and \code{p_none}.
+  \code{group} and \code{p_select}, with one row per threshold and cohort
+  (in the order of \code{results}), and, for \code{"br_diff"} with
+  admissibility, a row \code{"(none)"} for the trials in which no cohort is
+  selected.
 }
 \description{
-Computes, from the results of \code{\link{SimSelection}}, the proportions of
-simulated trials in which a decision rule selects the treatment cohort, the
-control cohort or neither.
+Computes, from the results of \code{\link{SimSelection}}, the proportion of
+simulated trials in which a decision rule selects each cohort.
 }
 \details{
-The treatment cohort is selected when \code{statistic} exceeds
-\code{threshold}; otherwise the control cohort is selected. The statistics
-are
+In each simulated trial, the cohorts other than the reference cohort whose
+\code{statistic} exceeds \code{threshold} are candidates, and the candidate
+with the largest statistic is selected; without a candidate, the reference
+cohort is selected. A cohort with a missing statistic (for example a win
+ratio when no pair is decided) is not a candidate. The statistics are
 \itemize{
   \item \code{"br_diff"}: the difference of the benefit-risk scores against
-    target values. With \code{admissibility = TRUE}, the scores are compared
-    only when both cohorts are admissible; an admissible cohort is selected
-    over one that is not, and neither is selected when neither is
-    admissible.
-  \item \code{"br_ref"}: the benefit-risk score of the treatment cohort
-    relative to the control cohort. With \code{admissibility = TRUE}, the
-    treatment cohort must also be admissible relative to the control cohort.
+    target values from that of the reference cohort. With
+    \code{admissibility = TRUE}, a candidate must be admissible; when the
+    reference cohort is not admissible, every admissible cohort is a
+    candidate whatever the threshold, and no cohort is selected when none
+    is admissible.
+  \item \code{"br_ref"}: the benefit-risk score relative to the reference
+    cohort. With \code{admissibility = TRUE}, a candidate must also be
+    admissible relative to the reference cohort.
   \item \code{"ntb"}, \code{"ntb_lower"}, \code{"wr"}, \code{"wo"}: the net
-    treatment benefit, its lower confidence bound, the win ratio and the win
-    odds.
+    treatment benefit against the reference cohort, its lower confidence
+    bound, the win ratio and the win odds.
 }
-A missing statistic (for example a win ratio when no pair is decided)
-selects the control cohort. The default thresholds are 0 for the
-differences and the net treatment benefit and 1 for the win ratio and the
-win odds; \code{"br_ref"} has no default.
+The default thresholds are 0 for the differences and the net treatment
+benefit and 1 for the win ratio and the win odds; \code{"br_ref"} has no
+default.
 }
 \examples{
-res <- data.frame(br_diff = c(0.2, -0.1, 0.05, 0.3), adm_trt = c(TRUE, TRUE, FALSE, TRUE),
-                  adm_ctl = c(TRUE, TRUE, TRUE, FALSE), ntb = c(0.1, -0.2, 0.05, 0.3),
-                  wr = c(1.3, 0.6, 1.1, 2))
+res <- data.frame(sim = rep(1:4, each = 3),
+                  group = rep(c("A", "B", "C"), 4),
+                  is_reference = rep(c(TRUE, FALSE, FALSE), 4),
+                  br_diff = c(NA, 0.2, 0.1, NA, -0.1, 0.05, NA, 0.3, 0.4, NA, 0, -0.2),
+                  adm = c(TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, TRUE, FALSE,
+                          FALSE, FALSE, FALSE),
+                  ntb = c(NA, 0.1, -0.1, NA, -0.2, 0.05, NA, 0.3, 0.1, NA, 0.02, 0.01))
 SelectionOC(res, "br_diff", threshold = c(0, 0.1))
-SelectionOC(res, "wr")
+SelectionOC(res, "ntb")
 }
 \seealso{
 \code{\link{SimSelection}}, \code{\link{CalibrateThreshold}}

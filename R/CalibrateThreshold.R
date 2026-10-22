@@ -2,33 +2,40 @@
 #'
 #' @description
 #' Finds, from the results of \code{\link{SimSelection}} under a scenario in
-#' which the treatment cohort should not be selected (for example identical
-#' cohorts), the smallest threshold for which the proportion of simulated
-#' trials that select the treatment cohort is at most \code{alpha}. Decision
-#' rules based on different statistics can then be compared at the same false
-#' selection probability.
+#' which no cohort should be selected over the reference cohort (for example
+#' cohorts that are all identical), the smallest threshold for which the
+#' proportion of simulated trials that select a cohort other than the
+#' reference is at most \code{alpha}. Decision rules based on different
+#' statistics can then be compared at the same false selection probability.
 #'
 #' @details
-#' The decision rules are those of \code{\link{SelectionOC}}. With
-#' \code{statistic = "br_diff"} and \code{admissibility = TRUE}, trials in
-#' which only the treatment cohort is admissible select it whatever the
-#' threshold; when their proportion exceeds \code{alpha}, no threshold
-#' achieves \code{alpha} and the result is \code{NA} with a warning. The
-#' threshold is one of the simulated values of the statistic (or \code{-Inf}
-#' when no trial needs to be excluded), and the achieved proportion can be
-#' smaller than \code{alpha} because of ties and the finite number of trials.
+#' The decision rules are those of \code{\link{SelectionOC}}: a cohort other
+#' than the reference is selected when the largest statistic among the
+#' candidate cohorts exceeds the threshold. With \code{statistic = "br_diff"}
+#' and \code{admissibility = TRUE}, trials in which the reference cohort is not
+#' admissible and another cohort is admissible select that cohort whatever the
+#' threshold; when their proportion exceeds \code{alpha}, no threshold achieves
+#' \code{alpha} and the result is \code{NA} with a warning. The threshold is
+#' one of the simulated values of the statistic (or \code{-Inf} when no trial
+#' needs to be excluded), and the achieved proportion can be smaller than
+#' \code{alpha} because of ties and the finite number of trials.
 #'
 #' @param results Data frame returned by \code{\link{SimSelection}}.
 #' @param statistic One of \code{"br_diff"}, \code{"br_ref"}, \code{"ntb"},
 #'   \code{"ntb_lower"}, \code{"wr"} and \code{"wo"}.
-#' @param alpha Target probability of selecting the treatment cohort.
+#' @param alpha Target probability of selecting a cohort other than the
+#'   reference.
 #' @param admissibility Logical: use the admissibility of the benefit-risk
 #'   scores (\code{"br_diff"} and \code{"br_ref"} only).
 #' @return A data frame with columns \code{statistic}, \code{alpha},
-#'   \code{threshold} and \code{p_treatment} (the achieved proportion).
+#'   \code{threshold} and \code{p_nonreference} (the achieved proportion of
+#'   trials that select a cohort other than the reference).
 #' @examples
 #' set.seed(1)
-#' res <- data.frame(ntb = rnorm(1000, 0, 0.1), wr = exp(rnorm(1000, 0, 0.3)))
+#' res <- data.frame(sim = rep(1:500, each = 3), group = rep(c("A", "B", "C"), 500),
+#'                   is_reference = rep(c(TRUE, FALSE, FALSE), 500))
+#' res$ntb <- ifelse(res$is_reference, NA, rnorm(1500, 0, 0.1))
+#' res$wr <- ifelse(res$is_reference, NA, exp(rnorm(1500, 0, 0.3)))
 #' CalibrateThreshold(res, "ntb", alpha = 0.1)
 #' CalibrateThreshold(res, "wr", alpha = 0.1)
 #' @seealso \code{\link{SelectionOC}}, \code{\link{SimSelection}}
@@ -36,9 +43,6 @@
 CalibrateThreshold <- function(results, statistic = c("br_diff", "br_ref", "ntb",
                                                       "ntb_lower", "wr", "wo"),
                                alpha = 0.05, admissibility = TRUE) {
-  if (!is.data.frame(results) || nrow(results) == 0L) {
-    stop("'results' must be a data frame with at least one row.", call. = FALSE)
-  }
   statistic <- match.arg(statistic)
   if (!is.numeric(alpha) || length(alpha) != 1L || is.na(alpha) || alpha <= 0 ||
       alpha >= 1) {
@@ -47,32 +51,25 @@ CalibrateThreshold <- function(results, statistic = c("br_diff", "br_ref", "ntb"
   if (!is.logical(admissibility) || length(admissibility) != 1L || is.na(admissibility)) {
     stop("'admissibility' must be TRUE or FALSE.", call. = FALSE)
   }
-  s <- results[[statistic]]
-  if (is.null(s)) stop("'results' has no column '", statistic, "'.", call. = FALSE)
-  .check_adm(results, statistic, admissibility)
-  N <- nrow(results)
-  fixed <- rep(FALSE, N)
-  eligible <- !is.na(s)
-  if (admissibility && statistic == "br_diff") {
-    at <- results$adm_trt %in% TRUE
-    ac <- results$adm_ctl %in% TRUE
-    fixed <- at & !ac
-    eligible <- eligible & at & ac
-  } else if (admissibility && statistic == "br_ref") {
-    eligible <- eligible & results$adm_ref %in% TRUE
-  }
-  # number of eligible trials that may exceed the threshold
-  k <- floor(alpha * N - sum(fixed) + 1e-8)
+  # the threshold does not change which trials have candidates whatever the
+  # threshold ('fixed') nor the largest statistic of the candidates ('max')
+  rs <- .rule_select(results, statistic, Inf, admissibility)
+  N <- nrow(rs)
+  # number of trials without a fixed selection that may exceed the threshold
+  k <- floor(alpha * N - sum(rs$fixed) + 1e-8)
   if (k < 0) {
-    warning("The trials that select the treatment cohort whatever the threshold ",
-            "exceed 'alpha'.", call. = FALSE)
+    warning("The trials that select a cohort other than the reference whatever the ",
+            "threshold exceed 'alpha'.", call. = FALSE)
     thr <- NA_real_
-    p <- sum(fixed) / N
+    p <- sum(rs$fixed) / N
   } else {
-    v <- sort(s[eligible], decreasing = TRUE)
+    v <- sort(rs$max[!rs$fixed & rs$max > -Inf], decreasing = TRUE)
     thr <- if (k >= length(v)) -Inf else v[k + 1L]
-    p <- mean(.rule_select(results, statistic, thr, admissibility) == "treatment")
+    sel <- .rule_select(results, statistic, thr, admissibility)
+    ref <- results$group[results$is_reference]
+    names(ref) <- as.character(results$sim[results$is_reference])
+    p <- mean(!is.na(sel$selected) & sel$selected != ref[as.character(sel$sim)])
   }
-  data.frame(statistic = statistic, alpha = alpha, threshold = thr, p_treatment = p,
+  data.frame(statistic = statistic, alpha = alpha, threshold = thr, p_nonreference = p,
              stringsAsFactors = FALSE)
 }

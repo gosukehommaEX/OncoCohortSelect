@@ -1,0 +1,143 @@
+---
+title: "Analyzing a completed trial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analyzing a completed trial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+```{r setup}
+library(OncoCohortSelect)
+```
+
+This article analyzes the data of a completed trial with three single-arm
+cohorts, with column names in the style of ADaM data sets. The data are
+fictitious and are installed with the package.
+
+## Data
+
+The file has one row per patient: the cohort (`TRT01P`), the overall and
+progression-free survival times in months (`OSAVAL`, `PFSAVAL`) with their
+censoring indicators (`OSCNSR`, `PFSCNSR`; 0 for an event and 1 for a censored
+time, as in ADaM), the best overall response (`BOR`) and a flag for an adverse
+event of interest (`AEFL`, `"Y"` or blank).
+
+```{r}
+path <- system.file("extdata", "example_trial.csv", package = "OncoCohortSelect")
+adsl <- read.csv(path, stringsAsFactors = FALSE)
+head(adsl)
+table(adsl$TRT01P, adsl$BOR)
+table(adsl$TRT01P, adsl$AEFL == "Y")
+```
+
+## Endpoints
+
+`Endpoint()` names the columns of each endpoint. For a time-to-event endpoint,
+`censor` gives a censoring indicator coded as in ADaM (0 for an event, any
+other value for a censored time) and `event` an event indicator (1 for an
+event). For a binary endpoint, `positive` lists the values that count as 1,
+here a complete or partial response and the flag `"Y"`.
+
+```{r}
+eps <- list(
+  Endpoint("OS", "tte", time = "OSAVAL", censor = "OSCNSR"),
+  Endpoint("PFS", "tte", time = "PFSAVAL", censor = "PFSCNSR"),
+  Endpoint("ORR", "binary", var = "BOR", positive = c("CR", "PR")),
+  Endpoint("AE", "binary", var = "AEFL", positive = "Y", higher.better = FALSE))
+```
+
+In ADaM, time-to-event data are usually in a separate data set with one row
+per patient and parameter. `reshape()` puts the parameters side by side, and
+`merge()` adds them to the data of the patients:
+
+```{r}
+adtte <- data.frame(USUBJID = c("01", "01", "02", "02"),
+                    PARAMCD = c("OS", "PFS", "OS", "PFS"),
+                    AVAL = c(10.2, 5.1, 8.4, 8.4), CNSR = c(1, 0, 0, 0))
+reshape(adtte, idvar = "USUBJID", timevar = "PARAMCD", direction = "wide")
+```
+
+The columns `AVAL.OS` and `CNSR.OS` are then given to `Endpoint()`.
+
+## Benefit-risk scores
+
+Against target values, with the criteria of the article *Evaluating decision
+rules by simulation*:
+
+```{r}
+crit <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
+                   target = c(0.30, 0.50, 0.60, 0.40), time = c(NA, 6, 12, NA),
+                   weight = c(1 / 3, 1 / 3, 1 / 3, 1), cutoff = c(NA, NA, NA, 0.8))
+br <- BenefitRisk(adsl, eps, crit, group = "TRT01P")
+br
+```
+
+Relative to Cohort 1, the reference regimen:
+
+```{r}
+crit_ref <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
+                       measure = c("rate", "hr", "hr", "rate"),
+                       target = c(0.10, 0.80, 0.90, 0.10),
+                       weight = c(1 / 3, 1 / 3, 1 / 3, 1), cutoff = c(NA, NA, NA, 0.8))
+br_ref <- BenefitRisk(adsl, eps, crit_ref, group = "TRT01P", reference = "Cohort 1")
+br_ref
+```
+
+## Win statistics
+
+Each new cohort is compared with Cohort 1, with priority OS, PFS, response and
+adverse event.
+
+```{r}
+w2 <- WinStat(adsl, eps, treatment = "Cohort 2", control = "Cohort 1", group = "TRT01P")
+w3 <- WinStat(adsl, eps, treatment = "Cohort 3", control = "Cohort 1", group = "TRT01P")
+w2$ci
+w3$ci
+```
+
+The net treatment benefit against Cohort 1 is
+`r round(w2$estimate[["ntb"]], 2)` for Cohort 2 and
+`r round(w3$estimate[["ntb"]], 2)` for Cohort 3. With the scoring rule of
+Péron, censored pairs are scored with the Kaplan-Meier estimates:
+
+```{r}
+rbind(
+  "Cohort 2" = WinStat(adsl, eps, treatment = "Cohort 2", control = "Cohort 1",
+                       group = "TRT01P", scoring = "peron")$estimate,
+  "Cohort 3" = WinStat(adsl, eps, treatment = "Cohort 3", control = "Cohort 1",
+                       group = "TRT01P", scoring = "peron")$estimate)
+```
+
+## Applying a decision rule
+
+The decision rule and its threshold are fixed when the trial is designed, for
+example with `CalibrateThreshold()` as in the article *Evaluating decision
+rules by simulation*. `SimSelection()` computes all the statistics of a
+completed trial when the data are treated as one simulated trial, and
+`SelectionOC()` then gives a probability of 1 to the cohort that the rule
+selects. The thresholds below are for illustration only.
+
+```{r}
+adsl$sim <- 1
+res <- SimSelection(adsl, eps, crit, reference = "Cohort 1", criteria.ref = crit_ref,
+                    group = "TRT01P")
+res[, c("group", "br", "adm", "br_diff", "br_ref", "adm_ref", "ntb", "wr")]
+rules <- data.frame(statistic = c("br_diff", "br_ref", "ntb", "wr"),
+                    threshold = c(0.05, 0.5, 0.1, 1.5))
+sel <- vapply(seq_len(nrow(rules)), function(i) {
+  oc <- SelectionOC(res, rules$statistic[i], threshold = rules$threshold[i])
+  oc$group[oc$p_select == 1]
+}, character(1))
+data.frame(rules, selected = sel)
+```
+
+## Note
+
+The data of this article are invented for illustration. They are generated by
+the script `data-raw/make_example_trial.py` of the GitHub repository of the
+package.

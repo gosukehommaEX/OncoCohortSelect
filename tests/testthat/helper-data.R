@@ -29,3 +29,14 @@ test_arms <- function() {
        Cohort2 = CorOncoEndpoints::OncoArm(pfs.median = 6, orr = 0.30, resp.cor = 0.4,
                                            death.prop = 0.15, os.median = 15))
 }
+
+# Treatment: 5 (censored), 7 (event), 9 (censored); Kaplan-Meier: 1/2 after 7.
+# Control: 4 (event), 6 (censored), 8 (event), 10 (censored); Kaplan-Meier:
+# 3/4 after 4 and 3/8 after 8. The true time of a censored patient is
+# distributed over the later event times and a remaining mass beyond the
+# largest observed time (9 in the treatment cohort, 10 in the control cohort).
+peron_example <- function() {
+  list(xt = data.frame(t = c(5, 7, 9), e = c(0, 1, 0)),
+       xc = data.frame(t = c(4, 6, 8, 10), e = c(1, 0, 1, 0)),
+       ep = Endpoint("T", "tte", time = "t", event = "e"))
+}

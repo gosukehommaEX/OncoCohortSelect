@@ -17,36 +17,43 @@ CalibrateThreshold(
 \item{statistic}{One of \code{"br_diff"}, \code{"br_ref"}, \code{"ntb"},
 \code{"ntb_lower"}, \code{"wr"} and \code{"wo"}.}
 
-\item{alpha}{Target probability of selecting the treatment cohort.}
+\item{alpha}{Target probability of selecting a cohort other than the
+reference.}
 
 \item{admissibility}{Logical: use the admissibility of the benefit-risk
 scores (\code{"br_diff"} and \code{"br_ref"} only).}
 }
 \value{
 A data frame with columns \code{statistic}, \code{alpha},
-  \code{threshold} and \code{p_treatment} (the achieved proportion).
+  \code{threshold} and \code{p_nonreference} (the achieved proportion of
+  trials that select a cohort other than the reference).
 }
 \description{
 Finds, from the results of \code{\link{SimSelection}} under a scenario in
-which the treatment cohort should not be selected (for example identical
-cohorts), the smallest threshold for which the proportion of simulated
-trials that select the treatment cohort is at most \code{alpha}. Decision
-rules based on different statistics can then be compared at the same false
-selection probability.
+which no cohort should be selected over the reference cohort (for example
+cohorts that are all identical), the smallest threshold for which the
+proportion of simulated trials that select a cohort other than the
+reference is at most \code{alpha}. Decision rules based on different
+statistics can then be compared at the same false selection probability.
 }
 \details{
-The decision rules are those of \code{\link{SelectionOC}}. With
-\code{statistic = "br_diff"} and \code{admissibility = TRUE}, trials in
-which only the treatment cohort is admissible select it whatever the
-threshold; when their proportion exceeds \code{alpha}, no threshold
-achieves \code{alpha} and the result is \code{NA} with a warning. The
-threshold is one of the simulated values of the statistic (or \code{-Inf}
-when no trial needs to be excluded), and the achieved proportion can be
-smaller than \code{alpha} because of ties and the finite number of trials.
+The decision rules are those of \code{\link{SelectionOC}}: a cohort other
+than the reference is selected when the largest statistic among the
+candidate cohorts exceeds the threshold. With \code{statistic = "br_diff"}
+and \code{admissibility = TRUE}, trials in which the reference cohort is not
+admissible and another cohort is admissible select that cohort whatever the
+threshold; when their proportion exceeds \code{alpha}, no threshold achieves
+\code{alpha} and the result is \code{NA} with a warning. The threshold is
+one of the simulated values of the statistic (or \code{-Inf} when no trial
+needs to be excluded), and the achieved proportion can be smaller than
+\code{alpha} because of ties and the finite number of trials.
 }
 \examples{
 set.seed(1)
-res <- data.frame(ntb = rnorm(1000, 0, 0.1), wr = exp(rnorm(1000, 0, 0.3)))
+res <- data.frame(sim = rep(1:500, each = 3), group = rep(c("A", "B", "C"), 500),
+                  is_reference = rep(c(TRUE, FALSE, FALSE), 500))
+res$ntb <- ifelse(res$is_reference, NA, rnorm(1500, 0, 0.1))
+res$wr <- ifelse(res$is_reference, NA, exp(rnorm(1500, 0, 0.3)))
 CalibrateThreshold(res, "ntb", alpha = 0.1)
 CalibrateThreshold(res, "wr", alpha = 0.1)
 }

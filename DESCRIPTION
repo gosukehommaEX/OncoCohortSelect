@@ -1,7 +1,7 @@
 Package: OncoCohortSelect
 Type: Package
 Title: Cohort Selection by Posterior Benefit-Risk and Win Statistics
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: person(given = "Gosuke",
                   family = "Homma",
                   role = c("aut", "cre"),
@@ -14,11 +14,13 @@ Description: Selects one of several single-arm oncology cohorts with multiple
     reference cohort, following Chakraborty et al. (2026)
     <doi:10.1080/19466315.2026.2668381>. Generalized pairwise comparisons of
     prioritized binary and time-to-event endpoints (Buyse (2010)
-    <doi:10.1002/sim.3923>) give the net treatment benefit, the win ratio and
-    the win odds with standard errors. Correlated progression-free survival,
-    overall survival and objective response are simulated with the
-    'CorOncoEndpoints' package, an independent adverse event is added, and
-    decision rules are compared at a common probability of a false selection.
+    <doi:10.1002/sim.3923>), with the scoring rule of Gehan or of Peron et al.
+    (2018) <doi:10.1177/0962280216658320> for censored times, give the net
+    treatment benefit, the win ratio and the win odds with standard errors.
+    Correlated progression-free survival, overall survival and objective
+    response are simulated with the 'CorOncoEndpoints' package, an independent
+    adverse event is added, and decision rules that select one of two or more
+    cohorts are compared at a common probability of a false selection.
 License: MIT + file LICENSE
 URL: https://github.com/gosukehommaEX/OncoCohortSelect,
     https://gosukehommaEX.github.io/OncoCohortSelect/

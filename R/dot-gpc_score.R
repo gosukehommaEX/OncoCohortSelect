@@ -24,9 +24,11 @@
 .gpc_score <- function(xt, xc, endpoint, threshold = 0) {
   m <- nrow(xt)
   n <- nrow(xc)
+  v1 <- .ep_values(xt, endpoint)
+  v0 <- .ep_values(xc, endpoint)
   if (endpoint$type == "binary") {
-    y1 <- as.numeric(xt[[endpoint$var]])
-    y0 <- as.numeric(xc[[endpoint$var]])
+    y1 <- v1$value
+    y0 <- v0$value
     if (!endpoint$higher.better) {
       y1 <- 1 - y1
       y0 <- 1 - y0
@@ -34,11 +36,9 @@
     win <- outer(y1 %in% 1, y0 %in% 0, "&")
     loss <- outer(y1 %in% 0, y0 %in% 1, "&")
   } else {
-    t1 <- as.numeric(xt[[endpoint$time]])
-    t0 <- as.numeric(xc[[endpoint$time]])
-    e1 <- matrix(xt[[endpoint$event]] == 1, m, n)
-    e0 <- matrix(xc[[endpoint$event]] == 1, m, n, byrow = TRUE)
-    d <- outer(t1, t0, "-")
+    e1 <- matrix(v1$event == 1, m, n)
+    e0 <- matrix(v0$event == 1, m, n, byrow = TRUE)
+    d <- outer(v1$time, v0$time, "-")
     if (threshold > 0) {
       up <- d >= threshold
       down <- d <= -threshold

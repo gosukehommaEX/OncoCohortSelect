@@ -15,3 +15,16 @@ test_that("endpoint lists are named and their columns are checked", {
                                 transform(d, e = c(0, 2, 1))), "0 and 1")
   expect_error(.check_endpoints(list(1)), "Endpoint")
 })
+
+test_that("columns with positive values and censoring indicators are checked", {
+  d <- data.frame(bor = c("CR", "SD", NA), t = c(1, 2, 3), cn = c(0, 1, 2),
+                  stringsAsFactors = FALSE)
+  eps <- list(Endpoint("ORR", var = "bor", positive = c("CR", "PR")),
+              Endpoint("T", "tte", time = "t", censor = "cn"))
+  expect_named(.check_endpoints(eps, d), c("ORR", "T"))
+  # without 'positive', character values are not accepted
+  expect_error(.check_endpoints(list(Endpoint("ORR", var = "bor")), d), "positive")
+  expect_error(.check_endpoints(eps, transform(d, cn = c(0, NA, 1))), "censoring")
+  expect_error(.check_endpoints(eps, transform(d, cn = c("0", "1", "1"))), "censoring")
+  expect_error(.check_endpoints(eps, d[, c("bor", "t")]), "not found")
+})

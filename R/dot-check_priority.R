@@ -2,7 +2,8 @@
 #'
 #' @param endpoints Named list of \code{Endpoint} objects.
 #' @param priority \code{NULL} (the order of \code{endpoints}) or a character
-#'   vector of endpoint names in decreasing priority; names may be repeated.
+#'   vector of endpoint names in decreasing priority; names may be repeated
+#'   with decreasing thresholds.
 #' @param threshold \code{NULL} (0 for every level) or a numeric vector with
 #'   one non-negative value per level; ignored (must be 0 or \code{NA}) for
 #'   binary endpoints.
@@ -33,6 +34,12 @@
   threshold[binary] <- 0
   if (anyNA(threshold) || any(!is.finite(threshold)) || any(threshold < 0)) {
     stop("The thresholds of time-to-event endpoints must be non-negative.", call. = FALSE)
+  }
+  for (nm in unique(priority[duplicated(priority)])) {
+    if (any(diff(threshold[priority == nm]) >= 0)) {
+      stop("An endpoint used more than once in 'priority' must have decreasing thresholds.",
+           call. = FALSE)
+    }
   }
   names(eps) <- priority
   list(endpoints = eps, threshold = threshold)

@@ -1,0 +1,17 @@
+spec,level,endpoint,threshold
+peron1,1,os,0
+peron1,2,pfs,0
+peron1,3,resp,0
+peron1,4,ae,0
+peron2,1,resp,0
+peron2,2,pfs,2
+peron2,3,ae,0
+peron2,4,os,1
+peron3,1,os,3
+peron3,2,pfs,0
+peron3,3,os,0
+peron3,4,ae,0
+peron4,1,os,2
+peron4,2,resp,0
+peron4,3,os,0
+peron4,4,pfs,1

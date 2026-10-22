@@ -227,3 +227,121 @@ def gpc(trt, ctl, eps_ordered, thresholds):
                if pw > 0 and pl > 0 else float("nan"),
                wo=(1 + ntb) / (1 - ntb))
     return res, win_k / (m * n), loss_k / (m * n)
+
+
+# ---------------------------------------------------------------------------
+# Generalized pairwise comparisons with the scoring rule of Peron
+# ---------------------------------------------------------------------------
+# Each censored observation is replaced by its conditional distribution given
+# survival beyond the censoring time, estimated by the Kaplan-Meier estimator of
+# its group: point masses at the later event times and a tail mass beyond the
+# last observed time, whose location is unknown. An event time is a point mass
+# 1. The probability that a pair is favorable is the total mass of the
+# combinations for which the treatment time is certainly longer by at least
+# the threshold (strictly longer with a threshold of 0); the tail mass counts
+# only when the comparison is certain whatever its location. The unfavorable
+# probability is defined symmetrically.
+#
+# The weight of a pair at a priority level is the product, over the other
+# endpoints already analyzed, of the probability that the pair is undecided at
+# the last threshold of that endpoint. When an endpoint is analyzed again with a
+# smaller threshold, the probabilities at the previous threshold are subtracted,
+# since a pair favorable at the larger threshold is favorable at the smaller
+# one. This is the rule of the BuyseTest package; with scores of 0 and 1 it
+# reduces to passing the undecided pairs to the next level.
+
+def kaplan_meier(times, events):
+    """Event times, survival just after each event time, last observed time."""
+    ut = sorted(set(t for t, e in zip(times, events) if e == 1))
+    surv, s = [], 1.0
+    for u in ut:
+        d = sum(1 for t, e in zip(times, events) if e == 1 and t == u)
+        r = sum(1 for t in times if t >= u)
+        s *= 1.0 - d / r
+        surv.append(s)
+    return ut, surv, max(times)
+
+
+def km_survival(km, t):
+    ut, surv, tmax = km
+    s = 1.0
+    for u, v in zip(ut, surv):
+        if u <= t:
+            s = v
+    return s
+
+
+def conditional_masses(km, t, event):
+    """Point masses (location, mass) and tail mass of the true time."""
+    if event == 1:
+        return [(t, 1.0)], 0.0
+    ut, surv, tmax = km
+    st = km_survival(km, t)
+    pts, prev = [], st
+    for u, v in zip(ut, surv):
+        if u > t:
+            pts.append((u, (prev - v) / st))
+            prev = v
+    return pts, km_survival(km, tmax) / st
+
+
+def peron_pair(km_t, km_c, x, ex, y, ey, thr):
+    """Lower bounds of P(treatment longer) and P(control longer)."""
+    pt, tail_t = conditional_masses(km_t, x, ex)
+    pc, tail_c = conditional_masses(km_c, y, ey)
+    tmax_t, tmax_c = km_t[2], km_c[2]
+
+    def longer(a, b):  # a certainly longer than b
+        return (a - b >= thr) if thr > 0 else (a - b > 0)
+
+    def longer_tail(tmax, b):  # a true time beyond tmax is certainly longer than b
+        return (tmax - b >= thr) if thr > 0 else (tmax - b >= 0)
+
+    fav = sum(ma * mb for a, ma in pt for b, mb in pc if longer(a, b))
+    fav += tail_t * sum(mb for b, mb in pc if longer_tail(tmax_t, b))
+    unf = sum(ma * mb for a, ma in pt for b, mb in pc if longer(b, a))
+    unf += tail_c * sum(ma for a, ma in pt if longer_tail(tmax_c, a))
+    return fav, unf
+
+
+def gpc_peron(trt, ctl, eps_ordered, thresholds):
+    """Generalized pairwise comparison with Peron scores for time-to-event endpoints."""
+    m, n = len(trt), len(ctl)
+    K = len(eps_ordered)
+    W = np.zeros((m, n))
+    L = np.zeros((m, n))
+    win_k = np.zeros(K)
+    loss_k = np.zeros(K)
+    rest, fav_prev, unf_prev = {}, {}, {}
+    for k, ep in enumerate(eps_ordered):
+        name = ep["name"]
+        if ep["type"] == "tte":
+            km_t = kaplan_meier([r[ep["time"]] for r in trt], [r[ep["event"]] for r in trt])
+            km_c = kaplan_meier([r[ep["time"]] for r in ctl], [r[ep["event"]] for r in ctl])
+        F = np.zeros((m, n))
+        U = np.zeros((m, n))
+        for i in range(m):
+            for j in range(n):
+                if ep["type"] == "binary":
+                    s = score_pair(ep, trt[i], ctl[j], thresholds[k])
+                    f, u = float(s == 1), float(s == -1)
+                else:
+                    tl, cl = peron_pair(km_t, km_c, trt[i][ep["time"]], trt[i][ep["event"]],
+                                        ctl[j][ep["time"]], ctl[j][ep["event"]], thresholds[k])
+                    f, u = (tl, cl) if ep["higher"] else (cl, tl)
+                F[i, j], U[i, j] = f, u
+        w = np.ones((m, n))
+        for other, r in rest.items():
+            if other != name:
+                w = w * r
+        dF = F - fav_prev.get(name, 0.0)
+        dU = U - unf_prev.get(name, 0.0)
+        W += w * dF
+        L += w * dU
+        win_k[k] = (w * dF).sum()
+        loss_k[k] = (w * dU).sum()
+        rest[name] = np.maximum(1.0 - F - U, 0.0)
+        fav_prev[name], unf_prev[name] = F, U
+    pw, pl = W.mean(), L.mean()
+    return dict(p_win=pw, p_loss=pl, p_tie=1 - pw - pl, ntb=pw - pl,
+                wr=pw / pl if pl > 0 else float("inf")), win_k / (m * n), loss_k / (m * n)

@@ -19,16 +19,19 @@ the selection rules by simulation.
   relative to a reference cohort, and combined by a weighted geometric mean;
   admissibility cutoffs can be set for each component.
 * **Generalized pairwise comparisons** (Buyse, 2010) of prioritized binary and
-  time-to-event endpoints with the scoring rule of Gehan: the net treatment
-  benefit, the win ratio and the win odds, with standard errors from the
-  U-statistic theory. Any number of endpoints, any priority order and
-  thresholds for time-to-event endpoints can be used.
+  time-to-event endpoints with the scoring rule of Gehan or of Péron et al.
+  (2018): the net treatment benefit, the win ratio and the win odds, with
+  standard errors from the U-statistic theory. Any number of endpoints, any
+  priority order and thresholds for time-to-event endpoints can be used.
 * **Simulation.** Correlated progression-free survival, overall survival and
   objective response are generated for each cohort with the
   [CorOncoEndpoints](https://github.com/gosukehommaEX/CorOncoEndpoints)
   package, an adverse event independent of them is added, and the data are cut
-  at a calendar time of analysis. The decision rules are compared at a common
-  probability of selecting a cohort that is not better.
+  at a calendar time of analysis. Two or more cohorts are compared with a
+  reference cohort, and the decision rules are compared at a common
+  probability of selecting a cohort that is not better than the reference.
+* **Data of a completed trial** can use columns coded as in ADaM data sets,
+  such as censoring indicators (`CNSR`) and the best overall response.
 
 ## Installation
 
@@ -71,6 +74,17 @@ BenefitRisk(d, eps, crit_ref, reference = "Cohort2")
 
 # net treatment benefit, win ratio and win odds (priority OS, PFS, ORR, AE)
 WinStat(d, eps, treatment = "Cohort1", control = "Cohort2")$ci
+
+# censored pairs scored with the Kaplan-Meier estimates (Peron)
+WinStat(d, eps, treatment = "Cohort1", control = "Cohort2", scoring = "peron")$ci
+```
+
+Columns coded as in ADaM data sets are named in `Endpoint()`:
+
+```r
+Endpoint("OS", "tte", time = "OSAVAL", censor = "OSCNSR")
+Endpoint("ORR", "binary", var = "BOR", positive = c("CR", "PR"))
+Endpoint("AE", "binary", var = "AEFL", positive = "Y", higher.better = FALSE)
 ```
 
 ## Functions
@@ -82,28 +96,31 @@ WinStat(d, eps, treatment = "Cohort1", control = "Cohort2")$ci
 | `BenefitRisk()` | Component probabilities, admissibility and composite benefit-risk score of cohorts |
 | `WinStat()` | Net treatment benefit, win ratio and win odds of prioritized endpoints |
 | `SimCohorts()` | Simulate cohorts with correlated PFS, OS and response and an adverse event |
-| `SimSelection()` | Benefit-risk scores and win statistics of simulated trials |
-| `SelectionOC()` | Selection probabilities of a decision rule |
-| `CalibrateThreshold()` | Threshold of a decision rule for a given false selection probability |
+| `SimSelection()` | Benefit-risk scores and win statistics of simulated trials, for two or more cohorts against a reference cohort |
+| `SelectionOC()` | Probability that a decision rule selects each cohort |
+| `CalibrateThreshold()` | Threshold of a decision rule for a given probability of selecting a cohort other than the reference |
 
 ## Verification
 
 * `tests/testthat`: expected values computed independently in Python
   (`inst/validation/python`), the example of Section S.4 of the supplementary
-  material of Chakraborty et al. (2026), and comparisons with the BuyseTest
-  package.
+  material of Chakraborty et al. (2026), hand calculations, and comparisons
+  with the BuyseTest package (Gehan and Péron scoring rules).
 * `inst/reproduce/reproduce_published.R`: reproduction of published numbers.
 * `inst/validation/validate_posterior.R`: Monte Carlo check of the posterior
   probabilities.
 * `inst/validation/validate_winstat.R`: comparison of the win statistics with
-  BuyseTest on simulated trials.
+  BuyseTest on simulated trials, with the Gehan and Péron scoring rules.
 * `inst/validation/validate_simcohorts.R`: Monte Carlo check of the simulated
   cohorts.
 
-## Vignettes
+## Articles
 
 * Getting started with OncoCohortSelect
-* Comparing selection rules by simulation
+* Posterior benefit-risk score
+* Net benefit and win ratio
+* Evaluating decision rules by simulation
+* Analyzing a completed trial
 
 ## References
 
@@ -116,6 +133,11 @@ optimization framework for oncology drug development with multiple efficacy
 and safety endpoints via an integrated benefit-risk assessment. *Statistics in
 Biopharmaceutical Research*, published online.
 https://doi.org/10.1080/19466315.2026.2668381
+
+Péron, J., Buyse, M., Ozenne, B., Roche, L. and Roy, P. (2018). An extension of
+generalized pairwise comparisons for prioritized outcomes in the presence of
+censoring. *Statistical Methods in Medical Research*, 27, 1230-1239.
+https://doi.org/10.1177/0962280216658320
 
 ## License
 
