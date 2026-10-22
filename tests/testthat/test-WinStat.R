@@ -133,7 +133,10 @@ test_that("the output has the documented structure", {
   d <- fixture("gpc_cont.csv")
   res <- WinStat(d, fixture_endpoints(), treatment = "T", control = "C", group = "arm",
                  conf.level = 0.9)
-  expect_named(res, c("estimate", "ci", "by.endpoint", "n"))
+  expect_s3_class(res, "WinStat")
+  expect_named(res, c("estimate", "ci", "by.endpoint", "n", "settings"))
+  expect_identical(res$settings, list(treatment = "T", control = "C", scoring = "gehan",
+                                      conf.level = 0.9))
   expect_named(res$estimate, c("p_win", "p_loss", "p_tie", "ntb", "wr", "wo"))
   expect_identical(res$ci$statistic, c("NTB", "WR", "WO"))
   expect_equal(unname(res$n), c(40, 35, 1400))

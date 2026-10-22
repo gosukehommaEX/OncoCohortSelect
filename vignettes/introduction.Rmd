@@ -8,7 +8,8 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5,
+                      out.width = "100%")
 ```
 
 ```{r setup}
@@ -76,11 +77,18 @@ PFS, response and adverse event.
 
 ```{r}
 w <- WinStat(d, eps, treatment = "Cohort2", control = "Cohort1")
-w$ci
+w
 ```
 
 The net treatment benefit of Cohort2 is `r round(w$estimate[["ntb"]], 2)` and
-its win ratio `r round(w$estimate[["wr"]], 2)`.
+its win ratio `r round(w$estimate[["wr"]], 2)`. The results of
+`BenefitRisk()`, `WinStat()`, `SimSelection()` and `SelectionOC()` have
+`print()` and `plot()` methods; the plot of the win statistics shows how many
+pairs each endpoint decides.
+
+```{r}
+plot(w)
+```
 
 ## Where to go next
 

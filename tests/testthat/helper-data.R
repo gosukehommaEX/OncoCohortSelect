@@ -40,3 +40,10 @@ peron_example <- function() {
        xc = data.frame(t = c(4, 6, 8, 10), e = c(1, 0, 1, 0)),
        ep = Endpoint("T", "tte", time = "t", event = "e"))
 }
+
+# evaluates a plotting call on a null graphics device and returns its value
+with_null_device <- function(code) {
+  grDevices::pdf(NULL)
+  on.exit(grDevices::dev.off())
+  code
+}

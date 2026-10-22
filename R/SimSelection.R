@@ -39,7 +39,11 @@
 #'   differences.
 #' @param scores Logical: if \code{TRUE}, the posterior probabilities of the
 #'   components are added to the output.
-#' @return A data frame with one row per simulated trial and cohort. The
+#' @return A data frame of class \code{SimSelection} with one row per
+#'   simulated trial and cohort and an attribute \code{settings} with the
+#'   reference cohort, the scoring rule and the confidence level (see
+#'   \code{\link{SimSelection-methods}} for \code{print()} and
+#'   \code{plot()}). The
 #'   statistics that compare a cohort with the reference cohort are \code{NA}
 #'   in the rows of the reference cohort. With \code{scores = TRUE}, the
 #'   posterior probabilities of the components are added after the columns
@@ -169,5 +173,8 @@ SimSelection <- function(data, endpoints, criteria, reference, cohorts = NULL,
     }
   }
   rownames(out) <- NULL
+  attr(out, "settings") <- list(reference = reference, scoring = scoring,
+                                conf.level = conf.level)
+  class(out) <- c("SimSelection", "data.frame")
   out
 }

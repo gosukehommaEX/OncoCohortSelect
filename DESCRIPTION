@@ -1,7 +1,7 @@
 Package: OncoCohortSelect
 Type: Package
 Title: Cohort Selection by Posterior Benefit-Risk and Win Statistics
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: person(given = "Gosuke",
                   family = "Homma",
                   role = c("aut", "cre"),
@@ -30,6 +30,8 @@ Depends:
     R (>= 4.1.0)
 Imports:
     stats,
+    graphics,
+    grDevices,
     CorOncoEndpoints (>= 0.3.0),
     dqrng
 Remotes:

@@ -8,7 +8,8 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5,
+                      out.width = "100%")
 ```
 
 ```{r setup}
@@ -112,6 +113,14 @@ head(res[["Cohort3 best"]][, c("sim", "group", "br", "adm", "br_diff", "br_ref",
                                "wr")])
 ```
 
+`plot()` shows the distribution of a statistic over the simulated trials for
+each cohort, here the net treatment benefit against Cohort1 in the scenario
+"Cohort3 best".
+
+```{r}
+plot(res[["Cohort3 best"]], "ntb")
+```
+
 The pairwise comparisons use the scoring rule of Gehan; `scoring = "peron"`
 in `SimSelection()` uses the rule of Péron instead.
 
@@ -126,6 +135,14 @@ thr <- do.call(rbind, lapply(stats, function(s) {
   CalibrateThreshold(res[["Null"]], s, alpha = 0.10)
 }))
 thr
+thr_ntb <- thr$threshold[thr$statistic == "ntb"]
+```
+
+In the null scenario, a new cohort is selected by the net treatment benefit
+when its value lies above the dashed line, the calibrated threshold.
+
+```{r}
+plot(res[["Null"]], "ntb", threshold = thr_ntb)
 ```
 
 ## Selection probabilities
@@ -165,6 +182,16 @@ many adverse events, whereas in the pairwise comparisons the adverse event has
 the lowest priority and decides only the pairs left undecided by OS, PFS and
 response; a rule based on win statistics gives more weight to safety when the
 adverse event comes earlier in the priority order.
+
+With several thresholds, `SelectionOC()` shows how the selection
+probabilities change with the threshold; the dashed line is the calibrated
+threshold of the net treatment benefit.
+
+```{r}
+oc <- SelectionOC(res[["Cohort3 best"]], "ntb", threshold = seq(0, 0.4, by = 0.02))
+plot(oc)
+abline(v = thr_ntb, lty = 2)
+```
 
 ## Saturation of the score against target values
 

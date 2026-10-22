@@ -55,7 +55,11 @@ differences.}
 components are added to the output.}
 }
 \value{
-A data frame with one row per simulated trial and cohort. The
+A data frame of class \code{SimSelection} with one row per
+  simulated trial and cohort and an attribute \code{settings} with the
+  reference cohort, the scoring rule and the confidence level (see
+  \code{\link{SimSelection-methods}} for \code{print()} and
+  \code{plot()}). The
   statistics that compare a cohort with the reference cohort are \code{NA}
   in the rows of the reference cohort. With \code{scores = TRUE}, the
   posterior probabilities of the components are added after the columns

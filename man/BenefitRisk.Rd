@@ -29,10 +29,14 @@ cohort used as the reference.}
 differences.}
 }
 \value{
-A data frame with one row per cohort (other than the reference)
-  and columns \code{group}, \code{reference} (with a reference cohort), one
-  column per component with its posterior probability, \code{admissible},
-  \code{BR} and, without a reference cohort, \code{selected}.
+A data frame of class \code{BenefitRisk} with one row per cohort
+  (other than the reference) and columns \code{group}, \code{reference}
+  (with a reference cohort), one column per component with its posterior
+  probability, \code{admissible}, \code{BR} and, without a reference
+  cohort, \code{selected}. The attribute \code{components} holds the
+  definition, weight and cutoff of each component, and the attribute
+  \code{reference} the reference cohort (if any). See
+  \code{\link{BenefitRisk-methods}} for \code{print()} and \code{plot()}.
 }
 \description{
 Computes, for each cohort, the posterior probabilities that its endpoints

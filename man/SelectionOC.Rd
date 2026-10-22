@@ -23,11 +23,12 @@ SelectionOC(
 scores (\code{"br_diff"} and \code{"br_ref"} only).}
 }
 \value{
-A data frame with columns \code{statistic}, \code{threshold},
-  \code{group} and \code{p_select}, with one row per threshold and cohort
-  (in the order of \code{results}), and, for \code{"br_diff"} with
-  admissibility, a row \code{"(none)"} for the trials in which no cohort is
-  selected.
+A data frame of class \code{SelectionOC} with columns
+  \code{statistic}, \code{threshold}, \code{group} and \code{p_select},
+  with one row per threshold and cohort (in the order of \code{results}),
+  and, for \code{"br_diff"} with admissibility, a row \code{"(none)"} for
+  the trials in which no cohort is selected. See
+  \code{\link{SelectionOC-methods}} for \code{print()} and \code{plot()}.
 }
 \description{
 Computes, from the results of \code{\link{SimSelection}}, the proportion of

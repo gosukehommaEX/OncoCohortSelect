@@ -34,11 +34,12 @@
 #' @param threshold Numeric vector of thresholds.
 #' @param admissibility Logical: use the admissibility of the benefit-risk
 #'   scores (\code{"br_diff"} and \code{"br_ref"} only).
-#' @return A data frame with columns \code{statistic}, \code{threshold},
-#'   \code{group} and \code{p_select}, with one row per threshold and cohort
-#'   (in the order of \code{results}), and, for \code{"br_diff"} with
-#'   admissibility, a row \code{"(none)"} for the trials in which no cohort is
-#'   selected.
+#' @return A data frame of class \code{SelectionOC} with columns
+#'   \code{statistic}, \code{threshold}, \code{group} and \code{p_select},
+#'   with one row per threshold and cohort (in the order of \code{results}),
+#'   and, for \code{"br_diff"} with admissibility, a row \code{"(none)"} for
+#'   the trials in which no cohort is selected. See
+#'   \code{\link{SelectionOC-methods}} for \code{print()} and \code{plot()}.
 #' @examples
 #' res <- data.frame(sim = rep(1:4, each = 3),
 #'                   group = rep(c("A", "B", "C"), 4),
@@ -78,5 +79,6 @@ SelectionOC <- function(results, statistic = c("br_diff", "br_ref", "ntb", "ntb_
                stringsAsFactors = FALSE)
   }))
   rownames(out) <- NULL
+  class(out) <- c("SelectionOC", "data.frame")
   out
 }

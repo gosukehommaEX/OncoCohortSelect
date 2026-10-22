@@ -13,6 +13,10 @@ test_that("scores against target values agree with independent Python values", {
   expect_lt(max(abs(res$BR - sm$BR)), 1e-9)
   expect_identical(res$admissible, sm$admissible)
   expect_identical(res$selected, as.logical(sm$selected))
+  expect_s3_class(res, c("BenefitRisk", "data.frame"))
+  comp <- attr(res, "components")
+  expect_identical(comp$label, ex$label[ex$group == ex$group[1]])
+  expect_null(attr(res, "reference"))
   # the same comparison fails when one expected value is changed by 1e-6
   changed <- ex$S
   changed[2] <- changed[2] + 1e-6

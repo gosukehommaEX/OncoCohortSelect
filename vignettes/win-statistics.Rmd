@@ -8,7 +8,8 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5,
+                      out.width = "100%")
 ```
 
 ```{r setup}
@@ -62,14 +63,20 @@ eps <- list(
   Endpoint("ORR", "binary", var = "response"),
   Endpoint("AE", "binary", var = "ae", higher.better = FALSE))
 w <- WinStat(d, eps, treatment = "Cohort2", control = "Cohort1")
-w$estimate
-w$by.endpoint
+w
 ```
 
-`by.endpoint` gives, for each priority level, the proportions of all pairs won
-and lost at that level and the proportion still undecided after it. Of the
-pairs, `r round(100 * w$by.endpoint$undecided[1])`% are not decided by OS:
-the pairs in which the shorter observed time is censored.
+The table by priority level (the element `by.endpoint` of the result) gives
+the proportions of all pairs won and lost at each level and the proportion
+still undecided after it. `plot()` draws the same proportions, with the net
+treatment benefit and the win ratio in the title.
+
+```{r}
+plot(w)
+```
+
+Of the pairs, `r round(100 * w$by.endpoint$undecided[1])`% are not decided by
+OS: the pairs in which the shorter observed time is censored.
 
 ## Scoring rules for censored times
 
@@ -91,8 +98,8 @@ of the pair goes to the next endpoint.
 
 ```{r}
 wp <- WinStat(d, eps, treatment = "Cohort2", control = "Cohort1", scoring = "peron")
-wp$by.endpoint
 rbind(Gehan = w$estimate, Peron = wp$estimate)
+plot(wp)
 ```
 
 With the Péron rule, OS leaves `r round(100 * wp$by.endpoint$undecided[1])`%
@@ -111,7 +118,7 @@ again on OS with a threshold of 0, and finally on response.
 ```{r}
 w3 <- WinStat(d, eps, treatment = "Cohort2", control = "Cohort1",
               priority = c("OS", "AE", "OS", "ORR"), threshold = c(3, 0, 0, 0))
-w3$by.endpoint
+plot(w3)
 ```
 
 With the Gehan rule used here, a pair decided by OS with the threshold of 3

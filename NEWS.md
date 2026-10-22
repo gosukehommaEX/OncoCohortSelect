@@ -1,3 +1,17 @@
+# OncoCohortSelect 0.3.0
+
+* `print()` and `plot()` methods for the results of `BenefitRisk()`,
+  `WinStat()`, `SimSelection()` and `SelectionOC()`, and a `print()` method
+  for `Endpoint()`. The results have the classes `BenefitRisk`, `WinStat`,
+  `SimSelection` and `SelectionOC`; the data frames remain data frames.
+* `WinStat()` returns the cohorts, the scoring rule and the confidence level
+  in the element `settings`, and `SimSelection()` returns the reference
+  cohort, the scoring rule and the confidence level in the attribute
+  `settings`.
+* The plots use base graphics (packages graphics and grDevices).
+* The example of the article "Posterior benefit-risk score" has larger cohorts
+  and clearer differences between them, and the articles show the new plots.
+
 # OncoCohortSelect 0.2.0
 
 ## Breaking changes

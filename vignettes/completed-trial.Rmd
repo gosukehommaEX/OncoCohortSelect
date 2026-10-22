@@ -8,7 +8,8 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5,
+                      out.width = "100%")
 ```
 
 ```{r setup}
@@ -75,6 +76,7 @@ crit <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
                    weight = c(1 / 3, 1 / 3, 1 / 3, 1), cutoff = c(NA, NA, NA, 0.8))
 br <- BenefitRisk(adsl, eps, crit, group = "TRT01P")
 br
+plot(br)
 ```
 
 Relative to Cohort 1, the reference regimen:
@@ -86,6 +88,7 @@ crit_ref <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
                        weight = c(1 / 3, 1 / 3, 1 / 3, 1), cutoff = c(NA, NA, NA, 0.8))
 br_ref <- BenefitRisk(adsl, eps, crit_ref, group = "TRT01P", reference = "Cohort 1")
 br_ref
+plot(br_ref)
 ```
 
 ## Win statistics
@@ -96,8 +99,9 @@ adverse event.
 ```{r}
 w2 <- WinStat(adsl, eps, treatment = "Cohort 2", control = "Cohort 1", group = "TRT01P")
 w3 <- WinStat(adsl, eps, treatment = "Cohort 3", control = "Cohort 1", group = "TRT01P")
-w2$ci
-w3$ci
+w2
+plot(w2)
+plot(w3)
 ```
 
 The net treatment benefit against Cohort 1 is

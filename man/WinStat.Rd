@@ -41,7 +41,7 @@ or \code{"peron"}.}
 \item{conf.level}{Confidence level of the intervals.}
 }
 \value{
-A list with elements
+A list of class \code{WinStat} with elements
   \item{estimate}{Named vector with \code{p_win}, \code{p_loss},
     \code{p_tie}, \code{ntb}, \code{wr} and \code{wo}.}
   \item{ci}{Data frame with the estimate, standard error and confidence
@@ -53,6 +53,9 @@ A list with elements
     probabilities divided by the number of pairs).}
   \item{n}{Named vector with the numbers of treatment and control patients
     and of pairs.}
+  \item{settings}{List with \code{treatment}, \code{control},
+    \code{scoring} and \code{conf.level}.}
+  See \code{\link{WinStat-methods}} for \code{print()} and \code{plot()}.
 }
 \description{
 Compares every patient of one cohort (\code{treatment}) with every patient

@@ -66,3 +66,11 @@ reference:
       - SimSelection
       - SelectionOC
       - CalibrateThreshold
+  - title: "Printing and plotting"
+    desc: >
+      Summaries and plots of the results
+    contents:
+      - BenefitRisk-methods
+      - WinStat-methods
+      - SimSelection-methods
+      - SelectionOC-methods

@@ -78,6 +78,9 @@ test_that("columns of the reference score are omitted without criteria.ref", {
   res <- SimSelection(d, sim_endpoints(), sim_criteria(), reference = "Cohort2")
   expect_named(res, c("sim", "group", "is_reference", "br", "adm", "br_diff", "p_win",
                       "p_loss", "p_tie", "ntb", "ntb_se", "ntb_lower", "wr", "wo"))
+  expect_s3_class(res, c("SimSelection", "data.frame"))
+  expect_identical(attr(res, "settings"),
+                   list(reference = "Cohort2", scoring = "gehan", conf.level = 0.95))
   expect_equal(nrow(res), 4)
 })
 

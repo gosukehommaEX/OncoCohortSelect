@@ -71,7 +71,7 @@
 #' @param scoring Scoring rule of time-to-event endpoints: \code{"gehan"}
 #'   or \code{"peron"}.
 #' @param conf.level Confidence level of the intervals.
-#' @return A list with elements
+#' @return A list of class \code{WinStat} with elements
 #'   \item{estimate}{Named vector with \code{p_win}, \code{p_loss},
 #'     \code{p_tie}, \code{ntb}, \code{wr} and \code{wo}.}
 #'   \item{ci}{Data frame with the estimate, standard error and confidence
@@ -83,6 +83,9 @@
 #'     probabilities divided by the number of pairs).}
 #'   \item{n}{Named vector with the numbers of treatment and control patients
 #'     and of pairs.}
+#'   \item{settings}{List with \code{treatment}, \code{control},
+#'     \code{scoring} and \code{conf.level}.}
+#'   See \code{\link{WinStat-methods}} for \code{print()} and \code{plot()}.
 #' @references
 #' Buyse, M. (2010). Generalized pairwise comparisons of prioritized outcomes
 #' in the two-sample problem. \emph{Statistics in Medicine}, 29, 3245-3257.
@@ -173,7 +176,11 @@ WinStat <- function(data, endpoints, treatment, control, group = "group",
   by_ep <- data.frame(priority = seq_along(win), endpoint = names(pr$endpoints),
                       threshold = pr$threshold, win = win, loss = loss,
                       undecided = 1 - cumsum(win + loss), stringsAsFactors = FALSE)
-  list(estimate = st[c("p_win", "p_loss", "p_tie", "ntb", "wr", "wo")],
-       ci = ci, by.endpoint = by_ep,
-       n = c(treatment = length(it), control = length(ic), pairs = np))
+  out <- list(estimate = st[c("p_win", "p_loss", "p_tie", "ntb", "wr", "wo")],
+              ci = ci, by.endpoint = by_ep,
+              n = c(treatment = length(it), control = length(ic), pairs = np),
+              settings = list(treatment = treatment, control = control, scoring = scoring,
+                              conf.level = conf.level))
+  class(out) <- "WinStat"
+  out
 }

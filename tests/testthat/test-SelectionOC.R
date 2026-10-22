@@ -2,6 +2,7 @@ test_that("selection probabilities follow the decision rules (worked out by hand
   r <- oc_results()
   oc <- SelectionOC(r, "br_diff", threshold = c(0, 0.35))
   expect_named(oc, c("statistic", "threshold", "group", "p_select"))
+  expect_s3_class(oc, c("SelectionOC", "data.frame"))
   expect_identical(oc$threshold, rep(c(0, 0.35), each = 4))
   expect_identical(oc$group, rep(c("A", "B", "C", "(none)"), 2))
   expect_equal(oc$p_select, c(1, 1, 1, 1, 2, 1, 0, 1) / 4)

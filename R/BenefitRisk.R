@@ -66,10 +66,14 @@
 #'   cohort used as the reference.
 #' @param n.nodes Number of Gauss-Legendre nodes for probabilities of
 #'   differences.
-#' @return A data frame with one row per cohort (other than the reference)
-#'   and columns \code{group}, \code{reference} (with a reference cohort), one
-#'   column per component with its posterior probability, \code{admissible},
-#'   \code{BR} and, without a reference cohort, \code{selected}.
+#' @return A data frame of class \code{BenefitRisk} with one row per cohort
+#'   (other than the reference) and columns \code{group}, \code{reference}
+#'   (with a reference cohort), one column per component with its posterior
+#'   probability, \code{admissible}, \code{BR} and, without a reference
+#'   cohort, \code{selected}. The attribute \code{components} holds the
+#'   definition, weight and cutoff of each component, and the attribute
+#'   \code{reference} the reference cohort (if any). See
+#'   \code{\link{BenefitRisk-methods}} for \code{print()} and \code{plot()}.
 #' @references
 #' Chakraborty, S., Dubey, A. K., Kumar, A. and Chan, I. (2026). A two-stage
 #' dose optimization framework for oncology drug development with multiple
@@ -138,5 +142,11 @@ BenefitRisk <- function(data, endpoints, criteria, group = "group",
     if (length(cand)) out$selected[cand[which.max(out$BR[cand])]] <- TRUE
   }
   rownames(out) <- NULL
+  attr(out, "components") <- data.frame(
+    label = crit$label, endpoint = crit$endpoint,
+    definition = .br_definitions(crit, !is.null(reference)),
+    weight = crit$weight, cutoff = crit$cutoff, stringsAsFactors = FALSE)
+  attr(out, "reference") <- reference
+  class(out) <- c("BenefitRisk", "data.frame")
   out
 }

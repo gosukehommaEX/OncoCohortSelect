@@ -8,7 +8,8 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 4.5,
+                      out.width = "100%")
 ```
 
 ```{r setup}
@@ -88,18 +89,19 @@ cohort with the highest score is marked as selected.
 
 ## Scores against target values
 
-The data of one simulated trial with three cohorts illustrate the score.
-Cohort1 is the reference regimen; Cohort2 is more active, and Cohort3 is the
-most active but has more adverse events.
+The data of one simulated trial with three cohorts of 50 patients illustrate
+the score. Cohort1 is the reference regimen. Cohort2 and Cohort3 are more
+active, and Cohort3 has many more adverse events (a true rate of 0.5 against
+0.15).
 
 ```{r}
 make_arm <- function(pfs, orr, os) {
   CorOncoEndpoints::OncoArm(pfs.median = pfs, orr = orr, resp.cor = 0.4,
                             death.prop = 0.15, os.median = os)
 }
-arms <- list(Cohort1 = make_arm(5, 0.30, 14), Cohort2 = make_arm(7, 0.45, 17),
-             Cohort3 = make_arm(8, 0.55, 18))
-d <- SimCohorts(nsim = 1, n = c(40, 40, 40), arms = arms, ae.rate = c(0.20, 0.25, 0.45),
+arms <- list(Cohort1 = make_arm(5, 0.30, 14), Cohort2 = make_arm(8, 0.50, 20),
+             Cohort3 = make_arm(9, 0.55, 21))
+d <- SimCohorts(nsim = 1, n = c(50, 50, 50), arms = arms, ae.rate = c(0.15, 0.15, 0.50),
                 cutoff = 24, a.time = c(0, 12), seed = 11)
 eps <- list(
   Endpoint("OS", "tte", time = "os_tte", event = "os_event"),
@@ -130,6 +132,15 @@ adverse event. Cohort3 has an `AE` component of
 The selected cohort is
 `r if (any(br$selected)) br$group[br$selected] else "none"`.
 
+The printed result lists the definition, weight and cutoff of each component
+before the scores. `plot()` shows the components and the score of each cohort;
+the dashed lines are the admissibility cutoffs, and an asterisk marks a cohort
+that is not admissible.
+
+```{r}
+plot(br)
+```
+
 A component against a fixed target measures how certainly a cohort exceeds the
 target, not by how much. When several cohorts clearly exceed all targets, their
 components are all close to 1 and the scores separate them little. The targets
@@ -158,6 +169,7 @@ crit_ref <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
                        cutoff = c(NA, NA, NA, 0.8))
 br_ref <- BenefitRisk(d, eps, crit_ref, reference = "Cohort1")
 br_ref
+plot(br_ref)
 ```
 
 Here `ORR` is $P(p - p_{\mathrm{ref}} \ge 0.1)$, `PFS_HR` and `OS_HR` are the

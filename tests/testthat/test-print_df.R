@@ -1,0 +1,10 @@
+test_that("data frames are printed without their subclass and can be truncated", {
+  x <- structure(data.frame(a = 1:12, b = letters[1:12]), class = c("foo", "data.frame"))
+  out <- capture.output(v <- withVisible(.print_df(x, n = 5)))
+  expect_false(v$visible)
+  expect_identical(v$value, x)
+  expect_length(out, 7)
+  expect_identical(out[7], "# ... with 7 more rows")
+  expect_length(capture.output(.print_df(x)), 13)
+  expect_identical(capture.output(.print_df(x[1:2, ], n = 1))[3], "# ... with 1 more row")
+})
