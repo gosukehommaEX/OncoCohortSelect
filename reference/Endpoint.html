@@ -19,7 +19,7 @@ SimSelection; any number of endpoints can be defined."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,7 @@ SimSelection; any number of endpoints can be defined."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Define an endpoint</h1>
-      <small class="dont-index">Source: <a href="https://github.com/gosukehommaEX/OncoCohortSelect/blob/main/R/Endpoint.R" class="external-link"><code>R/Endpoint.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/gosukehommaEX/OncoCohortSelect/blob/main/R/Endpoint.R" class="external-link"><code>R/Endpoint.R</code></a>, <a href="https://github.com/gosukehommaEX/OncoCohortSelect/blob/main/R/print.Endpoint.R" class="external-link"><code>R/print.Endpoint.R</code></a></small>
       <div class="d-none name"><code>Endpoint.Rd</code></div>
     </div>
 
@@ -73,7 +73,10 @@ definitions are used by <code><a href="BenefitRisk.html">BenefitRisk</a></code>,
 <span>  censor <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  positive <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  higher.better <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Endpoint'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -118,6 +121,14 @@ censoring indicators (0 = event, other values = censored).</p></dd>
 <dt id="arg-higher-better">higher.better<a class="anchor" aria-label="anchor" href="#arg-higher-better"></a></dt>
 <dd><p>Logical: <code>TRUE</code> if a value of 1 (binary) or a
 longer time (time to event) is favorable.</p></dd>
+
+
+<dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dd><p>An <code>Endpoint</code> object.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Not used.</p></dd>
 
 </dl></div>
     <div class="section level2">

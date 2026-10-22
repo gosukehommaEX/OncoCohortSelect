@@ -71,9 +71,19 @@ and that the adverse event rate is at most 0.3.
 crit <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
                    target = c(0.30, 0.50, 0.60, 0.30), time = c(NA, 6, 12, NA))
 BenefitRisk(d, eps, crit)
-#>     group       ORR    PFS_S6    OS_S12        AE admissible        BR selected
-#> 1 Cohort1 0.8898885 0.2159728 0.1842278 0.9986265       TRUE 0.4336339    FALSE
-#> 2 Cohort2 0.9999997 0.9517429 0.9070318 0.9428881       TRUE 0.9498402     TRUE
+#> Posterior benefit-risk scores against target values
+#> 
+#>  component definition      weight cutoff
+#>  ORR       P(rate >= 0.3)  0.25         
+#>  PFS_S6    P(S(6) >= 0.5)  0.25         
+#>  OS_S12    P(S(12) >= 0.6) 0.25         
+#>  AE        P(rate <= 0.3)  0.25         
+#> 
+#>    group  ORR PFS_S6 OS_S12    AE admissible    BR selected
+#>  Cohort1 0.89  0.216  0.184 0.999       TRUE 0.434    FALSE
+#>  Cohort2 1.00  0.952  0.907 0.943       TRUE 0.950     TRUE
+#> 
+#> Selected: Cohort2
 ```
 
 The pairwise comparisons of Cohort2 against Cohort1 use the priority
@@ -82,14 +92,43 @@ order OS, PFS, response and adverse event.
 ``` r
 
 w <- WinStat(d, eps, treatment = "Cohort2", control = "Cohort1")
-w$ci
-#>   statistic estimate        se       lower     upper
-#> 1       NTB 0.230000 0.1120764 0.002254385 0.4350627
-#> 2        WR 1.611052 0.3877121 1.005220514 2.5820094
-#> 3        WO 1.597403 0.3780617 1.004518957 2.5402159
+w
+#> Generalized pairwise comparisons: Cohort2 (treatment) vs Cohort1 (control)
+#> Patients: 50 and 50 (2500 pairs); scoring rule of Gehan
+#> 
+#> Proportions of all pairs won, lost and still undecided by priority level:
+#>  priority endpoint threshold    win   loss undecided
+#>         1       OS         0 0.4800 0.2556    0.2644
+#>         2      PFS         0 0.1216 0.1160    0.0268
+#>         3      ORR         0 0.0048 0.0032    0.0188
+#>         4       AE         0 0.0000 0.0016    0.0172
+#> 
+#> Pairs won 0.606, lost 0.376, tied 0.0172
+#> 
+#> 95% confidence intervals:
+#>  statistic estimate    se   lower upper
+#>        NTB     0.23 0.112 0.00225 0.435
+#>         WR     1.61 0.388 1.00522 2.582
+#>         WO     1.60 0.378 1.00452 2.540
 ```
 
-The net treatment benefit of Cohort2 is 0.23 and its win ratio 1.61.
+The net treatment benefit of Cohort2 is 0.23 and its win ratio 1.61. The
+results of
+[`BenefitRisk()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/BenefitRisk.md),
+[`WinStat()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat.md),
+[`SimSelection()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection.md)
+and
+[`SelectionOC()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md)
+have [`print()`](https://rdrr.io/r/base/print.html) and
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods; the
+plot of the win statistics shows how many pairs each endpoint decides.
+
+``` r
+
+plot(w)
+```
+
+![](introduction_files/figure-html/unnamed-chunk-6-1.png)
 
 ## Where to go next
 

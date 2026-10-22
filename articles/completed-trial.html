@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -157,14 +157,22 @@ given to <code><a href="../reference/Endpoint.html">Endpoint()</a></code>.</p>
 <span>                   weight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>, cutoff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">br</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/BenefitRisk.html">BenefitRisk</a></span><span class="op">(</span><span class="va">adsl</span>, <span class="va">eps</span>, <span class="va">crit</span>, group <span class="op">=</span> <span class="st">"TRT01P"</span><span class="op">)</span></span>
 <span><span class="va">br</span></span>
-<span><span class="co">#&gt;      group       ORR    PFS_S6    OS_S12         AE admissible          BR</span></span>
-<span><span class="co">#&gt; 1 Cohort 1 0.7585508 0.2487189 0.2241496 0.99011904       TRUE 0.344956673</span></span>
-<span><span class="co">#&gt; 2 Cohort 2 0.8495470 0.9993728 0.9577358 0.99011904       TRUE 0.924146786</span></span>
-<span><span class="co">#&gt; 3 Cohort 3 0.9995100 0.8494408 0.5243060 0.01270498      FALSE 0.009700831</span></span>
-<span><span class="co">#&gt;   selected</span></span>
-<span><span class="co">#&gt; 1    FALSE</span></span>
-<span><span class="co">#&gt; 2     TRUE</span></span>
-<span><span class="co">#&gt; 3    FALSE</span></span></code></pre></div>
+<span><span class="co">#&gt; Posterior benefit-risk scores against target values</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  component definition      weight cutoff</span></span>
+<span><span class="co">#&gt;  ORR       P(rate &gt;= 0.3)  0.333        </span></span>
+<span><span class="co">#&gt;  PFS_S6    P(S(6) &gt;= 0.5)  0.333        </span></span>
+<span><span class="co">#&gt;  OS_S12    P(S(12) &gt;= 0.6) 0.333        </span></span>
+<span><span class="co">#&gt;  AE        P(rate &lt;= 0.4)  1      0.8   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     group   ORR PFS_S6 OS_S12     AE admissible     BR selected</span></span>
+<span><span class="co">#&gt;  Cohort 1 0.759  0.249  0.224 0.9901       TRUE 0.3450    FALSE</span></span>
+<span><span class="co">#&gt;  Cohort 2 0.850  0.999  0.958 0.9901       TRUE 0.9241     TRUE</span></span>
+<span><span class="co">#&gt;  Cohort 3 1.000  0.849  0.524 0.0127      FALSE 0.0097    FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Selected: Cohort 2</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">br</span><span class="op">)</span></span></code></pre></div>
+<p><img src="completed-trial_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="100%"></p>
 <p>Relative to Cohort 1, the reference regimen:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">crit_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ORR"</span>, <span class="st">"PFS"</span>, <span class="st">"OS"</span>, <span class="st">"AE"</span><span class="op">)</span>,</span>
@@ -173,12 +181,19 @@ given to <code><a href="../reference/Endpoint.html">Endpoint()</a></code>.</p>
 <span>                       weight <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, <span class="fl">1</span><span class="op">)</span>, cutoff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">br_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/BenefitRisk.html">BenefitRisk</a></span><span class="op">(</span><span class="va">adsl</span>, <span class="va">eps</span>, <span class="va">crit_ref</span>, group <span class="op">=</span> <span class="st">"TRT01P"</span>, reference <span class="op">=</span> <span class="st">"Cohort 1"</span><span class="op">)</span></span>
 <span><span class="va">br_ref</span></span>
-<span><span class="co">#&gt;      group reference       ORR    PFS_HR     OS_HR         AE admissible</span></span>
-<span><span class="co">#&gt; 1 Cohort 2  Cohort 1 0.2371944 0.9642481 0.9251714 0.86211847       TRUE</span></span>
-<span><span class="co">#&gt; 2 Cohort 3  Cohort 1 0.8135225 0.6166791 0.5885187 0.01030468      FALSE</span></span>
-<span><span class="co">#&gt;            BR</span></span>
-<span><span class="co">#&gt; 1 0.513734506</span></span>
-<span><span class="co">#&gt; 2 0.006861683</span></span></code></pre></div>
+<span><span class="co">#&gt; Posterior benefit-risk scores relative to Cohort 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  component definition                weight cutoff</span></span>
+<span><span class="co">#&gt;  ORR       P(rate - rate_ref &gt;= 0.1) 0.333        </span></span>
+<span><span class="co">#&gt;  PFS_HR    P(HR &lt;= 0.8)              0.333        </span></span>
+<span><span class="co">#&gt;  OS_HR     P(HR &lt;= 0.9)              0.333        </span></span>
+<span><span class="co">#&gt;  AE        P(rate - rate_ref &lt;= 0.1) 1      0.8   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     group reference   ORR PFS_HR OS_HR     AE admissible      BR</span></span>
+<span><span class="co">#&gt;  Cohort 2  Cohort 1 0.237  0.964 0.925 0.8621       TRUE 0.51373</span></span>
+<span><span class="co">#&gt;  Cohort 3  Cohort 1 0.814  0.617 0.589 0.0103      FALSE 0.00686</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">br_ref</span><span class="op">)</span></span></code></pre></div>
+<p><img src="completed-trial_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="win-statistics">Win statistics<a class="anchor" aria-label="anchor" href="#win-statistics"></a>
@@ -188,20 +203,33 @@ response and adverse event.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">w2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WinStat.html">WinStat</a></span><span class="op">(</span><span class="va">adsl</span>, <span class="va">eps</span>, treatment <span class="op">=</span> <span class="st">"Cohort 2"</span>, control <span class="op">=</span> <span class="st">"Cohort 1"</span>, group <span class="op">=</span> <span class="st">"TRT01P"</span><span class="op">)</span></span>
 <span><span class="va">w3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WinStat.html">WinStat</a></span><span class="op">(</span><span class="va">adsl</span>, <span class="va">eps</span>, treatment <span class="op">=</span> <span class="st">"Cohort 3"</span>, control <span class="op">=</span> <span class="st">"Cohort 1"</span>, group <span class="op">=</span> <span class="st">"TRT01P"</span><span class="op">)</span></span>
-<span><span class="va">w2</span><span class="op">$</span><span class="va">ci</span></span>
-<span><span class="co">#&gt;   statistic estimate        se     lower     upper</span></span>
-<span><span class="co">#&gt; 1       NTB 0.331875 0.1176162 0.0856671 0.5398828</span></span>
-<span><span class="co">#&gt; 2        WR 2.035088 0.5536582 1.1940114 3.4686286</span></span>
-<span><span class="co">#&gt; 3        WO 1.993452 0.5269650 1.1873871 3.3467183</span></span>
-<span><span class="va">w3</span><span class="op">$</span><span class="va">ci</span></span>
-<span><span class="co">#&gt;   statistic estimate        se       lower     upper</span></span>
-<span><span class="co">#&gt; 1       NTB 0.167500 0.1252666 -0.08331817 0.3983604</span></span>
-<span><span class="co">#&gt; 2        WR 1.407295 0.3664531  0.84476537 2.3444128</span></span>
-<span><span class="co">#&gt; 3        WO 1.402402 0.3614904  0.84617968 2.3242493</span></span></code></pre></div>
+<span><span class="va">w2</span></span>
+<span><span class="co">#&gt; Generalized pairwise comparisons: Cohort 2 (treatment) vs Cohort 1 (control)</span></span>
+<span><span class="co">#&gt; Patients: 40 and 40 (1600 pairs); scoring rule of Gehan</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Proportions of all pairs won, lost and still undecided by priority level:</span></span>
+<span><span class="co">#&gt;  priority endpoint threshold     win    loss undecided</span></span>
+<span><span class="co">#&gt;         1       OS         0 0.44562 0.20125    0.3531</span></span>
+<span><span class="co">#&gt;         2      PFS         0 0.18250 0.09250    0.0781</span></span>
+<span><span class="co">#&gt;         3      ORR         0 0.01562 0.01750    0.0450</span></span>
+<span><span class="co">#&gt;         4       AE         0 0.00875 0.00937    0.0269</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pairs won 0.652, lost 0.321, tied 0.0269</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 95% confidence intervals:</span></span>
+<span><span class="co">#&gt;  statistic estimate    se  lower upper</span></span>
+<span><span class="co">#&gt;        NTB    0.332 0.118 0.0857  0.54</span></span>
+<span><span class="co">#&gt;         WR    2.035 0.554 1.1940  3.47</span></span>
+<span><span class="co">#&gt;         WO    1.993 0.527 1.1874  3.35</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">w2</span><span class="op">)</span></span></code></pre></div>
+<p><img src="completed-trial_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="100%"></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">w3</span><span class="op">)</span></span></code></pre></div>
+<p><img src="completed-trial_files/figure-html/unnamed-chunk-7-2.png" class="r-plt" alt="" width="100%"></p>
 <p>The net treatment benefit against Cohort 1 is 0.33 for Cohort 2 and
 0.17 for Cohort 3. With the scoring rule of Péron, censored pairs are
 scored with the Kaplan-Meier estimates:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  <span class="st">"Cohort 2"</span> <span class="op">=</span> <span class="fu"><a href="../reference/WinStat.html">WinStat</a></span><span class="op">(</span><span class="va">adsl</span>, <span class="va">eps</span>, treatment <span class="op">=</span> <span class="st">"Cohort 2"</span>, control <span class="op">=</span> <span class="st">"Cohort 1"</span>,</span>
 <span>                       group <span class="op">=</span> <span class="st">"TRT01P"</span>, scoring <span class="op">=</span> <span class="st">"peron"</span><span class="op">)</span><span class="op">$</span><span class="va">estimate</span>,</span>
@@ -222,15 +250,15 @@ trial when the data are treated as one simulated trial, and
 <code><a href="../reference/SelectionOC.html">SelectionOC()</a></code> then gives a probability of 1 to the cohort
 that the rule selects. The thresholds below are for illustration
 only.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">adsl</span><span class="op">$</span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SimSelection.html">SimSelection</a></span><span class="op">(</span><span class="va">adsl</span>, <span class="va">eps</span>, <span class="va">crit</span>, reference <span class="op">=</span> <span class="st">"Cohort 1"</span>, criteria.ref <span class="op">=</span> <span class="va">crit_ref</span>,</span>
 <span>                    group <span class="op">=</span> <span class="st">"TRT01P"</span><span class="op">)</span></span>
 <span><span class="va">res</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"group"</span>, <span class="st">"br"</span>, <span class="st">"adm"</span>, <span class="st">"br_diff"</span>, <span class="st">"br_ref"</span>, <span class="st">"adm_ref"</span>, <span class="st">"ntb"</span>, <span class="st">"wr"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;      group          br   adm    br_diff      br_ref adm_ref      ntb       wr</span></span>
-<span><span class="co">#&gt; 1 Cohort 1 0.344956673  TRUE         NA          NA      NA       NA       NA</span></span>
-<span><span class="co">#&gt; 2 Cohort 2 0.924146786  TRUE  0.5791901 0.513734506    TRUE 0.331875 2.035088</span></span>
-<span><span class="co">#&gt; 3 Cohort 3 0.009700831 FALSE -0.3352558 0.006861683   FALSE 0.167500 1.407295</span></span>
+<span><span class="co">#&gt;     group     br   adm br_diff  br_ref adm_ref   ntb   wr</span></span>
+<span><span class="co">#&gt;  Cohort 1 0.3450  TRUE      NA      NA      NA    NA   NA</span></span>
+<span><span class="co">#&gt;  Cohort 2 0.9241  TRUE   0.579 0.51373    TRUE 0.332 2.04</span></span>
+<span><span class="co">#&gt;  Cohort 3 0.0097 FALSE  -0.335 0.00686   FALSE 0.167 1.41</span></span>
 <span><span class="va">rules</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>statistic <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"br_diff"</span>, <span class="st">"br_ref"</span>, <span class="st">"ntb"</span>, <span class="st">"wr"</span><span class="op">)</span>,</span>
 <span>                    threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.5</span>, <span class="fl">0.1</span>, <span class="fl">1.5</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rules</span><span class="op">)</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>

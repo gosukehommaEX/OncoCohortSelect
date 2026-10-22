@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -154,17 +154,18 @@ admissible cohort with the highest score is marked as selected.</p>
 <div class="section level2">
 <h2 id="scores-against-target-values">Scores against target values<a class="anchor" aria-label="anchor" href="#scores-against-target-values"></a>
 </h2>
-<p>The data of one simulated trial with three cohorts illustrate the
-score. Cohort1 is the reference regimen; Cohort2 is more active, and
-Cohort3 is the most active but has more adverse events.</p>
+<p>The data of one simulated trial with three cohorts of 50 patients
+illustrate the score. Cohort1 is the reference regimen. Cohort2 and
+Cohort3 are more active, and Cohort3 has many more adverse events (a
+true rate of 0.5 against 0.15).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">make_arm</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">pfs</span>, <span class="va">orr</span>, <span class="va">os</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">CorOncoEndpoints</span><span class="fu">::</span><span class="fu"><a href="https://gosukehommaEX.github.io/CorOncoEndpoints/reference/OncoArm.html" class="external-link">OncoArm</a></span><span class="op">(</span>pfs.median <span class="op">=</span> <span class="va">pfs</span>, orr <span class="op">=</span> <span class="va">orr</span>, resp.cor <span class="op">=</span> <span class="fl">0.4</span>,</span>
 <span>                            death.prop <span class="op">=</span> <span class="fl">0.15</span>, os.median <span class="op">=</span> <span class="va">os</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="va">arms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Cohort1 <span class="op">=</span> <span class="fu">make_arm</span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0.30</span>, <span class="fl">14</span><span class="op">)</span>, Cohort2 <span class="op">=</span> <span class="fu">make_arm</span><span class="op">(</span><span class="fl">7</span>, <span class="fl">0.45</span>, <span class="fl">17</span><span class="op">)</span>,</span>
-<span>             Cohort3 <span class="op">=</span> <span class="fu">make_arm</span><span class="op">(</span><span class="fl">8</span>, <span class="fl">0.55</span>, <span class="fl">18</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SimCohorts.html">SimCohorts</a></span><span class="op">(</span>nsim <span class="op">=</span> <span class="fl">1</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="fl">40</span>, <span class="fl">40</span><span class="op">)</span>, arms <span class="op">=</span> <span class="va">arms</span>, ae.rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.20</span>, <span class="fl">0.25</span>, <span class="fl">0.45</span><span class="op">)</span>,</span>
+<span><span class="va">arms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Cohort1 <span class="op">=</span> <span class="fu">make_arm</span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0.30</span>, <span class="fl">14</span><span class="op">)</span>, Cohort2 <span class="op">=</span> <span class="fu">make_arm</span><span class="op">(</span><span class="fl">8</span>, <span class="fl">0.50</span>, <span class="fl">20</span><span class="op">)</span>,</span>
+<span>             Cohort3 <span class="op">=</span> <span class="fu">make_arm</span><span class="op">(</span><span class="fl">9</span>, <span class="fl">0.55</span>, <span class="fl">21</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SimCohorts.html">SimCohorts</a></span><span class="op">(</span>nsim <span class="op">=</span> <span class="fl">1</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">50</span>, <span class="fl">50</span><span class="op">)</span>, arms <span class="op">=</span> <span class="va">arms</span>, ae.rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.50</span><span class="op">)</span>,</span>
 <span>                cutoff <span class="op">=</span> <span class="fl">24</span>, a.time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">12</span><span class="op">)</span>, seed <span class="op">=</span> <span class="fl">11</span><span class="op">)</span></span>
 <span><span class="va">eps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/Endpoint.html">Endpoint</a></span><span class="op">(</span><span class="st">"OS"</span>, <span class="st">"tte"</span>, time <span class="op">=</span> <span class="st">"os_tte"</span>, event <span class="op">=</span> <span class="st">"os_event"</span><span class="op">)</span>,</span>
@@ -183,20 +184,33 @@ event rate must be at most 0.35 with a posterior probability of at least
 <span>                   cutoff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">br</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/BenefitRisk.html">BenefitRisk</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">eps</span>, <span class="va">crit</span><span class="op">)</span></span>
 <span><span class="va">br</span></span>
-<span><span class="co">#&gt;     group       ORR     PFS_S6     OS_S12         AE admissible          BR</span></span>
-<span><span class="co">#&gt; 1 Cohort1 0.9137056 0.01146008 0.35632997 0.99934877       TRUE 0.155000280</span></span>
-<span><span class="co">#&gt; 2 Cohort2 0.9960656 0.70731273 0.45428649 0.74301200      FALSE 0.508243987</span></span>
-<span><span class="co">#&gt; 3 Cohort3 0.9985459 0.46710628 0.01948206 0.02531843      FALSE 0.005283353</span></span>
-<span><span class="co">#&gt;   selected</span></span>
-<span><span class="co">#&gt; 1     TRUE</span></span>
-<span><span class="co">#&gt; 2    FALSE</span></span>
-<span><span class="co">#&gt; 3    FALSE</span></span></code></pre></div>
+<span><span class="co">#&gt; Posterior benefit-risk scores against target values</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  component definition      weight cutoff</span></span>
+<span><span class="co">#&gt;  ORR       P(rate &gt;= 0.3)  0.333        </span></span>
+<span><span class="co">#&gt;  PFS_S6    P(S(6) &gt;= 0.5)  0.333        </span></span>
+<span><span class="co">#&gt;  OS_S12    P(S(12) &gt;= 0.6) 0.333        </span></span>
+<span><span class="co">#&gt;  AE        P(rate &lt;= 0.35) 1      0.8   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    group   ORR  PFS_S6 OS_S12      AE admissible      BR selected</span></span>
+<span><span class="co">#&gt;  Cohort1 0.965 0.00564 0.0472 0.98949       TRUE 0.06286    FALSE</span></span>
+<span><span class="co">#&gt;  Cohort2 0.996 0.90879 0.6613 0.98949       TRUE 0.83399     TRUE</span></span>
+<span><span class="co">#&gt;  Cohort3 0.998 0.94723 0.5995 0.00682      FALSE 0.00564    FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Selected: Cohort2</span></span></code></pre></div>
 <p>The column <code>ORR</code> is <span class="math inline">\(P(p \ge
 0.3)\)</span>, <code>PFS_S6</code> is <span class="math inline">\(P(S(6)
 \ge 0.5)\)</span> for PFS, <code>OS_S12</code> is <span class="math inline">\(P(S(12) \ge 0.6)\)</span> for OS and
 <code>AE</code> is <span class="math inline">\(P(p \le 0.35)\)</span>
-for the adverse event. Cohort3 has an <code>AE</code> component of 0.03
-and is not admissible. The selected cohort is Cohort1.</p>
+for the adverse event. Cohort3 has an <code>AE</code> component of 0.01
+and is not admissible. The selected cohort is Cohort2.</p>
+<p>The printed result lists the definition, weight and cutoff of each
+component before the scores. <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> shows the components
+and the score of each cohort; the dashed lines are the admissibility
+cutoffs, and an asterisk marks a cohort that is not admissible.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">br</span><span class="op">)</span></span></code></pre></div>
+<p><img src="benefit-risk_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="100%"></p>
 <p>A component against a fixed target measures how certainly a cohort
 exceeds the target, not by how much. When several cohorts clearly exceed
 all targets, their components are all close to 1 and the scores separate
@@ -221,7 +235,7 @@ and <span class="math inline">\(2a_{\mathrm{ref}}\)</span> degrees of
 freedom for gamma posteriors with shapes <span class="math inline">\(a,
 a_{\mathrm{ref}}\)</span> and rates <span class="math inline">\(b,
 b_{\mathrm{ref}}\)</span>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">crit_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ORR"</span>, <span class="st">"PFS"</span>, <span class="st">"OS"</span>, <span class="st">"AE"</span><span class="op">)</span>,</span>
 <span>                       measure <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rate"</span>, <span class="st">"hr"</span>, <span class="st">"hr"</span>, <span class="st">"rate"</span><span class="op">)</span>,</span>
 <span>                       target <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.10</span>, <span class="fl">0.80</span>, <span class="fl">0.90</span>, <span class="fl">0.10</span><span class="op">)</span>,</span>
@@ -229,12 +243,19 @@ b_{\mathrm{ref}}\)</span>.</p>
 <span>                       cutoff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">br_ref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/BenefitRisk.html">BenefitRisk</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">eps</span>, <span class="va">crit_ref</span>, reference <span class="op">=</span> <span class="st">"Cohort1"</span><span class="op">)</span></span>
 <span><span class="va">br_ref</span></span>
-<span><span class="co">#&gt;     group reference       ORR    PFS_HR      OS_HR          AE admissible</span></span>
-<span><span class="co">#&gt; 1 Cohort2   Cohort1 0.4938515 0.8623758 0.43289892 0.210442927      FALSE</span></span>
-<span><span class="co">#&gt; 2 Cohort3   Cohort1 0.5831601 0.7367773 0.05873033 0.003110884      FALSE</span></span>
-<span><span class="co">#&gt;             BR</span></span>
-<span><span class="co">#&gt; 1 0.1197735249</span></span>
-<span><span class="co">#&gt; 2 0.0009124576</span></span></code></pre></div>
+<span><span class="co">#&gt; Posterior benefit-risk scores relative to Cohort1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  component definition                weight cutoff</span></span>
+<span><span class="co">#&gt;  ORR       P(rate - rate_ref &gt;= 0.1) 0.333        </span></span>
+<span><span class="co">#&gt;  PFS_HR    P(HR &lt;= 0.8)              0.333        </span></span>
+<span><span class="co">#&gt;  OS_HR     P(HR &lt;= 0.9)              0.333        </span></span>
+<span><span class="co">#&gt;  AE        P(rate - rate_ref &lt;= 0.1) 1      0.8   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    group reference   ORR PFS_HR OS_HR      AE admissible      BR</span></span>
+<span><span class="co">#&gt;  Cohort2   Cohort1 0.338  0.958 0.857 0.89716       TRUE 0.58543</span></span>
+<span><span class="co">#&gt;  Cohort3   Cohort1 0.415  0.973 0.830 0.00999      FALSE 0.00694</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">br_ref</span><span class="op">)</span></span></code></pre></div>
+<p><img src="benefit-risk_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="100%"></p>
 <p>Here <code>ORR</code> is <span class="math inline">\(P(p -
 p_{\mathrm{ref}} \ge 0.1)\)</span>, <code>PFS_HR</code> and
 <code>OS_HR</code> are the probabilities that the hazard ratios against

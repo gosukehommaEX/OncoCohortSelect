@@ -51,10 +51,16 @@ BenefitRisk(
 
 ## Value
 
-A data frame with one row per cohort (other than the reference) and
-columns `group`, `reference` (with a reference cohort), one column per
-component with its posterior probability, `admissible`, `BR` and,
-without a reference cohort, `selected`.
+A data frame of class `BenefitRisk` with one row per cohort (other than
+the reference) and columns `group`, `reference` (with a reference
+cohort), one column per component with its posterior probability,
+`admissible`, `BR` and, without a reference cohort, `selected`. The
+attribute `components` holds the definition, weight and cutoff of each
+component, and the attribute `reference` the reference cohort (if any).
+See
+[`BenefitRisk-methods`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/BenefitRisk-methods.md)
+for [`print()`](https://rdrr.io/r/base/print.html) and
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html).
 
 ## Details
 
@@ -144,15 +150,31 @@ eps <- list(Endpoint("PFS", "tte", time = "pfs_tte", event = "pfs_event"),
 crit <- data.frame(endpoint = c("ORR", "PFS", "AE"), target = c(0.3, 0.5, 0.3),
                    time = c(NA, 6, NA), cutoff = c(0.5, 0.5, 0.5))
 BenefitRisk(d, eps, crit)
-#>     group       ORR    PFS_S6        AE admissible        BR selected
-#> 1 Cohort1 0.9960656 0.9545059 0.6268918       TRUE 0.8415625     TRUE
-#> 2 Cohort2 0.5092972 0.8688193 0.9951728       TRUE 0.7607928    FALSE
+#> Posterior benefit-risk scores against target values
+#> 
+#>  component definition     weight cutoff
+#>  ORR       P(rate >= 0.3) 0.333  0.5   
+#>  PFS_S6    P(S(6) >= 0.5) 0.333  0.5   
+#>  AE        P(rate <= 0.3) 0.333  0.5   
+#> 
+#>    group   ORR PFS_S6    AE admissible    BR selected
+#>  Cohort1 0.996  0.955 0.627       TRUE 0.842     TRUE
+#>  Cohort2 0.509  0.869 0.995       TRUE 0.761    FALSE
+#> 
+#> Selected: Cohort1
 
 # Cohort1 relative to Cohort2
 crit_ref <- data.frame(endpoint = c("ORR", "PFS", "AE"),
                        measure = c("rate", "hr", "rate"),
                        target = c(0.1, 0.8, 0.1))
 BenefitRisk(d, eps, crit_ref, reference = "Cohort2")
-#>     group reference       ORR   PFS_HR       AE admissible        BR
-#> 1 Cohort1   Cohort2 0.8172346 0.265606 0.296234       TRUE 0.4006267
+#> Posterior benefit-risk scores relative to Cohort2
+#> 
+#>  component definition                weight cutoff
+#>  ORR       P(rate - rate_ref >= 0.1) 0.333        
+#>  PFS_HR    P(HR <= 0.8)              0.333        
+#>  AE        P(rate - rate_ref <= 0.1) 0.333        
+#> 
+#>    group reference   ORR PFS_HR    AE admissible    BR
+#>  Cohort1   Cohort2 0.817  0.266 0.296       TRUE 0.401
 ```

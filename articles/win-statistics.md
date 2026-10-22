@@ -60,21 +60,42 @@ eps <- list(
   Endpoint("ORR", "binary", var = "response"),
   Endpoint("AE", "binary", var = "ae", higher.better = FALSE))
 w <- WinStat(d, eps, treatment = "Cohort2", control = "Cohort1")
-w$estimate
-#>    p_win   p_loss    p_tie      ntb       wr       wo 
-#> 0.490400 0.463600 0.046000 0.026800 1.057808 1.055076
-w$by.endpoint
-#>   priority endpoint threshold    win   loss undecided
-#> 1        1       OS         0 0.2888 0.2300    0.4812
-#> 2        2      PFS         0 0.1468 0.1608    0.1736
-#> 3        3      ORR         0 0.0464 0.0356    0.0916
-#> 4        4       AE         0 0.0084 0.0372    0.0460
+w
+#> Generalized pairwise comparisons: Cohort2 (treatment) vs Cohort1 (control)
+#> Patients: 50 and 50 (2500 pairs); scoring rule of Gehan
+#> 
+#> Proportions of all pairs won, lost and still undecided by priority level:
+#>  priority endpoint threshold    win   loss undecided
+#>         1       OS         0 0.2888 0.2300    0.4812
+#>         2      PFS         0 0.1468 0.1608    0.1736
+#>         3      ORR         0 0.0464 0.0356    0.0916
+#>         4       AE         0 0.0084 0.0372    0.0460
+#> 
+#> Pairs won 0.49, lost 0.464, tied 0.046
+#> 
+#> 95% confidence intervals:
+#>  statistic estimate    se  lower upper
+#>        NTB   0.0268 0.112 -0.191 0.242
+#>         WR   1.0578 0.249  0.667 1.677
+#>         WO   1.0551 0.237  0.680 1.638
 ```
 
-`by.endpoint` gives, for each priority level, the proportions of all
-pairs won and lost at that level and the proportion still undecided
-after it. Of the pairs, 48% are not decided by OS: the pairs in which
-the shorter observed time is censored.
+The table by priority level (the element `by.endpoint` of the result)
+gives the proportions of all pairs won and lost at each level and the
+proportion still undecided after it.
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) draws the same
+proportions, with the net treatment benefit and the win ratio in the
+title.
+
+``` r
+
+plot(w)
+```
+
+![](win-statistics_files/figure-html/unnamed-chunk-3-1.png)
+
+Of the pairs, 48% are not decided by OS: the pairs in which the shorter
+observed time is censored.
 
 ## Scoring rules for censored times
 
@@ -98,17 +119,14 @@ endpoint.
 ``` r
 
 wp <- WinStat(d, eps, treatment = "Cohort2", control = "Cohort1", scoring = "peron")
-wp$by.endpoint
-#>   priority endpoint threshold          win        loss  undecided
-#> 1        1       OS         0 0.4641786828 0.332216434 0.20360488
-#> 2        2      PFS         0 0.0877424049 0.093214645 0.02264783
-#> 3        3      ORR         0 0.0082900660 0.002191979 0.01216579
-#> 4        4       AE         0 0.0008605782 0.005006900 0.00629831
 rbind(Gehan = w$estimate, Peron = wp$estimate)
 #>           p_win  p_loss      p_tie       ntb       wr       wo
 #> Gehan 0.4904000 0.46360 0.04600000 0.0268000 1.057808 1.055076
 #> Peron 0.5610717 0.43263 0.00629831 0.1284418 1.296886 1.294741
+plot(wp)
 ```
+
+![](win-statistics_files/figure-html/unnamed-chunk-4-1.png)
 
 With the Péron rule, OS leaves 20% of the pairs undecided instead of
 48%. The script `inst/validation/validate_winstat.R` compares the
@@ -127,13 +145,10 @@ finally on response.
 
 w3 <- WinStat(d, eps, treatment = "Cohort2", control = "Cohort1",
               priority = c("OS", "AE", "OS", "ORR"), threshold = c(3, 0, 0, 0))
-w3$by.endpoint
-#>   priority endpoint threshold    win   loss undecided
-#> 1        1       OS         3 0.2136 0.1616    0.6248
-#> 2        2       AE         0 0.0628 0.2268    0.3352
-#> 3        3       OS         0 0.0428 0.0448    0.2476
-#> 4        4      ORR         0 0.0572 0.0672    0.1232
+plot(w3)
 ```
+
+![](win-statistics_files/figure-html/unnamed-chunk-5-1.png)
 
 With the Gehan rule used here, a pair decided by OS with the threshold
 of 3 months is not compared again. With the Péron rule, the second use

@@ -90,12 +90,18 @@ SimSelection(
 
 ## Value
 
-A data frame with one row per simulated trial and cohort. The statistics
-that compare a cohort with the reference cohort are `NA` in the rows of
-the reference cohort. With `scores = TRUE`, the posterior probabilities
-of the components are added after the columns below, in columns named
-`S:` (against target values) and `ref:` (relative to the reference
-cohort) followed by the label of the component. The columns are
+A data frame of class `SimSelection` with one row per simulated trial
+and cohort and an attribute `settings` with the reference cohort, the
+scoring rule and the confidence level (see
+[`SimSelection-methods`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection-methods.md)
+for [`print()`](https://rdrr.io/r/base/print.html) and
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html)). The
+statistics that compare a cohort with the reference cohort are `NA` in
+the rows of the reference cohort. With `scores = TRUE`, the posterior
+probabilities of the components are added after the columns below, in
+columns named `S:` (against target values) and `ref:` (relative to the
+reference cohort) followed by the label of the component. The columns
+are
 
 - sim:
 
@@ -167,18 +173,22 @@ crit_ref <- data.frame(endpoint = c("ORR", "PFS", "AE"),
                        target = c(0.1, 0.8, 0.1))
 res <- SimSelection(d, eps, crit, reference = "Cohort2", criteria.ref = crit_ref)
 head(res)
-#>   sim   group is_reference        br  adm     br_diff    br_ref adm_ref
-#> 1   1 Cohort1        FALSE 0.6831450 TRUE 0.050653320 0.1567579    TRUE
-#> 2   1 Cohort2         TRUE 0.6324917 TRUE          NA        NA      NA
-#> 3   2 Cohort1        FALSE 0.9042010 TRUE 0.001577663 0.4472643    TRUE
-#> 4   2 Cohort2         TRUE 0.9026234 TRUE          NA        NA      NA
-#> 5   3 Cohort1        FALSE 0.7779846 TRUE 0.195732696 0.6936594    TRUE
-#> 6   3 Cohort2         TRUE 0.5822519 TRUE          NA        NA      NA
-#>      p_win   p_loss    p_tie      ntb    ntb_se   ntb_lower       wr       wo
-#> 1 0.605000 0.378125 0.016875 0.226875 0.1247553 -0.02688578 1.600000 1.586904
-#> 2       NA       NA       NA       NA        NA          NA       NA       NA
-#> 3 0.549375 0.423750 0.026875 0.125625 0.1274969 -0.12691586 1.296460 1.287348
-#> 4       NA       NA       NA       NA        NA          NA       NA       NA
-#> 5 0.534375 0.461250 0.004375 0.073125 0.1298129 -0.18053982 1.158537 1.157788
-#> 6       NA       NA       NA       NA        NA          NA       NA       NA
+#> 6 rows of results of 3 simulated trials
+#> Cohorts: Cohort1, Cohort2 (reference)
+#> Scoring rule of the pairwise comparisons: Gehan
+#> 
+#>  sim   group is_reference    br  adm br_diff br_ref adm_ref p_win p_loss
+#>    1 Cohort1        FALSE 0.683 TRUE 0.05065  0.157    TRUE 0.605  0.378
+#>    1 Cohort2         TRUE 0.632 TRUE      NA     NA      NA    NA     NA
+#>    2 Cohort1        FALSE 0.904 TRUE 0.00158  0.447    TRUE 0.549  0.424
+#>    2 Cohort2         TRUE 0.903 TRUE      NA     NA      NA    NA     NA
+#>    3 Cohort1        FALSE 0.778 TRUE 0.19573  0.694    TRUE 0.534  0.461
+#>    3 Cohort2         TRUE 0.582 TRUE      NA     NA      NA    NA     NA
+#>    p_tie    ntb ntb_se ntb_lower   wr   wo
+#>  0.01688 0.2269  0.125   -0.0269 1.60 1.59
+#>       NA     NA     NA        NA   NA   NA
+#>  0.02688 0.1256  0.127   -0.1269 1.30 1.29
+#>       NA     NA     NA        NA   NA   NA
+#>  0.00437 0.0731  0.130   -0.1805 1.16 1.16
+#>       NA     NA     NA        NA   NA   NA
 ```

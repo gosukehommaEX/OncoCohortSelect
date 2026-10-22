@@ -65,7 +65,7 @@ WinStat(
 
 ## Value
 
-A list with elements
+A list of class `WinStat` with elements
 
 - estimate:
 
@@ -88,6 +88,15 @@ A list with elements
 
   Named vector with the numbers of treatment and control patients and of
   pairs.
+
+- settings:
+
+  List with `treatment`, `control`, `scoring` and `conf.level`.
+
+See
+[`WinStat-methods`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat-methods.md)
+for [`print()`](https://rdrr.io/r/base/print.html) and
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html).
 
 ## Details
 

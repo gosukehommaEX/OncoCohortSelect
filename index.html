@@ -30,7 +30,7 @@
 
     <a class="navbar-brand me-2" href="index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,7 +125,9 @@
 <span><span class="fu"><a href="reference/BenefitRisk.html">BenefitRisk</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">eps</span>, <span class="va">crit_ref</span>, reference <span class="op">=</span> <span class="st">"Cohort2"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># net treatment benefit, win ratio and win odds (priority OS, PFS, ORR, AE)</span></span>
-<span><span class="fu"><a href="reference/WinStat.html">WinStat</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">eps</span>, treatment <span class="op">=</span> <span class="st">"Cohort1"</span>, control <span class="op">=</span> <span class="st">"Cohort2"</span><span class="op">)</span><span class="op">$</span><span class="va">ci</span></span>
+<span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/WinStat.html">WinStat</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">eps</span>, treatment <span class="op">=</span> <span class="st">"Cohort1"</span>, control <span class="op">=</span> <span class="st">"Cohort2"</span><span class="op">)</span></span>
+<span><span class="va">w</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># censored pairs scored with the Kaplan-Meier estimates (Peron)</span></span>
 <span><span class="fu"><a href="reference/WinStat.html">WinStat</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">eps</span>, treatment <span class="op">=</span> <span class="st">"Cohort1"</span>, control <span class="op">=</span> <span class="st">"Cohort2"</span>, scoring <span class="op">=</span> <span class="st">"peron"</span><span class="op">)</span><span class="op">$</span><span class="va">ci</span></span></code></pre></div>
@@ -182,6 +184,7 @@
 </tr>
 </tbody>
 </table>
+<p>The results of <code><a href="reference/BenefitRisk.html">BenefitRisk()</a></code>, <code><a href="reference/WinStat.html">WinStat()</a></code>, <code><a href="reference/SimSelection.html">SimSelection()</a></code> and <code><a href="reference/SelectionOC.html">SelectionOC()</a></code> have <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods.</p>
 </div>
 <div class="section level2">
 <h2 id="verification">Verification<a class="anchor" aria-label="anchor" href="#verification"></a>

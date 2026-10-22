@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -135,20 +135,49 @@ the PFS and OS probabilities at months 6 and 12 are at least 0.5 and
 <code class="sourceCode R"><span><span class="va">crit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>endpoint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ORR"</span>, <span class="st">"PFS"</span>, <span class="st">"OS"</span>, <span class="st">"AE"</span><span class="op">)</span>,</span>
 <span>                   target <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.30</span>, <span class="fl">0.50</span>, <span class="fl">0.60</span>, <span class="fl">0.30</span><span class="op">)</span>, time <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">6</span>, <span class="fl">12</span>, <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/BenefitRisk.html">BenefitRisk</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">eps</span>, <span class="va">crit</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     group       ORR    PFS_S6    OS_S12        AE admissible        BR selected</span></span>
-<span><span class="co">#&gt; 1 Cohort1 0.8898885 0.2159728 0.1842278 0.9986265       TRUE 0.4336339    FALSE</span></span>
-<span><span class="co">#&gt; 2 Cohort2 0.9999997 0.9517429 0.9070318 0.9428881       TRUE 0.9498402     TRUE</span></span></code></pre></div>
+<span><span class="co">#&gt; Posterior benefit-risk scores against target values</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  component definition      weight cutoff</span></span>
+<span><span class="co">#&gt;  ORR       P(rate &gt;= 0.3)  0.25         </span></span>
+<span><span class="co">#&gt;  PFS_S6    P(S(6) &gt;= 0.5)  0.25         </span></span>
+<span><span class="co">#&gt;  OS_S12    P(S(12) &gt;= 0.6) 0.25         </span></span>
+<span><span class="co">#&gt;  AE        P(rate &lt;= 0.3)  0.25         </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    group  ORR PFS_S6 OS_S12    AE admissible    BR selected</span></span>
+<span><span class="co">#&gt;  Cohort1 0.89  0.216  0.184 0.999       TRUE 0.434    FALSE</span></span>
+<span><span class="co">#&gt;  Cohort2 1.00  0.952  0.907 0.943       TRUE 0.950     TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Selected: Cohort2</span></span></code></pre></div>
 <p>The pairwise comparisons of Cohort2 against Cohort1 use the priority
 order OS, PFS, response and adverse event.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/WinStat.html">WinStat</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">eps</span>, treatment <span class="op">=</span> <span class="st">"Cohort2"</span>, control <span class="op">=</span> <span class="st">"Cohort1"</span><span class="op">)</span></span>
-<span><span class="va">w</span><span class="op">$</span><span class="va">ci</span></span>
-<span><span class="co">#&gt;   statistic estimate        se       lower     upper</span></span>
-<span><span class="co">#&gt; 1       NTB 0.230000 0.1120764 0.002254385 0.4350627</span></span>
-<span><span class="co">#&gt; 2        WR 1.611052 0.3877121 1.005220514 2.5820094</span></span>
-<span><span class="co">#&gt; 3        WO 1.597403 0.3780617 1.004518957 2.5402159</span></span></code></pre></div>
-<p>The net treatment benefit of Cohort2 is 0.23 and its win ratio
-1.61.</p>
+<span><span class="va">w</span></span>
+<span><span class="co">#&gt; Generalized pairwise comparisons: Cohort2 (treatment) vs Cohort1 (control)</span></span>
+<span><span class="co">#&gt; Patients: 50 and 50 (2500 pairs); scoring rule of Gehan</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Proportions of all pairs won, lost and still undecided by priority level:</span></span>
+<span><span class="co">#&gt;  priority endpoint threshold    win   loss undecided</span></span>
+<span><span class="co">#&gt;         1       OS         0 0.4800 0.2556    0.2644</span></span>
+<span><span class="co">#&gt;         2      PFS         0 0.1216 0.1160    0.0268</span></span>
+<span><span class="co">#&gt;         3      ORR         0 0.0048 0.0032    0.0188</span></span>
+<span><span class="co">#&gt;         4       AE         0 0.0000 0.0016    0.0172</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Pairs won 0.606, lost 0.376, tied 0.0172</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 95% confidence intervals:</span></span>
+<span><span class="co">#&gt;  statistic estimate    se   lower upper</span></span>
+<span><span class="co">#&gt;        NTB     0.23 0.112 0.00225 0.435</span></span>
+<span><span class="co">#&gt;         WR     1.61 0.388 1.00522 2.582</span></span>
+<span><span class="co">#&gt;         WO     1.60 0.378 1.00452 2.540</span></span></code></pre></div>
+<p>The net treatment benefit of Cohort2 is 0.23 and its win ratio 1.61.
+The results of <code><a href="../reference/BenefitRisk.html">BenefitRisk()</a></code>, <code><a href="../reference/WinStat.html">WinStat()</a></code>,
+<code><a href="../reference/SimSelection.html">SimSelection()</a></code> and <code><a href="../reference/SelectionOC.html">SelectionOC()</a></code> have
+<code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods; the plot of the
+win statistics shows how many pairs each endpoint decides.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span></span></code></pre></div>
+<p><img src="introduction_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="where-to-go-next">Where to go next<a class="anchor" aria-label="anchor" href="#where-to-go-next"></a>

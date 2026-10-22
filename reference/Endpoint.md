@@ -22,6 +22,9 @@ Endpoint(
   positive = NULL,
   higher.better = TRUE
 )
+
+# S3 method for class 'Endpoint'
+print(x, ...)
 ```
 
 ## Arguments
@@ -65,6 +68,14 @@ Endpoint(
 
   Logical: `TRUE` if a value of 1 (binary) or a longer time (time to
   event) is favorable.
+
+- x:
+
+  An `Endpoint` object.
+
+- ...:
+
+  Not used.
 
 ## Value
 

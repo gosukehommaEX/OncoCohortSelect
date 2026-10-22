@@ -87,9 +87,10 @@ admissible cohort with the highest score is marked as selected.
 
 ## Scores against target values
 
-The data of one simulated trial with three cohorts illustrate the score.
-Cohort1 is the reference regimen; Cohort2 is more active, and Cohort3 is
-the most active but has more adverse events.
+The data of one simulated trial with three cohorts of 50 patients
+illustrate the score. Cohort1 is the reference regimen. Cohort2 and
+Cohort3 are more active, and Cohort3 has many more adverse events (a
+true rate of 0.5 against 0.15).
 
 ``` r
 
@@ -97,9 +98,9 @@ make_arm <- function(pfs, orr, os) {
   CorOncoEndpoints::OncoArm(pfs.median = pfs, orr = orr, resp.cor = 0.4,
                             death.prop = 0.15, os.median = os)
 }
-arms <- list(Cohort1 = make_arm(5, 0.30, 14), Cohort2 = make_arm(7, 0.45, 17),
-             Cohort3 = make_arm(8, 0.55, 18))
-d <- SimCohorts(nsim = 1, n = c(40, 40, 40), arms = arms, ae.rate = c(0.20, 0.25, 0.45),
+arms <- list(Cohort1 = make_arm(5, 0.30, 14), Cohort2 = make_arm(8, 0.50, 20),
+             Cohort3 = make_arm(9, 0.55, 21))
+d <- SimCohorts(nsim = 1, n = c(50, 50, 50), arms = arms, ae.rate = c(0.15, 0.15, 0.50),
                 cutoff = 24, a.time = c(0, 12), seed = 11)
 eps <- list(
   Endpoint("OS", "tte", time = "os_tte", event = "os_event"),
@@ -122,20 +123,40 @@ crit <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
                    cutoff = c(NA, NA, NA, 0.8))
 br <- BenefitRisk(d, eps, crit)
 br
-#>     group       ORR     PFS_S6     OS_S12         AE admissible          BR
-#> 1 Cohort1 0.9137056 0.01146008 0.35632997 0.99934877       TRUE 0.155000280
-#> 2 Cohort2 0.9960656 0.70731273 0.45428649 0.74301200      FALSE 0.508243987
-#> 3 Cohort3 0.9985459 0.46710628 0.01948206 0.02531843      FALSE 0.005283353
-#>   selected
-#> 1     TRUE
-#> 2    FALSE
-#> 3    FALSE
+#> Posterior benefit-risk scores against target values
+#> 
+#>  component definition      weight cutoff
+#>  ORR       P(rate >= 0.3)  0.333        
+#>  PFS_S6    P(S(6) >= 0.5)  0.333        
+#>  OS_S12    P(S(12) >= 0.6) 0.333        
+#>  AE        P(rate <= 0.35) 1      0.8   
+#> 
+#>    group   ORR  PFS_S6 OS_S12      AE admissible      BR selected
+#>  Cohort1 0.965 0.00564 0.0472 0.98949       TRUE 0.06286    FALSE
+#>  Cohort2 0.996 0.90879 0.6613 0.98949       TRUE 0.83399     TRUE
+#>  Cohort3 0.998 0.94723 0.5995 0.00682      FALSE 0.00564    FALSE
+#> 
+#> Selected: Cohort2
 ```
 
 The column `ORR` is \\P(p \ge 0.3)\\, `PFS_S6` is \\P(S(6) \ge 0.5)\\
 for PFS, `OS_S12` is \\P(S(12) \ge 0.6)\\ for OS and `AE` is \\P(p \le
-0.35)\\ for the adverse event. Cohort3 has an `AE` component of 0.03 and
-is not admissible. The selected cohort is Cohort1.
+0.35)\\ for the adverse event. Cohort3 has an `AE` component of 0.01 and
+is not admissible. The selected cohort is Cohort2.
+
+The printed result lists the definition, weight and cutoff of each
+component before the scores.
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) shows the
+components and the score of each cohort; the dashed lines are the
+admissibility cutoffs, and an asterisk marks a cohort that is not
+admissible.
+
+``` r
+
+plot(br)
+```
+
+![](benefit-risk_files/figure-html/unnamed-chunk-6-1.png)
 
 A component against a fixed target measures how certainly a cohort
 exceeds the target, not by how much. When several cohorts clearly exceed
@@ -168,13 +189,21 @@ crit_ref <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
                        cutoff = c(NA, NA, NA, 0.8))
 br_ref <- BenefitRisk(d, eps, crit_ref, reference = "Cohort1")
 br_ref
-#>     group reference       ORR    PFS_HR      OS_HR          AE admissible
-#> 1 Cohort2   Cohort1 0.4938515 0.8623758 0.43289892 0.210442927      FALSE
-#> 2 Cohort3   Cohort1 0.5831601 0.7367773 0.05873033 0.003110884      FALSE
-#>             BR
-#> 1 0.1197735249
-#> 2 0.0009124576
+#> Posterior benefit-risk scores relative to Cohort1
+#> 
+#>  component definition                weight cutoff
+#>  ORR       P(rate - rate_ref >= 0.1) 0.333        
+#>  PFS_HR    P(HR <= 0.8)              0.333        
+#>  OS_HR     P(HR <= 0.9)              0.333        
+#>  AE        P(rate - rate_ref <= 0.1) 1      0.8   
+#> 
+#>    group reference   ORR PFS_HR OS_HR      AE admissible      BR
+#>  Cohort2   Cohort1 0.338  0.958 0.857 0.89716       TRUE 0.58543
+#>  Cohort3   Cohort1 0.415  0.973 0.830 0.00999      FALSE 0.00694
+plot(br_ref)
 ```
+
+![](benefit-risk_files/figure-html/unnamed-chunk-7-1.png)
 
 Here `ORR` is \\P(p - p\_{\mathrm{ref}} \ge 0.1)\\, `PFS_HR` and `OS_HR`
 are the probabilities that the hazard ratios against Cohort1 are at most

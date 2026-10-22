@@ -74,7 +74,9 @@ crit_ref <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
 BenefitRisk(d, eps, crit_ref, reference = "Cohort2")
 
 # net treatment benefit, win ratio and win odds (priority OS, PFS, ORR, AE)
-WinStat(d, eps, treatment = "Cohort1", control = "Cohort2")$ci
+w <- WinStat(d, eps, treatment = "Cohort1", control = "Cohort2")
+w
+plot(w)
 
 # censored pairs scored with the Kaplan-Meier estimates (Peron)
 WinStat(d, eps, treatment = "Cohort1", control = "Cohort2", scoring = "peron")$ci
@@ -102,6 +104,15 @@ Endpoint("AE", "binary", var = "AEFL", positive = "Y", higher.better = FALSE)
 | [`SimSelection()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection.md) | Benefit-risk scores and win statistics of simulated trials, for two or more cohorts against a reference cohort |
 | [`SelectionOC()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md) | Probability that a decision rule selects each cohort |
 | [`CalibrateThreshold()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/CalibrateThreshold.md) | Threshold of a decision rule for a given probability of selecting a cohort other than the reference |
+
+The results of
+[`BenefitRisk()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/BenefitRisk.md),
+[`WinStat()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat.md),
+[`SimSelection()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection.md)
+and
+[`SelectionOC()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md)
+have [`print()`](https://rdrr.io/r/base/print.html) and
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods.
 
 ## Verification
 

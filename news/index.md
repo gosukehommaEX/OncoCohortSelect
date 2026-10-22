@@ -1,5 +1,30 @@
 # Changelog
 
+## OncoCohortSelect 0.3.0
+
+- [`print()`](https://rdrr.io/r/base/print.html) and
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods for
+  the results of
+  [`BenefitRisk()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/BenefitRisk.md),
+  [`WinStat()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat.md),
+  [`SimSelection()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection.md)
+  and
+  [`SelectionOC()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md),
+  and a [`print()`](https://rdrr.io/r/base/print.html) method for
+  [`Endpoint()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/Endpoint.md).
+  The results have the classes `BenefitRisk`, `WinStat`, `SimSelection`
+  and `SelectionOC`; the data frames remain data frames.
+- [`WinStat()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat.md)
+  returns the cohorts, the scoring rule and the confidence level in the
+  element `settings`, and
+  [`SimSelection()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection.md)
+  returns the reference cohort, the scoring rule and the confidence
+  level in the attribute `settings`.
+- The plots use base graphics (packages graphics and grDevices).
+- The example of the article “Posterior benefit-risk score” has larger
+  cohorts and clearer differences between them, and the articles show
+  the new plots.
+
 ## OncoCohortSelect 0.2.0
 
 ### Breaking changes

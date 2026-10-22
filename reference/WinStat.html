@@ -21,7 +21,7 @@ with standard errors and confidence intervals."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -125,7 +125,7 @@ or <code>"peron"</code>.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with elements</p>
+    <p>A list of class <code>WinStat</code> with elements</p>
 <dl><dt>estimate</dt>
 <dd><p>Named vector with <code>p_win</code>, <code>p_loss</code>,
     <code>p_tie</code>, <code>ntb</code>, <code>wr</code> and <code>wo</code>.</p></dd>
@@ -145,7 +145,12 @@ or <code>"peron"</code>.</p></dd>
 <dd><p>Named vector with the numbers of treatment and control patients
     and of pairs.</p></dd>
 
-</dl></div>
+  <dt>settings</dt>
+<dd><p>List with <code>treatment</code>, <code>control</code>,
+    <code>scoring</code> and <code>conf.level</code>.</p></dd>
+
+</dl><p>See <code><a href="WinStat-methods.html">WinStat-methods</a></code> for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.</p>
+    </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>A pair is compared on the endpoints in the order of <code>priority</code>. The

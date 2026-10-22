@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -181,13 +181,19 @@ one row per trial and cohort with all the statistics.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scenarios</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res</span><span class="op">[[</span><span class="st">"Cohort3 best"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sim"</span>, <span class="st">"group"</span>, <span class="st">"br"</span>, <span class="st">"adm"</span>, <span class="st">"br_diff"</span>, <span class="st">"br_ref"</span>, <span class="st">"ntb"</span>,</span>
 <span>                               <span class="st">"wr"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   sim   group        br  adm   br_diff    br_ref      ntb       wr</span></span>
-<span><span class="co">#&gt; 1   1 Cohort1 0.3457031 TRUE        NA        NA       NA       NA</span></span>
-<span><span class="co">#&gt; 2   1 Cohort2 0.9341182 TRUE 0.5884151 0.6528040 0.261875 1.746881</span></span>
-<span><span class="co">#&gt; 3   1 Cohort3 0.6003460 TRUE 0.2546429 0.5309574 0.054375 1.116779</span></span>
-<span><span class="co">#&gt; 4   2 Cohort1 0.1521474 TRUE        NA        NA       NA       NA</span></span>
-<span><span class="co">#&gt; 5   2 Cohort2 0.8117088 TRUE 0.6595613 0.4894333 0.349375 2.098232</span></span>
-<span><span class="co">#&gt; 6   2 Cohort3 0.9042806 TRUE 0.7521331 0.8645273 0.273750 1.768421</span></span></code></pre></div>
+<span><span class="co">#&gt;  sim   group    br  adm br_diff br_ref    ntb   wr</span></span>
+<span><span class="co">#&gt;    1 Cohort1 0.346 TRUE      NA     NA     NA   NA</span></span>
+<span><span class="co">#&gt;    1 Cohort2 0.934 TRUE   0.588  0.653 0.2619 1.75</span></span>
+<span><span class="co">#&gt;    1 Cohort3 0.600 TRUE   0.255  0.531 0.0544 1.12</span></span>
+<span><span class="co">#&gt;    2 Cohort1 0.152 TRUE      NA     NA     NA   NA</span></span>
+<span><span class="co">#&gt;    2 Cohort2 0.812 TRUE   0.660  0.489 0.3494 2.10</span></span>
+<span><span class="co">#&gt;    2 Cohort3 0.904 TRUE   0.752  0.865 0.2737 1.77</span></span></code></pre></div>
+<p><code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> shows the distribution of a statistic over the
+simulated trials for each cohort, here the net treatment benefit against
+Cohort1 in the scenario “Cohort3 best”.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">[[</span><span class="st">"Cohort3 best"</span><span class="op">]</span><span class="op">]</span>, <span class="st">"ntb"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="selection_files/figure-html/unnamed-chunk-5-1.png" class="r-plt" alt="" width="100%"></p>
 <p>The pairwise comparisons use the scoring rule of Gehan;
 <code>scoring = "peron"</code> in <code><a href="../reference/SimSelection.html">SimSelection()</a></code> uses the
 rule of Péron instead.</p>
@@ -197,7 +203,7 @@ rule of Péron instead.</p>
 </h2>
 <p>The thresholds are chosen in the null scenario so that a new cohort
 is selected in at most 10% of the trials.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"br_diff"</span>, <span class="st">"br_ref"</span>, <span class="st">"ntb"</span>, <span class="st">"wr"</span><span class="op">)</span></span>
 <span><span class="va">thr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">stats</span>, <span class="kw">function</span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/CalibrateThreshold.html">CalibrateThreshold</a></span><span class="op">(</span><span class="va">res</span><span class="op">[[</span><span class="st">"Null"</span><span class="op">]</span><span class="op">]</span>, <span class="va">s</span>, alpha <span class="op">=</span> <span class="fl">0.10</span><span class="op">)</span></span>
@@ -207,12 +213,19 @@ is selected in at most 10% of the trials.</p>
 <span><span class="co">#&gt; 1   br_diff   0.1 0.4913541            0.1</span></span>
 <span><span class="co">#&gt; 2    br_ref   0.1 0.5610610            0.1</span></span>
 <span><span class="co">#&gt; 3       ntb   0.1 0.2181250            0.1</span></span>
-<span><span class="co">#&gt; 4        wr   0.1 1.5592949            0.1</span></span></code></pre></div>
+<span><span class="co">#&gt; 4        wr   0.1 1.5592949            0.1</span></span>
+<span><span class="va">thr_ntb</span> <span class="op">&lt;-</span> <span class="va">thr</span><span class="op">$</span><span class="va">threshold</span><span class="op">[</span><span class="va">thr</span><span class="op">$</span><span class="va">statistic</span> <span class="op">==</span> <span class="st">"ntb"</span><span class="op">]</span></span></code></pre></div>
+<p>In the null scenario, a new cohort is selected by the net treatment
+benefit when its value lies above the dashed line, the calibrated
+threshold.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">[[</span><span class="st">"Null"</span><span class="op">]</span><span class="op">]</span>, <span class="st">"ntb"</span>, threshold <span class="op">=</span> <span class="va">thr_ntb</span><span class="op">)</span></span></code></pre></div>
+<p><img src="selection_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="selection-probabilities">Selection probabilities<a class="anchor" aria-label="anchor" href="#selection-probabilities"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">oc_row</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">r</span>, <span class="va">s</span>, <span class="va">th</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SelectionOC.html">SelectionOC</a></span><span class="op">(</span><span class="va">r</span>, <span class="va">s</span>, threshold <span class="op">=</span> <span class="va">th</span><span class="op">)</span></span>
 <span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">oc</span><span class="op">$</span><span class="va">p_select</span>, <span class="va">oc</span><span class="op">$</span><span class="va">group</span><span class="op">)</span></span>
@@ -399,13 +412,21 @@ event has the lowest priority and decides only the pairs left undecided
 by OS, PFS and response; a rule based on win statistics gives more
 weight to safety when the adverse event comes earlier in the priority
 order.</p>
+<p>With several thresholds, <code><a href="../reference/SelectionOC.html">SelectionOC()</a></code> shows how the
+selection probabilities change with the threshold; the dashed line is
+the calibrated threshold of the net treatment benefit.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">oc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SelectionOC.html">SelectionOC</a></span><span class="op">(</span><span class="va">res</span><span class="op">[[</span><span class="st">"Cohort3 best"</span><span class="op">]</span><span class="op">]</span>, <span class="st">"ntb"</span>, threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.4</span>, by <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">oc</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">thr_ntb</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<p><img src="selection_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="saturation-of-the-score-against-target-values">Saturation of the score against target values<a class="anchor" aria-label="anchor" href="#saturation-of-the-score-against-target-values"></a>
 </h2>
 <p>In the scenario “Cohort3 best”, the median scores against the target
 values are</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r3</span> <span class="op">&lt;-</span> <span class="va">res</span><span class="op">[[</span><span class="st">"Cohort3 best"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">r3</span><span class="op">$</span><span class="va">br</span>, <span class="va">r3</span><span class="op">$</span><span class="va">group</span>, <span class="va">median</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Cohort1 Cohort2 Cohort3 </span></span>

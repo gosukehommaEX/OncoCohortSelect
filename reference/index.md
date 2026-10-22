@@ -6,6 +6,7 @@ Define endpoints and compute posterior benefit-risk scores and win
 statistics of observed or simulated data
 
 - [`Endpoint()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/Endpoint.md)
+  [`print(`*`<Endpoint>`*`)`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/Endpoint.md)
   : Define an endpoint
 - [`PosteriorProb()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/PosteriorProb.md)
   : Posterior probability of a favorable value of an endpoint
@@ -28,3 +29,20 @@ Simulate cohorts and evaluate selection rules
   : Selection probabilities of a decision rule
 - [`CalibrateThreshold()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/CalibrateThreshold.md)
   : Threshold of a decision rule for a given false selection probability
+
+## Printing and plotting
+
+Summaries and plots of the results
+
+- [`plot(`*`<BenefitRisk>`*`)`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/BenefitRisk-methods.md)
+  [`print(`*`<BenefitRisk>`*`)`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/BenefitRisk-methods.md)
+  : Print and plot benefit-risk scores
+- [`plot(`*`<WinStat>`*`)`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat-methods.md)
+  [`print(`*`<WinStat>`*`)`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat-methods.md)
+  : Print and plot win statistics
+- [`plot(`*`<SimSelection>`*`)`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection-methods.md)
+  [`print(`*`<SimSelection>`*`)`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection-methods.md)
+  : Print and plot the results of simulated trials
+- [`plot(`*`<SelectionOC>`*`)`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC-methods.md)
+  [`print(`*`<SelectionOC>`*`)`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC-methods.md)
+  : Print and plot selection probabilities

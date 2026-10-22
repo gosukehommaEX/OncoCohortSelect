@@ -93,15 +93,24 @@ crit <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
                    weight = c(1 / 3, 1 / 3, 1 / 3, 1), cutoff = c(NA, NA, NA, 0.8))
 br <- BenefitRisk(adsl, eps, crit, group = "TRT01P")
 br
-#>      group       ORR    PFS_S6    OS_S12         AE admissible          BR
-#> 1 Cohort 1 0.7585508 0.2487189 0.2241496 0.99011904       TRUE 0.344956673
-#> 2 Cohort 2 0.8495470 0.9993728 0.9577358 0.99011904       TRUE 0.924146786
-#> 3 Cohort 3 0.9995100 0.8494408 0.5243060 0.01270498      FALSE 0.009700831
-#>   selected
-#> 1    FALSE
-#> 2     TRUE
-#> 3    FALSE
+#> Posterior benefit-risk scores against target values
+#> 
+#>  component definition      weight cutoff
+#>  ORR       P(rate >= 0.3)  0.333        
+#>  PFS_S6    P(S(6) >= 0.5)  0.333        
+#>  OS_S12    P(S(12) >= 0.6) 0.333        
+#>  AE        P(rate <= 0.4)  1      0.8   
+#> 
+#>     group   ORR PFS_S6 OS_S12     AE admissible     BR selected
+#>  Cohort 1 0.759  0.249  0.224 0.9901       TRUE 0.3450    FALSE
+#>  Cohort 2 0.850  0.999  0.958 0.9901       TRUE 0.9241     TRUE
+#>  Cohort 3 1.000  0.849  0.524 0.0127      FALSE 0.0097    FALSE
+#> 
+#> Selected: Cohort 2
+plot(br)
 ```
+
+![](completed-trial_files/figure-html/unnamed-chunk-5-1.png)
 
 Relative to Cohort 1, the reference regimen:
 
@@ -113,13 +122,21 @@ crit_ref <- data.frame(endpoint = c("ORR", "PFS", "OS", "AE"),
                        weight = c(1 / 3, 1 / 3, 1 / 3, 1), cutoff = c(NA, NA, NA, 0.8))
 br_ref <- BenefitRisk(adsl, eps, crit_ref, group = "TRT01P", reference = "Cohort 1")
 br_ref
-#>      group reference       ORR    PFS_HR     OS_HR         AE admissible
-#> 1 Cohort 2  Cohort 1 0.2371944 0.9642481 0.9251714 0.86211847       TRUE
-#> 2 Cohort 3  Cohort 1 0.8135225 0.6166791 0.5885187 0.01030468      FALSE
-#>            BR
-#> 1 0.513734506
-#> 2 0.006861683
+#> Posterior benefit-risk scores relative to Cohort 1
+#> 
+#>  component definition                weight cutoff
+#>  ORR       P(rate - rate_ref >= 0.1) 0.333        
+#>  PFS_HR    P(HR <= 0.8)              0.333        
+#>  OS_HR     P(HR <= 0.9)              0.333        
+#>  AE        P(rate - rate_ref <= 0.1) 1      0.8   
+#> 
+#>     group reference   ORR PFS_HR OS_HR     AE admissible      BR
+#>  Cohort 2  Cohort 1 0.237  0.964 0.925 0.8621       TRUE 0.51373
+#>  Cohort 3  Cohort 1 0.814  0.617 0.589 0.0103      FALSE 0.00686
+plot(br_ref)
 ```
+
+![](completed-trial_files/figure-html/unnamed-chunk-6-1.png)
 
 ## Win statistics
 
@@ -130,17 +147,35 @@ response and adverse event.
 
 w2 <- WinStat(adsl, eps, treatment = "Cohort 2", control = "Cohort 1", group = "TRT01P")
 w3 <- WinStat(adsl, eps, treatment = "Cohort 3", control = "Cohort 1", group = "TRT01P")
-w2$ci
-#>   statistic estimate        se     lower     upper
-#> 1       NTB 0.331875 0.1176162 0.0856671 0.5398828
-#> 2        WR 2.035088 0.5536582 1.1940114 3.4686286
-#> 3        WO 1.993452 0.5269650 1.1873871 3.3467183
-w3$ci
-#>   statistic estimate        se       lower     upper
-#> 1       NTB 0.167500 0.1252666 -0.08331817 0.3983604
-#> 2        WR 1.407295 0.3664531  0.84476537 2.3444128
-#> 3        WO 1.402402 0.3614904  0.84617968 2.3242493
+w2
+#> Generalized pairwise comparisons: Cohort 2 (treatment) vs Cohort 1 (control)
+#> Patients: 40 and 40 (1600 pairs); scoring rule of Gehan
+#> 
+#> Proportions of all pairs won, lost and still undecided by priority level:
+#>  priority endpoint threshold     win    loss undecided
+#>         1       OS         0 0.44562 0.20125    0.3531
+#>         2      PFS         0 0.18250 0.09250    0.0781
+#>         3      ORR         0 0.01562 0.01750    0.0450
+#>         4       AE         0 0.00875 0.00937    0.0269
+#> 
+#> Pairs won 0.652, lost 0.321, tied 0.0269
+#> 
+#> 95% confidence intervals:
+#>  statistic estimate    se  lower upper
+#>        NTB    0.332 0.118 0.0857  0.54
+#>         WR    2.035 0.554 1.1940  3.47
+#>         WO    1.993 0.527 1.1874  3.35
+plot(w2)
 ```
+
+![](completed-trial_files/figure-html/unnamed-chunk-7-1.png)
+
+``` r
+
+plot(w3)
+```
+
+![](completed-trial_files/figure-html/unnamed-chunk-7-2.png)
 
 The net treatment benefit against Cohort 1 is 0.33 for Cohort 2 and 0.17
 for Cohort 3. With the scoring rule of Péron, censored pairs are scored
@@ -177,10 +212,10 @@ adsl$sim <- 1
 res <- SimSelection(adsl, eps, crit, reference = "Cohort 1", criteria.ref = crit_ref,
                     group = "TRT01P")
 res[, c("group", "br", "adm", "br_diff", "br_ref", "adm_ref", "ntb", "wr")]
-#>      group          br   adm    br_diff      br_ref adm_ref      ntb       wr
-#> 1 Cohort 1 0.344956673  TRUE         NA          NA      NA       NA       NA
-#> 2 Cohort 2 0.924146786  TRUE  0.5791901 0.513734506    TRUE 0.331875 2.035088
-#> 3 Cohort 3 0.009700831 FALSE -0.3352558 0.006861683   FALSE 0.167500 1.407295
+#>     group     br   adm br_diff  br_ref adm_ref   ntb   wr
+#>  Cohort 1 0.3450  TRUE      NA      NA      NA    NA   NA
+#>  Cohort 2 0.9241  TRUE   0.579 0.51373    TRUE 0.332 2.04
+#>  Cohort 3 0.0097 FALSE  -0.335 0.00686   FALSE 0.167 1.41
 rules <- data.frame(statistic = c("br_diff", "br_ref", "ntb", "wr"),
                     threshold = c(0.05, 0.5, 0.1, 1.5))
 sel <- vapply(seq_len(nrow(rules)), function(i) {

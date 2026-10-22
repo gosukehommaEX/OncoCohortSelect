@@ -39,10 +39,14 @@ SelectionOC(
 
 ## Value
 
-A data frame with columns `statistic`, `threshold`, `group` and
-`p_select`, with one row per threshold and cohort (in the order of
-`results`), and, for `"br_diff"` with admissibility, a row `"(none)"`
-for the trials in which no cohort is selected.
+A data frame of class `SelectionOC` with columns `statistic`,
+`threshold`, `group` and `p_select`, with one row per threshold and
+cohort (in the order of `results`), and, for `"br_diff"` with
+admissibility, a row `"(none)"` for the trials in which no cohort is
+selected. See
+[`SelectionOC-methods`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC-methods.md)
+for [`print()`](https://rdrr.io/r/base/print.html) and
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html).
 
 ## Details
 
@@ -87,18 +91,16 @@ res <- data.frame(sim = rep(1:4, each = 3),
                           FALSE, FALSE, FALSE),
                   ntb = c(NA, 0.1, -0.1, NA, -0.2, 0.05, NA, 0.3, 0.1, NA, 0.02, 0.01))
 SelectionOC(res, "br_diff", threshold = c(0, 0.1))
-#>   statistic threshold  group p_select
-#> 1   br_diff       0.0      A     0.25
-#> 2   br_diff       0.0      B     0.50
-#> 3   br_diff       0.0      C     0.00
-#> 4   br_diff       0.0 (none)     0.25
-#> 5   br_diff       0.1      A     0.25
-#> 6   br_diff       0.1      B     0.50
-#> 7   br_diff       0.1      C     0.00
-#> 8   br_diff       0.1 (none)     0.25
+#> Probability that the rule selects each cohort
+#> Statistic: br_diff (Difference of the benefit-risk scores from the reference)
+#> 
+#>  threshold    A   B C (none)
+#>        0.0 0.25 0.5 0   0.25
+#>        0.1 0.25 0.5 0   0.25
 SelectionOC(res, "ntb")
-#>   statistic threshold group p_select
-#> 1       ntb         0     A     0.00
-#> 2       ntb         0     B     0.75
-#> 3       ntb         0     C     0.25
+#> Probability that the rule selects each cohort
+#> Statistic: ntb (Net treatment benefit against the reference)
+#> 
+#>  threshold A    B    C
+#>          0 0 0.75 0.25
 ```

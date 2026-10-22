@@ -15,7 +15,7 @@ simulated trials in which a decision rule selects each cohort."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,11 +90,12 @@ scores (<code>"br_diff"</code> and <code>"br_ref"</code> only).</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with columns <code>statistic</code>, <code>threshold</code>,
-  <code>group</code> and <code>p_select</code>, with one row per threshold and cohort
-  (in the order of <code>results</code>), and, for <code>"br_diff"</code> with
-  admissibility, a row <code>"(none)"</code> for the trials in which no cohort is
-  selected.</p>
+    <p>A data frame of class <code>SelectionOC</code> with columns
+  <code>statistic</code>, <code>threshold</code>, <code>group</code> and <code>p_select</code>,
+  with one row per threshold and cohort (in the order of <code>results</code>),
+  and, for <code>"br_diff"</code> with admissibility, a row <code>"(none)"</code> for
+  the trials in which no cohort is selected. See
+  <code><a href="SelectionOC-methods.html">SelectionOC-methods</a></code> for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -133,20 +134,18 @@ default.</p>
 <span class="r-in"><span>                          <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                  ntb <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="fl">0.1</span>, <span class="op">-</span><span class="fl">0.1</span>, <span class="cn">NA</span>, <span class="op">-</span><span class="fl">0.2</span>, <span class="fl">0.05</span>, <span class="cn">NA</span>, <span class="fl">0.3</span>, <span class="fl">0.1</span>, <span class="cn">NA</span>, <span class="fl">0.02</span>, <span class="fl">0.01</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">SelectionOC</span><span class="op">(</span><span class="va">res</span>, <span class="st">"br_diff"</span>, threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   statistic threshold  group p_select</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   br_diff       0.0      A     0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   br_diff       0.0      B     0.50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   br_diff       0.0      C     0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   br_diff       0.0 (none)     0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   br_diff       0.1      A     0.25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   br_diff       0.1      B     0.50</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   br_diff       0.1      C     0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   br_diff       0.1 (none)     0.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Probability that the rule selects each cohort</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Statistic: br_diff (Difference of the benefit-risk scores from the reference)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  threshold    A   B C (none)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.0 0.25 0.5 0   0.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.1 0.25 0.5 0   0.25</span>
 <span class="r-in"><span><span class="fu">SelectionOC</span><span class="op">(</span><span class="va">res</span>, <span class="st">"ntb"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   statistic threshold group p_select</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       ntb         0     A     0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       ntb         0     B     0.75</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       ntb         0     C     0.25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Probability that the rule selects each cohort</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Statistic: ntb (Net treatment benefit against the reference)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  threshold A    B    C</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          0 0 0.75 0.25</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

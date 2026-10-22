@@ -109,14 +109,26 @@ res <- lapply(seq_along(scenarios), function(i) {
 names(res) <- names(scenarios)
 head(res[["Cohort3 best"]][, c("sim", "group", "br", "adm", "br_diff", "br_ref", "ntb",
                                "wr")])
-#>   sim   group        br  adm   br_diff    br_ref      ntb       wr
-#> 1   1 Cohort1 0.3457031 TRUE        NA        NA       NA       NA
-#> 2   1 Cohort2 0.9341182 TRUE 0.5884151 0.6528040 0.261875 1.746881
-#> 3   1 Cohort3 0.6003460 TRUE 0.2546429 0.5309574 0.054375 1.116779
-#> 4   2 Cohort1 0.1521474 TRUE        NA        NA       NA       NA
-#> 5   2 Cohort2 0.8117088 TRUE 0.6595613 0.4894333 0.349375 2.098232
-#> 6   2 Cohort3 0.9042806 TRUE 0.7521331 0.8645273 0.273750 1.768421
+#>  sim   group    br  adm br_diff br_ref    ntb   wr
+#>    1 Cohort1 0.346 TRUE      NA     NA     NA   NA
+#>    1 Cohort2 0.934 TRUE   0.588  0.653 0.2619 1.75
+#>    1 Cohort3 0.600 TRUE   0.255  0.531 0.0544 1.12
+#>    2 Cohort1 0.152 TRUE      NA     NA     NA   NA
+#>    2 Cohort2 0.812 TRUE   0.660  0.489 0.3494 2.10
+#>    2 Cohort3 0.904 TRUE   0.752  0.865 0.2737 1.77
 ```
+
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) shows the
+distribution of a statistic over the simulated trials for each cohort,
+here the net treatment benefit against Cohort1 in the scenario “Cohort3
+best”.
+
+``` r
+
+plot(res[["Cohort3 best"]], "ntb")
+```
+
+![](selection_files/figure-html/unnamed-chunk-5-1.png)
 
 The pairwise comparisons use the scoring rule of Gehan;
 `scoring = "peron"` in
@@ -140,7 +152,19 @@ thr
 #> 2    br_ref   0.1 0.5610610            0.1
 #> 3       ntb   0.1 0.2181250            0.1
 #> 4        wr   0.1 1.5592949            0.1
+thr_ntb <- thr$threshold[thr$statistic == "ntb"]
 ```
+
+In the null scenario, a new cohort is selected by the net treatment
+benefit when its value lies above the dashed line, the calibrated
+threshold.
+
+``` r
+
+plot(res[["Null"]], "ntb", threshold = thr_ntb)
+```
+
+![](selection_files/figure-html/unnamed-chunk-7-1.png)
 
 ## Selection probabilities
 
@@ -196,6 +220,20 @@ adverse events, whereas in the pairwise comparisons the adverse event
 has the lowest priority and decides only the pairs left undecided by OS,
 PFS and response; a rule based on win statistics gives more weight to
 safety when the adverse event comes earlier in the priority order.
+
+With several thresholds,
+[`SelectionOC()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md)
+shows how the selection probabilities change with the threshold; the
+dashed line is the calibrated threshold of the net treatment benefit.
+
+``` r
+
+oc <- SelectionOC(res[["Cohort3 best"]], "ntb", threshold = seq(0, 0.4, by = 0.02))
+plot(oc)
+abline(v = thr_ntb, lty = 2)
+```
+
+![](selection_files/figure-html/unnamed-chunk-9-1.png)
 
 ## Saturation of the score against target values
 
