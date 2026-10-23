@@ -21,12 +21,7 @@ plot.SelectionOC <- function(x, threshold = NULL, col = NULL, main = NULL,
   M <- .oc_matrix(x)
   thr <- unique(x$threshold)
   cols <- if (is.null(col)) .oc_colors(ncol(M)) else rep_len(col, ncol(M))
-  if (is.null(main)) {
-    main <- .stat_label(as.character(x$statistic[1]), short = TRUE)
-    if (length(thr) == 1L) {
-      main <- paste0(main, " (threshold ", .fmt_num(thr, 4), ")")
-    }
-  }
+  if (is.null(main)) main <- .oc_title(as.character(x$statistic[1]), thr)
   # names shown: the selection of no cohort is labeled in words
   shown <- colnames(M)
   shown[shown == "(none)"] <- "None admissible"
@@ -43,7 +38,8 @@ plot.SelectionOC <- function(x, threshold = NULL, col = NULL, main = NULL,
   leg_h <- 1.4 * cex.legend
   bottom <- base + if (legend.position == "bottom") leg_h + 0.6 else 0.4
   title_line <- if (legend.position == "top") 0.6 + leg_h else 1
-  op <- graphics::par(mar = c(bottom, 4.5, title_line + 1.4 * cex.main, 1))
+  op <- graphics::par(mar = c(bottom, 4.5, title_line + 1.4 * cex.main * .title_lines(main),
+                             1))
   on.exit(graphics::par(op))
   o <- order(thr)
   graphics::matplot(thr[o], M[o, , drop = FALSE], type = "l", lty = 1, lwd = 2, col = cols,

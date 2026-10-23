@@ -34,7 +34,8 @@ plot.BenefitRisk <- function(x, col = NULL, main = NULL,
   leg_h <- 1.4 * cex.legend
   bottom <- base + if (legend.position == "bottom") leg_h + 0.6 else 0.4
   title_line <- if (legend.position == "top") 0.6 + leg_h else 1
-  op <- graphics::par(mar = c(bottom, 4.5, title_line + 1.4 * cex.main, 1))
+  op <- graphics::par(mar = c(bottom, 4.5, title_line + 1.4 * cex.main * .title_lines(main),
+                             1))
   on.exit(graphics::par(op))
   bp <- graphics::barplot(M, beside = TRUE, col = cols, ylim = c(0, 1), axes = FALSE,
                           names.arg = nm, cex.names = cex.axis, cex.lab = cex.lab,

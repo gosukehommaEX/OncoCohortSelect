@@ -7,13 +7,14 @@
 #' \code{plot()} draws one bar per priority level with the proportions of all
 #' pairs won and lost at that level, and a last bar with the pairs that no
 #' level decides; the title gives the net treatment benefit and the win ratio
-#' with their confidence intervals.
+#' with their confidence intervals, one per line.
 #'
 #' @param x List returned by \code{\link{WinStat}}.
 #' @param digits Number of significant digits.
 #' @param col Colors of the pairs won, lost and undecided (recycled).
 #' @param main Title of the plot; by default the net treatment benefit and the
-#'   win ratio with their confidence intervals.
+#'   win ratio with their confidence intervals, one per line. A title with
+#'   line breaks gets the room it needs above the plot.
 #' @param legend.position Position of the legend: \code{"bottom"} (below the
 #'   plot, the default) or \code{"top"} (above the plot) for a horizontal
 #'   legend, a keyword of \code{\link[graphics]{legend}} such as

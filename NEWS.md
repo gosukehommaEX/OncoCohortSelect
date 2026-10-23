@@ -1,3 +1,11 @@
+# OncoCohortSelect 0.3.4
+
+* The default titles of the plots fit above narrow plots: `plot()` for the
+  results of `SelectionOC()` with a single threshold puts the threshold on a
+  second line, and `plot()` for the results of `WinStat()` gives the net
+  treatment benefit and the win ratio on two lines. The plot methods leave
+  room above the plot for a title with several lines.
+
 # OncoCohortSelect 0.3.3
 
 * `SelectionOC()` and `CalibrateThreshold()` have a new argument

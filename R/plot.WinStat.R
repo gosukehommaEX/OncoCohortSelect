@@ -21,27 +21,15 @@ plot.WinStat <- function(x, col = c("#0072B2", "#D55E00", "grey75"), main = NULL
   colnames(H) <- c(lab, "Undecided")
   # the first priority level at the top
   H <- H[, rev(seq_len(K + 1L)), drop = FALSE]
-  if (is.null(main)) {
-    f2 <- function(v) .fmt_num(v, 2, "f")
-    part <- function(i, name) {
-      r <- x$ci[i, ]
-      out <- paste(name, f2(r$estimate))
-      if (!is.na(r$lower) && !is.na(r$upper)) {
-        lvl <- if (is.null(x$settings)) "" else
-          paste0(round(100 * x$settings$conf.level, 1), "% ")
-        out <- paste0(out, " (", lvl, "CI ", f2(r$lower), " to ", f2(r$upper), ")")
-      }
-      out
-    }
-    main <- paste0(part(1L, "NTB"), "; ", part(2L, "WR"))
-  }
+  if (is.null(main)) main <- .winstat_title(x)
   # margin lines: axis title, legend
   base <- 2.5 + 1.2 * cex.lab
   leg_h <- 1.4 * cex.legend
   bottom <- base + if (legend.position == "bottom") leg_h + 0.6 else 0.4
   title_line <- if (legend.position == "top") 0.6 + leg_h else 1
   left <- min(max(6, 0.55 * cex.axis * max(nchar(colnames(H))) + 1.5), 20)
-  op <- graphics::par(mar = c(bottom, left, title_line + 1.4 * cex.main, 1))
+  op <- graphics::par(mar = c(bottom, left, title_line + 1.4 * cex.main * .title_lines(main),
+                             1))
   on.exit(graphics::par(op))
   graphics::barplot(H, horiz = TRUE, las = 1, col = cols, border = NA,
                     xlim = c(0, max(colSums(H), 0.05)), xlab = "Proportion of all pairs",
