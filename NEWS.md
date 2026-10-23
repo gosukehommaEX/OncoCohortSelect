@@ -1,3 +1,15 @@
+# OncoCohortSelect 0.3.3
+
+* `SelectionOC()` and `CalibrateThreshold()` have a new argument
+  `ref.inadmissible` for the rule of `"br_diff"` with admissibility when the
+  reference cohort is not admissible. The default `"switch"` keeps the rule of
+  the earlier versions: every admissible cohort is a candidate whatever the
+  threshold, which with a threshold of 0 is the two-stage selection of
+  Chakraborty et al. (2026). With `"keep"`, a candidate must exceed the
+  threshold in every trial and the reference cohort is selected without a
+  candidate, so that `CalibrateThreshold()` always finds a threshold, also
+  when the reference cohort is often not admissible in the null scenario.
+
 # OncoCohortSelect 0.3.2
 
 * The plots name the statistics and the components in words, without

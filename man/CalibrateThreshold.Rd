@@ -8,7 +8,8 @@ CalibrateThreshold(
   results,
   statistic = c("br_diff", "br_ref", "ntb", "ntb_lower", "wr", "wo"),
   alpha = 0.05,
-  admissibility = TRUE
+  admissibility = TRUE,
+  ref.inadmissible = c("switch", "keep")
 )
 }
 \arguments{
@@ -22,6 +23,10 @@ reference.}
 
 \item{admissibility}{Logical: use the admissibility of the benefit-risk
 scores (\code{"br_diff"} and \code{"br_ref"} only).}
+
+\item{ref.inadmissible}{\code{"switch"} or \code{"keep"}: the rule of
+\code{"br_diff"} with admissibility when the reference cohort is not
+admissible (see \code{\link{SelectionOC}}).}
 }
 \value{
 A data frame with columns \code{statistic}, \code{alpha},
@@ -39,11 +44,14 @@ statistics can then be compared at the same false selection probability.
 \details{
 The decision rules are those of \code{\link{SelectionOC}}: a cohort other
 than the reference is selected when the largest statistic among the
-candidate cohorts exceeds the threshold. With \code{statistic = "br_diff"}
-and \code{admissibility = TRUE}, trials in which the reference cohort is not
-admissible and another cohort is admissible select that cohort whatever the
-threshold; when their proportion exceeds \code{alpha}, no threshold achieves
-\code{alpha} and the result is \code{NA} with a warning. The threshold is
+candidate cohorts exceeds the threshold. With \code{statistic = "br_diff"},
+\code{admissibility = TRUE} and \code{ref.inadmissible = "switch"}, trials
+in which the reference cohort is not admissible and another cohort is
+admissible select that cohort whatever the threshold; when their proportion
+exceeds \code{alpha}, no threshold achieves \code{alpha} and the result is
+\code{NA} with a warning. With \code{ref.inadmissible = "keep"}, every
+selection of another cohort needs the threshold, so a threshold that
+achieves \code{alpha} always exists. The threshold is
 one of the simulated values of the statistic (or \code{-Inf} when no trial
 needs to be excluded), and the achieved proportion can be smaller than
 \code{alpha} because of ties and the finite number of trials.

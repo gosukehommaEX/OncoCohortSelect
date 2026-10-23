@@ -8,7 +8,8 @@ SelectionOC(
   results,
   statistic = c("br_diff", "br_ref", "ntb", "ntb_lower", "wr", "wo"),
   threshold = NULL,
-  admissibility = TRUE
+  admissibility = TRUE,
+  ref.inadmissible = c("switch", "keep")
 )
 }
 \arguments{
@@ -21,13 +22,18 @@ SelectionOC(
 
 \item{admissibility}{Logical: use the admissibility of the benefit-risk
 scores (\code{"br_diff"} and \code{"br_ref"} only).}
+
+\item{ref.inadmissible}{\code{"switch"} or \code{"keep"}: the rule of
+\code{"br_diff"} with admissibility when the reference cohort is not
+admissible (see Details).}
 }
 \value{
 A data frame of class \code{SelectionOC} with columns
   \code{statistic}, \code{threshold}, \code{group} and \code{p_select},
   with one row per threshold and cohort (in the order of \code{results}),
-  and, for \code{"br_diff"} with admissibility, a row \code{"(none)"} for
-  the trials in which no cohort is selected. See
+  and, for \code{"br_diff"} with admissibility and
+  \code{ref.inadmissible = "switch"}, a row \code{"(none)"} for the trials
+  in which no cohort is selected. See
   \code{\link{SelectionOC-methods}} for \code{print()} and \code{plot()}.
 }
 \description{
@@ -43,10 +49,18 @@ ratio when no pair is decided) is not a candidate. The statistics are
 \itemize{
   \item \code{"br_diff"}: the difference of the benefit-risk scores against
     target values from that of the reference cohort. With
-    \code{admissibility = TRUE}, a candidate must be admissible; when the
-    reference cohort is not admissible, every admissible cohort is a
-    candidate whatever the threshold, and no cohort is selected when none
-    is admissible.
+    \code{admissibility = TRUE}, a candidate must be admissible. When the
+    reference cohort is not admissible, with
+    \code{ref.inadmissible = "switch"} (the default) every admissible
+    cohort is a candidate whatever the threshold, and no cohort is
+    selected when none is admissible; with a threshold of 0, this is the
+    two-stage selection of Chakraborty et al. (2026), which selects the
+    admissible cohort with the highest score. With
+    \code{ref.inadmissible = "keep"}, a candidate must exceed the
+    threshold whatever the admissibility of the reference cohort, which is
+    selected without a candidate; a large enough threshold then makes the
+    probability of selecting another cohort as small as wanted, as
+    \code{\link{CalibrateThreshold}} needs.
   \item \code{"br_ref"}: the benefit-risk score relative to the reference
     cohort. With \code{admissibility = TRUE}, a candidate must also be
     admissible relative to the reference cohort.
@@ -67,7 +81,15 @@ res <- data.frame(sim = rep(1:4, each = 3),
                           FALSE, FALSE, FALSE),
                   ntb = c(NA, 0.1, -0.1, NA, -0.2, 0.05, NA, 0.3, 0.1, NA, 0.02, 0.01))
 SelectionOC(res, "br_diff", threshold = c(0, 0.1))
+SelectionOC(res, "br_diff", threshold = c(0, 0.1), ref.inadmissible = "keep")
 SelectionOC(res, "ntb")
+}
+\references{
+Chakraborty, S., Dubey, A. K., Kumar, A. and Chan, I. (2026). A two-stage
+dose optimization framework for oncology drug development with multiple
+efficacy and safety endpoints via an integrated benefit-risk assessment.
+\emph{Statistics in Biopharmaceutical Research}, published online.
+\doi{10.1080/19466315.2026.2668381}
 }
 \seealso{
 \code{\link{SimSelection}}, \code{\link{CalibrateThreshold}}

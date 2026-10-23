@@ -13,10 +13,18 @@
 #' \itemize{
 #'   \item \code{"br_diff"}: the difference of the benefit-risk scores against
 #'     target values from that of the reference cohort. With
-#'     \code{admissibility = TRUE}, a candidate must be admissible; when the
-#'     reference cohort is not admissible, every admissible cohort is a
-#'     candidate whatever the threshold, and no cohort is selected when none
-#'     is admissible.
+#'     \code{admissibility = TRUE}, a candidate must be admissible. When the
+#'     reference cohort is not admissible, with
+#'     \code{ref.inadmissible = "switch"} (the default) every admissible
+#'     cohort is a candidate whatever the threshold, and no cohort is
+#'     selected when none is admissible; with a threshold of 0, this is the
+#'     two-stage selection of Chakraborty et al. (2026), which selects the
+#'     admissible cohort with the highest score. With
+#'     \code{ref.inadmissible = "keep"}, a candidate must exceed the
+#'     threshold whatever the admissibility of the reference cohort, which is
+#'     selected without a candidate; a large enough threshold then makes the
+#'     probability of selecting another cohort as small as wanted, as
+#'     \code{\link{CalibrateThreshold}} needs.
 #'   \item \code{"br_ref"}: the benefit-risk score relative to the reference
 #'     cohort. With \code{admissibility = TRUE}, a candidate must also be
 #'     admissible relative to the reference cohort.
@@ -34,12 +42,22 @@
 #' @param threshold Numeric vector of thresholds.
 #' @param admissibility Logical: use the admissibility of the benefit-risk
 #'   scores (\code{"br_diff"} and \code{"br_ref"} only).
+#' @param ref.inadmissible \code{"switch"} or \code{"keep"}: the rule of
+#'   \code{"br_diff"} with admissibility when the reference cohort is not
+#'   admissible (see Details).
 #' @return A data frame of class \code{SelectionOC} with columns
 #'   \code{statistic}, \code{threshold}, \code{group} and \code{p_select},
 #'   with one row per threshold and cohort (in the order of \code{results}),
-#'   and, for \code{"br_diff"} with admissibility, a row \code{"(none)"} for
-#'   the trials in which no cohort is selected. See
+#'   and, for \code{"br_diff"} with admissibility and
+#'   \code{ref.inadmissible = "switch"}, a row \code{"(none)"} for the trials
+#'   in which no cohort is selected. See
 #'   \code{\link{SelectionOC-methods}} for \code{print()} and \code{plot()}.
+#' @references
+#' Chakraborty, S., Dubey, A. K., Kumar, A. and Chan, I. (2026). A two-stage
+#' dose optimization framework for oncology drug development with multiple
+#' efficacy and safety endpoints via an integrated benefit-risk assessment.
+#' \emph{Statistics in Biopharmaceutical Research}, published online.
+#' \doi{10.1080/19466315.2026.2668381}
 #' @examples
 #' res <- data.frame(sim = rep(1:4, each = 3),
 #'                   group = rep(c("A", "B", "C"), 4),
@@ -49,13 +67,16 @@
 #'                           FALSE, FALSE, FALSE),
 #'                   ntb = c(NA, 0.1, -0.1, NA, -0.2, 0.05, NA, 0.3, 0.1, NA, 0.02, 0.01))
 #' SelectionOC(res, "br_diff", threshold = c(0, 0.1))
+#' SelectionOC(res, "br_diff", threshold = c(0, 0.1), ref.inadmissible = "keep")
 #' SelectionOC(res, "ntb")
 #' @seealso \code{\link{SimSelection}}, \code{\link{CalibrateThreshold}}
 #' @export
 SelectionOC <- function(results, statistic = c("br_diff", "br_ref", "ntb", "ntb_lower",
                                                "wr", "wo"),
-                        threshold = NULL, admissibility = TRUE) {
+                        threshold = NULL, admissibility = TRUE,
+                        ref.inadmissible = c("switch", "keep")) {
   statistic <- match.arg(statistic)
+  ref.inadmissible <- match.arg(ref.inadmissible)
   if (is.null(threshold)) {
     if (statistic == "br_ref") {
       stop("'threshold' is required for 'statistic' = \"br_ref\".", call. = FALSE)
@@ -70,9 +91,11 @@ SelectionOC <- function(results, statistic = c("br_diff", "br_ref", "ntb", "ntb_
   }
   .check_results(results, statistic)
   lev <- unique(as.character(results$group))
-  if (admissibility && statistic == "br_diff") lev <- c(lev, "(none)")
+  if (admissibility && statistic == "br_diff" && ref.inadmissible == "switch") {
+    lev <- c(lev, "(none)")
+  }
   out <- do.call(rbind, lapply(threshold, function(th) {
-    sel <- .rule_select(results, statistic, th, admissibility)$selected
+    sel <- .rule_select(results, statistic, th, admissibility, ref.inadmissible)$selected
     sel[is.na(sel)] <- "(none)"
     data.frame(statistic = statistic, threshold = th, group = lev,
                p_select = unname(vapply(lev, function(l) mean(sel == l), numeric(1))),

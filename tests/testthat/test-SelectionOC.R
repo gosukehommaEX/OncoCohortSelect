@@ -16,6 +16,20 @@ test_that("selection probabilities follow the decision rules (worked out by hand
   expect_equal(as.vector(tapply(oc$p_select, oc$threshold, sum)), c(1, 1))
 })
 
+test_that("with ref.inadmissible = 'keep' the reference is kept without a candidate", {
+  r <- oc_results()
+  oc <- SelectionOC(r, "br_diff", threshold = c(0, -0.2), ref.inadmissible = "keep")
+  # no row "(none)": a cohort is always selected
+  expect_identical(oc$group, rep(c("A", "B", "C"), 2))
+  expect_equal(oc$p_select, c(3, 0, 1, 2, 1, 1) / 4)
+  # the default is the rule of 'switch'
+  expect_identical(SelectionOC(r, "br_diff", threshold = 0),
+                   SelectionOC(r, "br_diff", threshold = 0, ref.inadmissible = "switch"))
+  # the argument does not change the other statistics
+  expect_identical(SelectionOC(r, "ntb", ref.inadmissible = "keep"), SelectionOC(r, "ntb"))
+  expect_error(SelectionOC(r, "br_diff", ref.inadmissible = "drop"), "should be one of")
+})
+
 test_that("the probabilities agree with the selections of the trials", {
   r <- oc_results()
   for (th in c(-1, 0, 0.15, 1)) {

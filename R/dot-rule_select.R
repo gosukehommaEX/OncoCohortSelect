@@ -5,17 +5,23 @@
 #' largest statistic is selected (the first in the order of \code{results} in
 #' case of ties); without a candidate the reference cohort is selected. A
 #' missing statistic does not make a candidate. For \code{"br_diff"} with
-#' admissibility, a candidate must be admissible, and when the reference
-#' cohort is not admissible every admissible cohort is a candidate whatever
-#' the threshold; no cohort is selected when no cohort is admissible. For
-#' \code{"br_ref"} with admissibility, a candidate must be admissible relative
-#' to the reference cohort.
+#' admissibility, a candidate must be admissible; with
+#' \code{ref.inadmissible = "switch"}, when the reference cohort is not
+#' admissible every admissible cohort is a candidate whatever the threshold,
+#' and no cohort is selected when no cohort is admissible; with
+#' \code{ref.inadmissible = "keep"}, a candidate must exceed the threshold
+#' whatever the admissibility of the reference cohort. For \code{"br_ref"}
+#' with admissibility, a candidate must be admissible relative to the
+#' reference cohort.
 #'
 #' @param results Data frame returned by \code{\link{SimSelection}}.
 #' @param statistic Name of the column used for the selection.
 #' @param threshold Numeric threshold.
 #' @param admissibility Logical: use the admissibility of the benefit-risk
 #'   scores.
+#' @param ref.inadmissible \code{"switch"} or \code{"keep"}: the rule of
+#'   \code{"br_diff"} with admissibility when the reference cohort is not
+#'   admissible.
 #' @return A data frame with one row per simulated trial and the columns
 #'   \code{sim}, \code{selected} (the selected cohort, \code{NA} when none is
 #'   selected), \code{fixed} (a cohort other than the reference is selected
@@ -25,7 +31,8 @@
 #'   \code{CalibrateThreshold()}.
 #' @keywords internal
 #' @noRd
-.rule_select <- function(results, statistic, threshold, admissibility = TRUE) {
+.rule_select <- function(results, statistic, threshold, admissibility = TRUE,
+                         ref.inadmissible = "switch") {
   .check_results(results, statistic)
   .check_adm(results, statistic, admissibility)
   s <- results[[statistic]]
@@ -39,10 +46,14 @@
   ref_ok <- rep(TRUE, nrow(results))
   if (admissibility && statistic == "br_diff") {
     adm <- results$adm %in% TRUE
-    ref_adm <- as.vector(tapply(adm & ref, sim, any)[sim])
-    eligible <- eligible & adm & ref_adm
-    fixed <- !ref & !is.na(s) & adm & !ref_adm
-    ref_ok <- ref_adm
+    if (identical(ref.inadmissible, "keep")) {
+      eligible <- eligible & adm
+    } else {
+      ref_adm <- as.vector(tapply(adm & ref, sim, any)[sim])
+      eligible <- eligible & adm & ref_adm
+      fixed <- !ref & !is.na(s) & adm & !ref_adm
+      ref_ok <- ref_adm
+    }
   } else if (admissibility && statistic == "br_ref") {
     eligible <- eligible & results$adm_ref %in% TRUE
   }

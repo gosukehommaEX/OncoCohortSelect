@@ -50,6 +50,18 @@ test_that("trials selected whatever the threshold are counted (admissibility)", 
   ct3 <- CalibrateThreshold(r, "br_diff", alpha = 0.05, admissibility = FALSE)
   expect_equal(ct3$threshold, 0.9)
   expect_equal(ct3$p_nonreference, 0)
+  # With ref.inadmissible = "keep", trial 9 needs the threshold as well, so
+  # alpha = 0.05 is achieved by excluding every trial
+  expect_silent(ct4 <- CalibrateThreshold(r, "br_diff", alpha = 0.05,
+                                          ref.inadmissible = "keep"))
+  expect_equal(ct4$threshold, 0.9)
+  expect_equal(ct4$p_nonreference, 0)
+  # alpha = 0.2: two trials (B at 0.9 and 0.5) may select B
+  ct5 <- CalibrateThreshold(r, "br_diff", alpha = 0.2, ref.inadmissible = "keep")
+  expect_equal(ct5$threshold, 0.4)
+  expect_equal(ct5$p_nonreference, 0.2)
+  oc <- SelectionOC(r, "br_diff", threshold = ct5$threshold, ref.inadmissible = "keep")
+  expect_equal(oc$p_select[oc$group == "B"], ct5$p_nonreference)
 })
 
 test_that("invalid arguments give errors", {
