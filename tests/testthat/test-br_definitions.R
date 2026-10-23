@@ -13,7 +13,8 @@ test_that("definitions follow the measure, the direction and the reference", {
                                       time = c(NA, 6, NA, NA, NA, 12.5)),
                            eps, two.sample = TRUE)
   expect_identical(.br_definitions(crit2, TRUE),
-                   c("P(rate - rate_ref >= 0.1)", "P(S(6) - S_ref(6) >= 0.05)",
-                     "P(HR <= 0.8)", "P(rate - rate_ref <= 0.1)", "P(HR >= 1.2)",
-                     "P(S(12.5) - S_ref(12.5) <= 0.1)"))
+                   c("P(rate - reference rate >= 0.1)",
+                     "P(S(6) - reference S(6) >= 0.05)", "P(HR <= 0.8)",
+                     "P(rate - reference rate <= 0.1)", "P(HR >= 1.2)",
+                     "P(S(12.5) - reference S(12.5) <= 0.1)"))
 })

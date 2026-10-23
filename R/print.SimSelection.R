@@ -16,7 +16,9 @@
 #' @param threshold Optional threshold drawn as a dashed line.
 #' @param col Colors of the cohorts (recycled), in the order of the cohorts in
 #'   \code{x}; a cohort keeps its color whatever the statistic.
-#' @param main Title of the plot.
+#' @param main Title of the plot; by default a description of the statistic.
+#' @param ylab Title of the vertical axis; by default a short name of the
+#'   statistic, for example "BR difference" or "Win ratio".
 #' @param cex.main,cex.lab,cex.axis Sizes of the title, of the axis titles and
 #'   of the axis labels, relative to the default size.
 #' @param ... Not used.

@@ -49,6 +49,7 @@ plot.BenefitRisk <- function(x, col = NULL, main = NULL,
     graphics::mtext(paste(notes, collapse = "; "), side = 1, line = note_line,
                     cex = cex.legend)
   }
-  .oc_legend(legend.position, rownames(M), fill = cols, cex = cex.legend, line = base + 0.3)
+  .oc_legend(legend.position, c(.display_labels(comp), "BR"), fill = cols, cex = cex.legend,
+             line = base + 0.3)
   invisible(M)
 }

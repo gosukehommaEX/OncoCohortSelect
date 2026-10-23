@@ -22,14 +22,17 @@ plot.SelectionOC <- function(x, threshold = NULL, col = NULL, main = NULL,
   thr <- unique(x$threshold)
   cols <- if (is.null(col)) .oc_colors(ncol(M)) else rep_len(col, ncol(M))
   if (is.null(main)) {
-    main <- paste0("Selection by ", as.character(x$statistic[1]))
+    main <- .stat_label(as.character(x$statistic[1]), short = TRUE)
     if (length(thr) == 1L) {
       main <- paste0(main, " (threshold ", .fmt_num(thr, 4), ")")
     }
   }
+  # names shown: the selection of no cohort is labeled in words
+  shown <- colnames(M)
+  shown[shown == "(none)"] <- "None admissible"
   if (length(thr) == 1L) {
     # the cohorts are named on the axis; no legend is needed
-    graphics::barplot(M[1, ], col = cols, ylim = c(0, 1), las = 1,
+    graphics::barplot(M[1, ], names.arg = shown, col = cols, ylim = c(0, 1), las = 1,
                       ylab = "Probability of selection", main = main,
                       cex.main = cex.main, cex.lab = cex.lab, cex.axis = cex.axis,
                       cex.names = cex.axis)
@@ -49,7 +52,7 @@ plot.SelectionOC <- function(x, threshold = NULL, col = NULL, main = NULL,
                     cex.axis = cex.axis)
   graphics::title(main = main, line = title_line, cex.main = cex.main)
   if (!is.null(threshold)) graphics::abline(v = threshold, lty = 2)
-  .oc_legend(legend.position, colnames(M), col = cols, lwd = 2, cex = cex.legend,
+  .oc_legend(legend.position, shown, col = cols, lwd = 2, cex = cex.legend,
              line = base + 0.3)
   invisible(M)
 }

@@ -1,3 +1,18 @@
+# OncoCohortSelect 0.3.2
+
+* The plots name the statistics and the components in words, without
+  underscores. `plot()` for the results of `SimSelection()` titles the
+  vertical axis with a short name of the statistic (for example "BR
+  difference" or "Win ratio") and has a new argument `ylab`; `plot()` for the
+  results of `SelectionOC()` has this name in its default title and labels the
+  selection of no cohort "None admissible"; `plot()` for the results of
+  `BenefitRisk()` shows the default labels of the components as, for example,
+  "PFS S(6)" and "OS HR" in its legend. The values returned by the plot
+  methods and the column names of the results are unchanged.
+* The definitions of the components relative to a reference cohort name the
+  reference in words, for example `P(rate - reference rate >= 0.1)` and
+  `P(S(6) - reference S(6) >= 0.05)`.
+
 # OncoCohortSelect 0.3.1
 
 * The `plot()` methods have arguments for the colors (`col`), the sizes of

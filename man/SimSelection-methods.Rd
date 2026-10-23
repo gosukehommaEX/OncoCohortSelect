@@ -12,6 +12,7 @@
   threshold = NULL,
   col = NULL,
   main = NULL,
+  ylab = NULL,
   cex.main = 1.2,
   cex.lab = 1,
   cex.axis = 1,
@@ -33,7 +34,10 @@ reference).}
 \item{col}{Colors of the cohorts (recycled), in the order of the cohorts in
 \code{x}; a cohort keeps its color whatever the statistic.}
 
-\item{main}{Title of the plot.}
+\item{main}{Title of the plot; by default a description of the statistic.}
+
+\item{ylab}{Title of the vertical axis; by default a short name of the
+statistic, for example "BR difference" or "Win ratio".}
 
 \item{cex.main, cex.lab, cex.axis}{Sizes of the title, of the axis titles and
 of the axis labels, relative to the default size.}

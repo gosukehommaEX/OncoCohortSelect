@@ -13,6 +13,8 @@ test_that("the plotted values are the statistic of each cohort", {
   v2 <- with_null_device(plot(r, "ntb", col = c("red", "green", "blue"), cex.main = 1.5,
                               cex.lab = 0.8, cex.axis = 0.8))
   expect_identical(v2, v)
+  expect_identical(with_null_device(plot(r, "ntb", ylab = "NTB against A")), v)
+  expect_error(plot(r, "ntb", ylab = c("a", "b")), "ylab")
   expect_error(plot(r, "ntb", cex.axis = 0), "cex.axis")
   expect_error(plot(r, "br"), "br")
   expect_error(plot(r, "ntb", threshold = "a"), "threshold")

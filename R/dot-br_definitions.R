@@ -15,8 +15,8 @@
   if (!reference) {
     return(paste0("P(", param, " ", ge, " ", num(crit$target), ")"))
   }
-  ref_param <- ifelse(crit$measure == "rate", "rate_ref",
-                      paste0("S_ref(", num(crit$time), ")"))
+  ref_param <- ifelse(crit$measure == "rate", "reference rate",
+                      paste0("reference S(", num(crit$time), ")"))
   out <- paste0("P(", param, " - ", ref_param, " ", ge, " ", num(crit$target), ")")
   hr <- crit$measure == "hr"
   out[hr] <- paste0("P(HR ", ifelse(hb[hr], "<=", ">="), " ", num(crit$target[hr]), ")")

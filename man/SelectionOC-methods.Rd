@@ -58,7 +58,10 @@ cohort, with one row per threshold and one column per cohort. \code{plot()}
 draws these probabilities against the threshold, one line per cohort, or as
 bars when there is a single threshold. Results of several statistics
 combined with \code{rbind()} are printed as a data frame and cannot be
-plotted together. The plot methods of the package restore the graphical
+plotted together. The plot names the statistic in words, for example "Win
+ratio", and labels the selection of no cohort (\code{"(none)"}, with
+\code{"br_diff"} and admissibility) "None admissible". The plot methods of
+the package restore the graphical
 parameters they change, so elements added afterwards with low-level
 functions such as \code{abline()} may be misplaced; use the arguments of the
 methods, such as \code{threshold}, instead.
