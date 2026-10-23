@@ -16,6 +16,7 @@ plot(
   threshold = NULL,
   col = NULL,
   main = NULL,
+  ylab = NULL,
   cex.main = 1.2,
   cex.lab = 1,
   cex.axis = 1,
@@ -50,7 +51,12 @@ print(x, n = 10, digits = 3, ...)
 
 - main:
 
-  Title of the plot.
+  Title of the plot; by default a description of the statistic.
+
+- ylab:
+
+  Title of the vertical axis; by default a short name of the statistic,
+  for example "BR difference" or "Win ratio".
 
 - cex.main, cex.lab, cex.axis:
 

@@ -124,11 +124,11 @@ br_ref <- BenefitRisk(adsl, eps, crit_ref, group = "TRT01P", reference = "Cohort
 br_ref
 #> Posterior benefit-risk scores relative to Cohort 1
 #> 
-#>  component definition                weight cutoff
-#>  ORR       P(rate - rate_ref >= 0.1) 0.333        
-#>  PFS_HR    P(HR <= 0.8)              0.333        
-#>  OS_HR     P(HR <= 0.9)              0.333        
-#>  AE        P(rate - rate_ref <= 0.1) 1      0.8   
+#>  component definition                      weight cutoff
+#>  ORR       P(rate - reference rate >= 0.1) 0.333        
+#>  PFS_HR    P(HR <= 0.8)                    0.333        
+#>  OS_HR     P(HR <= 0.9)                    0.333        
+#>  AE        P(rate - reference rate <= 0.1) 1      0.8   
 #> 
 #>     group reference   ORR PFS_HR OS_HR     AE admissible      BR
 #>  Cohort 2  Cohort 1 0.237  0.964 0.925 0.8621       TRUE 0.51373

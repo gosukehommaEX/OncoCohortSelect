@@ -191,11 +191,11 @@ br_ref <- BenefitRisk(d, eps, crit_ref, reference = "Cohort1")
 br_ref
 #> Posterior benefit-risk scores relative to Cohort1
 #> 
-#>  component definition                weight cutoff
-#>  ORR       P(rate - rate_ref >= 0.1) 0.333        
-#>  PFS_HR    P(HR <= 0.8)              0.333        
-#>  OS_HR     P(HR <= 0.9)              0.333        
-#>  AE        P(rate - rate_ref <= 0.1) 1      0.8   
+#>  component definition                      weight cutoff
+#>  ORR       P(rate - reference rate >= 0.1) 0.333        
+#>  PFS_HR    P(HR <= 0.8)                    0.333        
+#>  OS_HR     P(HR <= 0.9)                    0.333        
+#>  AE        P(rate - reference rate <= 0.1) 1      0.8   
 #> 
 #>    group reference   ORR PFS_HR OS_HR      AE admissible      BR
 #>  Cohort2   Cohort1 0.338  0.958 0.857 0.89716       TRUE 0.58543

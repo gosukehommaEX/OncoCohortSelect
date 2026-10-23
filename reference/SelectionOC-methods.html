@@ -5,23 +5,29 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Print and plot selection probabilities — plot.SelectionOC"><meta name="description" content="print() shows the probability that the decision rule selects each
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Print and plot selection probabilities — plot.SelectionOC"><meta name="description" content='print() shows the probability that the decision rule selects each
 cohort, with one row per threshold and one column per cohort. plot()
 draws these probabilities against the threshold, one line per cohort, or as
 bars when there is a single threshold. Results of several statistics
 combined with rbind() are printed as a data frame and cannot be
-plotted together. The plot methods of the package restore the graphical
+plotted together. The plot names the statistic in words, for example "Win
+ratio", and labels the selection of no cohort ("(none)", with
+"br_diff" and admissibility) "None admissible". The plot methods of
+the package restore the graphical
 parameters they change, so elements added afterwards with low-level
 functions such as abline() may be misplaced; use the arguments of the
-methods, such as threshold, instead."><meta property="og:description" content="print() shows the probability that the decision rule selects each
+methods, such as threshold, instead.'><meta property="og:description" content='print() shows the probability that the decision rule selects each
 cohort, with one row per threshold and one column per cohort. plot()
 draws these probabilities against the threshold, one line per cohort, or as
 bars when there is a single threshold. Results of several statistics
 combined with rbind() are printed as a data frame and cannot be
-plotted together. The plot methods of the package restore the graphical
+plotted together. The plot names the statistic in words, for example "Win
+ratio", and labels the selection of no cohort ("(none)", with
+"br_diff" and admissibility) "None admissible". The plot methods of
+the package restore the graphical
 parameters they change, so elements added afterwards with low-level
 functions such as abline() may be misplaced; use the arguments of the
-methods, such as threshold, instead."></head><body>
+methods, such as threshold, instead.'></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -29,7 +35,7 @@ methods, such as threshold, instead."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +77,10 @@ cohort, with one row per threshold and one column per cohort. <code><a href="htt
 draws these probabilities against the threshold, one line per cohort, or as
 bars when there is a single threshold. Results of several statistics
 combined with <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> are printed as a data frame and cannot be
-plotted together. The plot methods of the package restore the graphical
+plotted together. The plot names the statistic in words, for example "Win
+ratio", and labels the selection of no cohort (<code>"(none)"</code>, with
+<code>"br_diff"</code> and admissibility) "None admissible". The plot methods of
+the package restore the graphical
 parameters they change, so elements added afterwards with low-level
 functions such as <code><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline()</a></code> may be misplaced; use the arguments of the
 methods, such as <code>threshold</code>, instead.</p>

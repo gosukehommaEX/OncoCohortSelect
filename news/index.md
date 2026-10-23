@@ -1,5 +1,28 @@
 # Changelog
 
+## OncoCohortSelect 0.3.2
+
+- The plots name the statistics and the components in words, without
+  underscores. [`plot()`](https://rdrr.io/r/graphics/plot.default.html)
+  for the results of
+  [`SimSelection()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SimSelection.md)
+  titles the vertical axis with a short name of the statistic (for
+  example “BR difference” or “Win ratio”) and has a new argument `ylab`;
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) for the
+  results of
+  [`SelectionOC()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md)
+  has this name in its default title and labels the selection of no
+  cohort “None admissible”;
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) for the
+  results of
+  [`BenefitRisk()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/BenefitRisk.md)
+  shows the default labels of the components as, for example, “PFS S(6)”
+  and “OS HR” in its legend. The values returned by the plot methods and
+  the column names of the results are unchanged.
+- The definitions of the components relative to a reference cohort name
+  the reference in words, for example `P(rate - reference rate >= 0.1)`
+  and `P(S(6) - reference S(6) >= 0.05)`.
+
 ## OncoCohortSelect 0.3.1
 
 - The [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods

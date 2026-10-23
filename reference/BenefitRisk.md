@@ -170,10 +170,10 @@ crit_ref <- data.frame(endpoint = c("ORR", "PFS", "AE"),
 BenefitRisk(d, eps, crit_ref, reference = "Cohort2")
 #> Posterior benefit-risk scores relative to Cohort2
 #> 
-#>  component definition                weight cutoff
-#>  ORR       P(rate - rate_ref >= 0.1) 0.333        
-#>  PFS_HR    P(HR <= 0.8)              0.333        
-#>  AE        P(rate - rate_ref <= 0.1) 0.333        
+#>  component definition                      weight cutoff
+#>  ORR       P(rate - reference rate >= 0.1) 0.333        
+#>  PFS_HR    P(HR <= 0.8)                    0.333        
+#>  AE        P(rate - reference rate <= 0.1) 0.333        
 #> 
 #>    group reference   ORR PFS_HR    AE admissible    BR
 #>  Cohort1   Cohort2 0.817  0.266 0.296       TRUE 0.401

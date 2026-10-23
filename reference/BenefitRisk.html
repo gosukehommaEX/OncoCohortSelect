@@ -21,7 +21,7 @@ other cohort is assessed by its difference from the reference."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -215,10 +215,10 @@ efficacy and safety endpoints via an integrated benefit-risk assessment.
 <span class="r-in"><span><span class="fu">BenefitRisk</span><span class="op">(</span><span class="va">d</span>, <span class="va">eps</span>, <span class="va">crit_ref</span>, reference <span class="op">=</span> <span class="st">"Cohort2"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Posterior benefit-risk scores relative to Cohort2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  component definition                weight cutoff</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  ORR       P(rate - rate_ref &gt;= 0.1) 0.333        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  PFS_HR    P(HR &lt;= 0.8)              0.333        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  AE        P(rate - rate_ref &lt;= 0.1) 0.333        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  component definition                      weight cutoff</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  ORR       P(rate - reference rate &gt;= 0.1) 0.333        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  PFS_HR    P(HR &lt;= 0.8)                    0.333        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  AE        P(rate - reference rate &lt;= 0.1) 0.333        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    group reference   ORR PFS_HR    AE admissible    BR</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Cohort1   Cohort2 0.817  0.266 0.296       TRUE 0.401</span>
