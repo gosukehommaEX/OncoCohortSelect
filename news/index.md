@@ -1,5 +1,18 @@
 # Changelog
 
+## OncoCohortSelect 0.3.4
+
+- The default titles of the plots fit above narrow plots:
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) for the
+  results of
+  [`SelectionOC()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md)
+  with a single threshold puts the threshold on a second line, and
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) for the
+  results of
+  [`WinStat()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/WinStat.md)
+  gives the net treatment benefit and the win ratio on two lines. The
+  plot methods leave room above the plot for a title with several lines.
+
 ## OncoCohortSelect 0.3.3
 
 - [`SelectionOC()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md)

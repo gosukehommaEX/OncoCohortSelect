@@ -8,7 +8,7 @@ odds with their confidence intervals.
 per priority level with the proportions of all pairs won and lost at
 that level, and a last bar with the pairs that no level decides; the
 title gives the net treatment benefit and the win ratio with their
-confidence intervals.
+confidence intervals, one per line.
 
 ## Usage
 
@@ -45,7 +45,8 @@ print(x, digits = 3, ...)
 - main:
 
   Title of the plot; by default the net treatment benefit and the win
-  ratio with their confidence intervals.
+  ratio with their confidence intervals, one per line. A title with line
+  breaks gets the room it needs above the plot.
 
 - legend.position:
 

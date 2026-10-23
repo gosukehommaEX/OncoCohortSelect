@@ -11,13 +11,13 @@ the win ratio and the win odds with their confidence intervals.
 plot() draws one bar per priority level with the proportions of all
 pairs won and lost at that level, and a last bar with the pairs that no
 level decides; the title gives the net treatment benefit and the win ratio
-with their confidence intervals."><meta property="og:description" content="print() shows the cohorts compared, the proportions of pairs won,
+with their confidence intervals, one per line."><meta property="og:description" content="print() shows the cohorts compared, the proportions of pairs won,
 lost and undecided at each priority level, and the net treatment benefit,
 the win ratio and the win odds with their confidence intervals.
 plot() draws one bar per priority level with the proportions of all
 pairs won and lost at that level, and a last bar with the pairs that no
 level decides; the title gives the net treatment benefit and the win ratio
-with their confidence intervals."></head><body>
+with their confidence intervals, one per line."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -25,7 +25,7 @@ with their confidence intervals."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@ the win ratio and the win odds with their confidence intervals.
 <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> draws one bar per priority level with the proportions of all
 pairs won and lost at that level, and a last bar with the pairs that no
 level decides; the title gives the net treatment benefit and the win ratio
-with their confidence intervals.</p>
+with their confidence intervals, one per line.</p>
     </div>
 
     <div class="section level2">
@@ -105,7 +105,8 @@ with their confidence intervals.</p>
 
 <dt id="arg-main">main<a class="anchor" aria-label="anchor" href="#arg-main"></a></dt>
 <dd><p>Title of the plot; by default the net treatment benefit and the
-win ratio with their confidence intervals.</p></dd>
+win ratio with their confidence intervals, one per line. A title with
+line breaks gets the room it needs above the plot.</p></dd>
 
 
 <dt id="arg-legend-position">legend.position<a class="anchor" aria-label="anchor" href="#arg-legend-position"></a></dt>

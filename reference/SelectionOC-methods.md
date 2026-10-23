@@ -8,7 +8,8 @@ probabilities against the threshold, one line per cohort, or as bars
 when there is a single threshold. Results of several statistics combined
 with [`rbind()`](https://rdrr.io/r/base/cbind.html) are printed as a
 data frame and cannot be plotted together. The plot names the statistic
-in words, for example "Win ratio", and labels the selection of no cohort
+in words, for example "Win ratio", with the threshold on a second line
+when there is a single threshold, and labels the selection of no cohort
 (`"(none)"`, with `"br_diff"` and admissibility) "None admissible". The
 plot methods of the package restore the graphical parameters they
 change, so elements added afterwards with low-level functions such as
