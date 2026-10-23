@@ -155,6 +155,19 @@ thr
 thr_ntb <- thr$threshold[thr$statistic == "ntb"]
 ```
 
+When Cohort1 is not admissible, the rule `br_diff` selects an admissible
+new cohort whatever the threshold, as in the two-stage selection of
+Chakraborty et al. (2026). When this happens in more than a proportion
+alpha of the trials of the null scenario, no threshold achieves alpha,
+and
+[`CalibrateThreshold()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/CalibrateThreshold.md)
+returns `NA` with a warning. With `ref.inadmissible = "keep"` in
+[`CalibrateThreshold()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/CalibrateThreshold.md)
+and
+[`SelectionOC()`](https://gosukehommaEX.github.io/OncoCohortSelect/reference/SelectionOC.md),
+a new cohort must exceed the threshold in every trial, and a threshold
+that achieves alpha always exists.
+
 In the null scenario, a new cohort is selected by the net treatment
 benefit when its value lies above the dashed line, the calibrated
 threshold.

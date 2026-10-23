@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,11 @@
       <small>Source: <a href="https://github.com/gosukehommaEX/OncoCohortSelect/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.3" id="oncocohortselect-033">OncoCohortSelect 0.3.3<a class="anchor" aria-label="anchor" href="#oncocohortselect-033"></a></h2>
+<ul><li>
+<code><a href="../reference/SelectionOC.html">SelectionOC()</a></code> and <code><a href="../reference/CalibrateThreshold.html">CalibrateThreshold()</a></code> have a new argument <code>ref.inadmissible</code> for the rule of <code>"br_diff"</code> with admissibility when the reference cohort is not admissible. The default <code>"switch"</code> keeps the rule of the earlier versions: every admissible cohort is a candidate whatever the threshold, which with a threshold of 0 is the two-stage selection of Chakraborty et al. (2026). With <code>"keep"</code>, a candidate must exceed the threshold in every trial and the reference cohort is selected without a candidate, so that <code><a href="../reference/CalibrateThreshold.html">CalibrateThreshold()</a></code> always finds a threshold, also when the reference cohort is often not admissible in the null scenario.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.2" id="oncocohortselect-032">OncoCohortSelect 0.3.2<a class="anchor" aria-label="anchor" href="#oncocohortselect-032"></a></h2>
 <ul><li>The plots name the statistics and the components in words, without underscores. <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> for the results of <code><a href="../reference/SimSelection.html">SimSelection()</a></code> titles the vertical axis with a short name of the statistic (for example “BR difference” or “Win ratio”) and has a new argument <code>ylab</code>; <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> for the results of <code><a href="../reference/SelectionOC.html">SelectionOC()</a></code> has this name in its default title and labels the selection of no cohort “None admissible”; <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> for the results of <code><a href="../reference/BenefitRisk.html">BenefitRisk()</a></code> shows the default labels of the components as, for example, “PFS S(6)” and “OS HR” in its legend. The values returned by the plot methods and the column names of the results are unchanged.</li>

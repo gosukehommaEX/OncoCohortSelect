@@ -23,7 +23,7 @@ statistics can then be compared at the same false selection probability."></head
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,8 @@ statistics can then be compared at the same false selection probability.</p>
 <span>  <span class="va">results</span>,</span>
 <span>  statistic <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"br_diff"</span>, <span class="st">"br_ref"</span>, <span class="st">"ntb"</span>, <span class="st">"ntb_lower"</span>, <span class="st">"wr"</span>, <span class="st">"wo"</span><span class="op">)</span>,</span>
 <span>  alpha <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>  admissibility <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  admissibility <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ref.inadmissible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"switch"</span>, <span class="st">"keep"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -100,6 +101,12 @@ reference.</p></dd>
 <dd><p>Logical: use the admissibility of the benefit-risk
 scores (<code>"br_diff"</code> and <code>"br_ref"</code> only).</p></dd>
 
+
+<dt id="arg-ref-inadmissible">ref.inadmissible<a class="anchor" aria-label="anchor" href="#arg-ref-inadmissible"></a></dt>
+<dd><p><code>"switch"</code> or <code>"keep"</code>: the rule of
+<code>"br_diff"</code> with admissibility when the reference cohort is not
+admissible (see <code><a href="SelectionOC.html">SelectionOC</a></code>).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -111,11 +118,14 @@ scores (<code>"br_diff"</code> and <code>"br_ref"</code> only).</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The decision rules are those of <code><a href="SelectionOC.html">SelectionOC</a></code>: a cohort other
 than the reference is selected when the largest statistic among the
-candidate cohorts exceeds the threshold. With <code>statistic = "br_diff"</code>
-and <code>admissibility = TRUE</code>, trials in which the reference cohort is not
-admissible and another cohort is admissible select that cohort whatever the
-threshold; when their proportion exceeds <code>alpha</code>, no threshold achieves
-<code>alpha</code> and the result is <code>NA</code> with a warning. The threshold is
+candidate cohorts exceeds the threshold. With <code>statistic = "br_diff"</code>,
+<code>admissibility = TRUE</code> and <code>ref.inadmissible = "switch"</code>, trials
+in which the reference cohort is not admissible and another cohort is
+admissible select that cohort whatever the threshold; when their proportion
+exceeds <code>alpha</code>, no threshold achieves <code>alpha</code> and the result is
+<code>NA</code> with a warning. With <code>ref.inadmissible = "keep"</code>, every
+selection of another cohort needs the threshold, so a threshold that
+achieves <code>alpha</code> always exists. The threshold is
 one of the simulated values of the statistic (or <code>-Inf</code> when no trial
 needs to be excluded), and the achieved proportion can be smaller than
 <code>alpha</code> because of ties and the finite number of trials.</p>

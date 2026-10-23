@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -215,6 +215,16 @@ is selected in at most 10% of the trials.</p>
 <span><span class="co">#&gt; 3       ntb   0.1 0.2181250            0.1</span></span>
 <span><span class="co">#&gt; 4        wr   0.1 1.5592949            0.1</span></span>
 <span><span class="va">thr_ntb</span> <span class="op">&lt;-</span> <span class="va">thr</span><span class="op">$</span><span class="va">threshold</span><span class="op">[</span><span class="va">thr</span><span class="op">$</span><span class="va">statistic</span> <span class="op">==</span> <span class="st">"ntb"</span><span class="op">]</span></span></code></pre></div>
+<p>When Cohort1 is not admissible, the rule <code>br_diff</code> selects
+an admissible new cohort whatever the threshold, as in the two-stage
+selection of Chakraborty et al. (2026). When this happens in more than a
+proportion alpha of the trials of the null scenario, no threshold
+achieves alpha, and <code><a href="../reference/CalibrateThreshold.html">CalibrateThreshold()</a></code> returns
+<code>NA</code> with a warning. With
+<code>ref.inadmissible = "keep"</code> in
+<code><a href="../reference/CalibrateThreshold.html">CalibrateThreshold()</a></code> and <code><a href="../reference/SelectionOC.html">SelectionOC()</a></code>, a new
+cohort must exceed the threshold in every trial, and a threshold that
+achieves alpha always exists.</p>
 <p>In the null scenario, a new cohort is selected by the net treatment
 benefit when its value lies above the dashed line, the calibrated
 threshold.</p>

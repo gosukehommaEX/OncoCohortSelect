@@ -15,7 +15,7 @@ simulated trials in which a decision rule selects each cohort."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">OncoCohortSelect</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +62,8 @@ simulated trials in which a decision rule selects each cohort.</p>
 <span>  <span class="va">results</span>,</span>
 <span>  statistic <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"br_diff"</span>, <span class="st">"br_ref"</span>, <span class="st">"ntb"</span>, <span class="st">"ntb_lower"</span>, <span class="st">"wr"</span>, <span class="st">"wo"</span><span class="op">)</span>,</span>
 <span>  threshold <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  admissibility <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  admissibility <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ref.inadmissible <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"switch"</span>, <span class="st">"keep"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,14 +88,21 @@ simulated trials in which a decision rule selects each cohort.</p>
 <dd><p>Logical: use the admissibility of the benefit-risk
 scores (<code>"br_diff"</code> and <code>"br_ref"</code> only).</p></dd>
 
+
+<dt id="arg-ref-inadmissible">ref.inadmissible<a class="anchor" aria-label="anchor" href="#arg-ref-inadmissible"></a></dt>
+<dd><p><code>"switch"</code> or <code>"keep"</code>: the rule of
+<code>"br_diff"</code> with admissibility when the reference cohort is not
+admissible (see Details).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A data frame of class <code>SelectionOC</code> with columns
   <code>statistic</code>, <code>threshold</code>, <code>group</code> and <code>p_select</code>,
   with one row per threshold and cohort (in the order of <code>results</code>),
-  and, for <code>"br_diff"</code> with admissibility, a row <code>"(none)"</code> for
-  the trials in which no cohort is selected. See
+  and, for <code>"br_diff"</code> with admissibility and
+  <code>ref.inadmissible = "switch"</code>, a row <code>"(none)"</code> for the trials
+  in which no cohort is selected. See
   <code><a href="SelectionOC-methods.html">SelectionOC-methods</a></code> for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.</p>
     </div>
     <div class="section level2">
@@ -105,10 +113,18 @@ with the largest statistic is selected; without a candidate, the reference
 cohort is selected. A cohort with a missing statistic (for example a win
 ratio when no pair is decided) is not a candidate. The statistics are</p><ul><li><p><code>"br_diff"</code>: the difference of the benefit-risk scores against
     target values from that of the reference cohort. With
-    <code>admissibility = TRUE</code>, a candidate must be admissible; when the
-    reference cohort is not admissible, every admissible cohort is a
-    candidate whatever the threshold, and no cohort is selected when none
-    is admissible.</p></li>
+    <code>admissibility = TRUE</code>, a candidate must be admissible. When the
+    reference cohort is not admissible, with
+    <code>ref.inadmissible = "switch"</code> (the default) every admissible
+    cohort is a candidate whatever the threshold, and no cohort is
+    selected when none is admissible; with a threshold of 0, this is the
+    two-stage selection of Chakraborty et al. (2026), which selects the
+    admissible cohort with the highest score. With
+    <code>ref.inadmissible = "keep"</code>, a candidate must exceed the
+    threshold whatever the admissibility of the reference cohort, which is
+    selected without a candidate; a large enough threshold then makes the
+    probability of selecting another cohort as small as wanted, as
+    <code><a href="CalibrateThreshold.html">CalibrateThreshold</a></code> needs.</p></li>
 <li><p><code>"br_ref"</code>: the benefit-risk score relative to the reference
     cohort. With <code>admissibility = TRUE</code>, a candidate must also be
     admissible relative to the reference cohort.</p></li>
@@ -118,6 +134,14 @@ ratio when no pair is decided) is not a candidate. The statistics are</p><ul><li
 </ul><p>The default thresholds are 0 for the differences and the net treatment
 benefit and 1 for the win ratio and the win odds; <code>"br_ref"</code> has no
 default.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Chakraborty, S., Dubey, A. K., Kumar, A. and Chan, I. (2026). A two-stage
+dose optimization framework for oncology drug development with multiple
+efficacy and safety endpoints via an integrated benefit-risk assessment.
+<em>Statistics in Biopharmaceutical Research</em>, published online.
+<a href="https://doi.org/10.1080/19466315.2026.2668381" class="external-link">doi:10.1080/19466315.2026.2668381</a></p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -140,6 +164,13 @@ default.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  threshold    A   B C (none)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        0.0 0.25 0.5 0   0.25</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        0.1 0.25 0.5 0   0.25</span>
+<span class="r-in"><span><span class="fu">SelectionOC</span><span class="op">(</span><span class="va">res</span>, <span class="st">"br_diff"</span>, threshold <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span><span class="op">)</span>, ref.inadmissible <span class="op">=</span> <span class="st">"keep"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Probability that the rule selects each cohort</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Statistic: br_diff (Difference of the benefit-risk scores from the reference)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  threshold   A   B C</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.0 0.5 0.5 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        0.1 0.5 0.5 0</span>
 <span class="r-in"><span><span class="fu">SelectionOC</span><span class="op">(</span><span class="va">res</span>, <span class="st">"ntb"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Probability that the rule selects each cohort</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Statistic: ntb (Net treatment benefit against the reference)</span>
